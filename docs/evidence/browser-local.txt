@@ -1,0 +1,21 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test
+
+
+Running 12 tests using 1 worker
+
+  ✓   1 [chromium] › tests/browser/app.spec.js:30:1 › catálogo, seis temas y cursos futuros honestos (2.0s)
+  ✓   2 [chromium] › tests/browser/app.spec.js:52:1 › error, pista, resumen y persistencia aislada por explorador (768ms)
+  ✓   3 [chromium] › tests/browser/app.spec.js:75:1 › repaso mixto cubre todos los temas y finaliza (994ms)
+  ✓   4 [chromium] › tests/browser/app.spec.js:94:1 › responsive, teclado, offline real y caché aislada (403ms)
+  ✓   5 [chromium] › tests/browser/app.spec.js:125:1 › almacenamiento bloqueado no rompe la práctica (351ms)
+  ✓   6 [chromium] › tests/browser/app.spec.js:136:1 › foco, alternativas accesibles y cambios entre pestañas (796ms)
+  ✓   7 [webkit] › tests/browser/app.spec.js:30:1 › catálogo, seis temas y cursos futuros honestos (1.6s)
+  ✓   8 [webkit] › tests/browser/app.spec.js:52:1 › error, pista, resumen y persistencia aislada por explorador (1.1s)
+  ✓   9 [webkit] › tests/browser/app.spec.js:75:1 › repaso mixto cubre todos los temas y finaliza (1.6s)
+  ✓  10 [webkit] › tests/browser/app.spec.js:94:1 › responsive, teclado, offline real y caché aislada (363ms)
+  ✓  11 [webkit] › tests/browser/app.spec.js:125:1 › almacenamiento bloqueado no rompe la práctica (444ms)
+  ✓  12 [webkit] › tests/browser/app.spec.js:136:1 › foco, alternativas accesibles y cambios entre pestañas (916ms)
+
+  12 passed (12.8s)

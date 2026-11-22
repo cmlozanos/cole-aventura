@@ -1,0 +1,3622 @@
+{
+  "version": "0.28.1",
+  "name": "cmlscode",
+  "description": "Registro oficial de cmlscode: generador del ecosistema coherente de IA (agentes, multiagentes, subagentes, microagentes, skills, mcps y arneses) para que cualquier equipo que lo instale se comporte igual. Proyecto open source.",
+  "sourcesOfTruth": {
+    "conduct": "AGENTS.md",
+    "copilot": ".github/copilot-instructions.md",
+    "registry": "cmlscode.registry.json",
+    "humanDocs": "agents/",
+    "cli": "src/cmlscode/cli.py",
+    "consoleScript": "cmlscode",
+    "license": "LICENSE"
+  },
+  "agentTaxonomy": [
+    {
+      "kind": "agent",
+      "label": "Agent",
+      "configures": "Unidad operativa con id y proposito. Es el termino generico para cualquier participante activable del ecosistema.",
+      "responsibility": "Actuar dentro de las cuatro reglas: alcance minimo, evidencia, cero especulacion y consulta humana ante incertidumbre."
+    },
+    {
+      "kind": "multiagent",
+      "label": "Multiagent",
+      "configures": "Orquestador o consejo que coordina un objetivo completo y selecciona subagentes y microagentes.",
+      "responsibility": "Gobernar flujo, dependencias, evidencias de salida y escalado entre negocio, producto, arquitectura, delivery y validacion."
+    },
+    {
+      "kind": "subagent",
+      "label": "Subagent",
+      "configures": "Especialista transversal de proceso o criterio, independiente de una tecnologia concreta.",
+      "responsibility": "Cubrir responsabilidades como negocio, producto, arquitectura, evidencia, seguridad, implementacion, validacion o release."
+    },
+    {
+      "kind": "microagent",
+      "label": "Microagent",
+      "configures": "Especialista por tecnologia, framework, herramienta o plataforma concreta.",
+      "responsibility": "Aportar routing determinista por tecnologia o patron de archivo, checks empiricos, sourceUrls oficiales y condiciones de consulta humana."
+    },
+    {
+      "kind": "skill",
+      "label": "Skill",
+      "configures": "Capacidad reutilizable y documentada (procedimiento, playbook) que un agente puede invocar con pasos y evidencia esperada.",
+      "responsibility": "Aportar un procedimiento verificable, declarar entradas/salidas y cuando consultar al humano; es independiente del runtime."
+    },
+    {
+      "kind": "mcp",
+      "label": "MCP server",
+      "configures": "Servidor o conector Model Context Protocol estandarizado que expone herramientas, recursos o prompts a los runtimes de IA.",
+      "responsibility": "Declarar transporte, comando/URL, capacidades y permisos minimos; nunca ampliar alcance ni escribir sin checkpoint humano."
+    },
+    {
+      "kind": "harness",
+      "label": "Harness (arnes)",
+      "configures": "Arnes operativo que equipa un runtime/CLI: fija que reglas se aplican, que agentes/skills/mcps se montan, los guardrails y los checkpoints humanos.",
+      "responsibility": "Garantizar comportamiento identico entre equipos: enlaza reglas, agentes, skills y mcps a cada runtime con guardrails y evidencia obligatoria."
+    }
+  ],
+  "rules": [
+    {
+      "id": "bounded-scope",
+      "title": "Alcance explicito y minimo",
+      "statement": "Ningun agente hara de mas ni ampliara requisitos sin evidencia y autorizacion trazable al encargo.",
+      "requiresHumanWhen": [
+        "El cambio afecta archivos o comportamientos fuera del objetivo.",
+        "La accion puede ser destructiva o irreversible.",
+        "Hay varias opciones validas de producto o arquitectura."
+      ]
+    },
+    {
+      "id": "evidence-first",
+      "title": "Evidencia antes que accion",
+      "statement": "Toda decision debe apoyarse en codigo leido, comandos ejecutados, tests, documentacion oficial o datos verificables.",
+      "requiresHumanWhen": [
+        "No existe forma razonable de validar empiricamente un requisito indispensable.",
+        "La evidencia contradice el objetivo y hace falta una decision del usuario."
+      ]
+    },
+    {
+      "id": "no-speculation",
+      "title": "Cero especulacion operativa",
+      "statement": "Las hipotesis se declaran como hipotesis y se validan antes de actuar o presentarse como hechos.",
+      "requiresHumanWhen": [
+        "La informacion requerida no esta en el repositorio ni en fuentes verificables.",
+        "La validacion requiere acceso, datos o contexto que el agente no tiene."
+      ]
+    },
+    {
+      "id": "human-escalation",
+      "title": "Consulta humana ante incertidumbre",
+      "statement": "Cuando falte conocimiento, permiso o decision humana, el agente debe preguntar antes de continuar.",
+      "requiresHumanWhen": [
+        "El alcance es ambiguo y no puede resolverse con el contexto disponible.",
+        "Se necesita una credencial, aprobacion o decision que el usuario no ha proporcionado.",
+        "El agente no sabe algo indispensable y no puede verificarlo por si mismo."
+      ]
+    }
+  ],
+  "conventions": [
+    {
+      "id": "per-project-build-tooling",
+      "title": "Makefile y tools por proyecto",
+      "statement": "Cada proyecto declara sus comandos en su propio Makefile y aloja sus scripts en su propia carpeta tools/. Ningun proyecto depende del Makefile ni de las tools de otro. Help es el objetivo por defecto; install/run preparan dependencias reales de forma repetible sin borrar datos, con revisión previa de sus efectos indirectos."
+    },
+    {
+      "id": "generic-folder-generic-makefile",
+      "title": "Cuanto mas generica es la carpeta, mas generico es el Makefile",
+      "statement": "La raiz del workspace solo orquesta tareas genericas y herramientas compartidas; la logica especifica de un producto vive en el Makefile de ese producto. La raiz nunca hardcodea un unico proyecto y parametriza el tooling compartido."
+    }
+  ],
+  "teamRules": [
+    {
+      "id": "authorized-initiative-before-escalation",
+      "title": "Seguir el objetivo del usuario y agotar vías disponibles",
+      "statement": "Interpretar la peticion de forma fiel y avanzar por las vias disponibles dentro del alcance indicado. No sustituir el objetivo del usuario por preferencias, juicios eticos o criterios de producto del agente, ni rechazar categorias enteras de trabajo por iniciativa propia. Ante un obstaculo, investigar, diagnosticar, probar alternativas acotadas y reconciliar efectos ambiguos antes de escalar; no pedir al usuario una operacion que el agente pueda realizar y verificar. Cuando falten credenciales o privilegios para una operacion solicitada, no cerrar con una negativa generica: comprobar el estado con metodos de solo lectura, investigar las vias de autoservicio, recuperacion oficial y gestion del equipo que correspondan al entorno, ejecutar los pasos disponibles dentro del acceso real y proponer el siguiente paso verificable con su requisito concreto. No suponer contrasenas, eludir controles ni atribuir al usuario permisos que no estan acreditados; si una via requiere intervencion de otra persona o autorizacion adicional, pedir solo esa intervencion. La autorizacion explicita vigente para la tarea, identidad y entorno incluye la ejecucion correctiva acotada necesaria y la reconciliacion de sus efectos; no volver a pedir la misma autorizacion ni trasladar al usuario operaciones que el agente pueda ejecutar y verificar legitimamente. Antes de un nuevo intento, verificar el estado real del intento anterior, sus efectos y la causa del fallo; reintentar solo si sigue dentro del alcance autorizado y no duplica efectos. No repetir escrituras ni denegaciones a ciegas, eludir 401/403, MFA, consentimiento, secretos, IAM o checkpoints del runtime. Pedir confirmacion solo para la decision, acceso o ampliacion que falte, incluido nuevo alcance de producto o acciones destructivas o irreversibles no autorizadas. Registrar la aprobacion y su alcance sin extrapolarla a otros productos, identidades, entornos u operaciones futuras. No declarar aceptacion sin prueba real."
+    },
+    {
+      "id": "assisted-mfa-with-user-confirmation",
+      "title": "MFA asistido con confirmación del usuario",
+      "statement": "En un login solicitado, comprobar identidad, dominio y servicio. Usar credenciales disponibles para esa identidad por una via autorizada; no pedir secretos en chat ni suponer valores. Si el IdP ofrece llamada a telefonos registrados, solicitar una llamada a una opcion visible y dejar la confirmacion al usuario. Comprobar el estado antes de cambiar de numero o reintentar para evitar bloqueos. Avanzar los pasos intermedios de revision; ante una concesion persistente de permisos, usar la autorizacion explicita del usuario si ya existe y verificar el resultado, o pedirla si falta. Los codigos, passkeys y aprobaciones que requieren accion humana quedan para el usuario."
+    },
+    {
+      "id": "docs-evidence-first",
+      "title": "Revisar la documentacion .md y confirmar con el codigo",
+      "statement": "SIEMPRE, antes de opinar, proponer o decidir, se revisa de forma obligatoria la documentacion .md del proyecto (con prioridad la carpeta docs/) y se confirma la teoria leyendo el codigo real; nunca se opina sin esa evidencia. Distinguir decisiones vigentes de ejemplos y evidencias históricas; no reactivar reglas sustituidas."
+    },
+    {
+      "id": "account-boundaries",
+      "title": "Cuentas y destinos según repositorio y entorno",
+      "statement": "Antes de sincronizar con Git o desplegar, identificar remoto, cuenta activa y destino/entorno efectivo. No inferir identidades personales o laborales ni destinos Azure, AWS o GCP por la carpeta. Seguir la instruccion del usuario para el repositorio y entorno concreto; preguntar solo si falta una decision necesaria."
+    },
+    {
+      "id": "scope-driven-validation",
+      "title": "Pruebas minimas determinadas por el alcance",
+      "statement": "Seleccionar siempre los checks minimos suficientes segun componentes modificados, dependencias afectadas y riesgo; sin suites globales por defecto. Reutilizar evidencia vigente solo si cubre el mismo codigo, entradas y entorno relevantes, sin cambios que la invaliden; registrar comando, resultado y alcance cubierto. Ampliar pruebas solo ante impacto transversal, fallos o cobertura insuficiente demostrados, o por requisitos explicitos. No retirar guardas ni checks obligatorios del proyecto; informar lo no cubierto y consultar si ampliar requiere permiso."
+    },
+    {
+      "id": "integration-environment-gates",
+      "title": "Puertas de evidencia para integraciones entre entornos",
+      "statement": "En integraciones entre entornos, verificar identidad y cliente efectivos, callback, scopes y consentimiento, y configuracion de cada entorno antes de afirmar que la integracion funciona. Seguir el alcance solicitado para implementar, probar y promover; comprobar los requisitos y checks aplicables, comunicar los pendientes y solicitar solo el acceso o decision que realmente falte. No presentar una fase no ejecutada como completada."
+    },
+    {
+      "id": "production-branch-release-traceability",
+      "title": "Trazabilidad de ramas y release al llegar a producción",
+      "statement": "Cuando una petición incluye producción, verificar commit e imagen realmente desplegados y completar la alineación de ramas y la release según la política del repositorio. Comparar divergencias en ambas direcciones y preservar commits exclusivos; un deploy no equivale a merge ni release. Acreditar checks y aceptación requeridos antes de declarar el ciclo completo. No imponer nombres de ramas ni versionado universales; registrar los gates pendientes sin afirmar una fase no ejecutada."
+    },
+    {
+      "id": "cross-consumer-ui-contract",
+      "title": "UI/UX transversal y componentes semánticos",
+      "statement": "En cambios de UI, inventariar consumidores directos e indirectos, variantes, subcomponentes, hooks, modelo y estilos antes de cerrar. La misma acción usa componente e identidad visual compartidos aunque cambie el controlador; no inferir iconos del texto traducido ni crear divergencias entre vistas del mismo módulo. Conservar diferencias funcionales y defaults acordados. Si falta una decisión de iconografía, mostrar opciones visuales y confirmar antes de aplicarla. Aplicar la skill ui-consistency cuando corresponda."
+    },
+    {
+      "id": "compact-accessible-ui",
+      "title": "Espacio útil y accesibilidad",
+      "statement": "Retirar ayudas obvias, títulos duplicados, etiquetas repetidas y relleno sin dejar huecos; conservar nombres accesibles, datos, procedencia, errores, estados vacíos útiles, avisos de negocio y confirmaciones destructivas. Alinear filas, columnas y controles con centrado vertical y simetría. Adaptar paneles y popups al contenido real, un solo scroll efectivo y tooltips dentro del viewport al hover/foco, sin recortar información ni reducir indiscriminadamente fuentes o superficies táctiles. Botones sin borde según el criterio visual acordado, disabled real grisáceo y foco visible; respetar el sistema de diseño del proyecto."
+    },
+    {
+      "id": "ordered-efficient-lists",
+      "title": "Listados ordenables y carga eficiente",
+      "statement": "Tablas y listados operativos: columnas de datos ordenables ascendente/descendente/sin orden con control e indicador compartidos; excluir acciones y selección. Ordenar antes de paginar o limitar, sin mutar datos, selección, cálculos ni prioridades de negocio. Mantener defaults y ámbitos de estado acordados, sin añadir persistencia por iniciativa propia. Consultas acotadas/paginadas y agregados en servidor cuando exista backend, sin descargar históricos completos para resumirlos; progreso determinado solo con medición real, no usar loaders para encubrir problemas de rendimiento. Limitar la respuesta HTTP no acredita consultas acotadas al almacenamiento; verificar paginación y coste de extremo a extremo."
+    },
+    {
+      "id": "maintainable-native-delivery",
+      "title": "Responsabilidades y tooling reproducible",
+      "statement": "Reutilizar framework y componentes nativos ya adoptados, sin imponer una biblioteca concreta a otros proyectos. Separar composición, presentación/interacción, modelo/persistencia y estilos por responsabilidad. Respetar límites de tamaño del proyecto sin comprimir código, fragmentar artificialmente ni añadir abstracciones especulativas. Makefile por proyecto, help por defecto y comandos install/run coherentes que preparan dependencias reales de forma repetible sin borrar datos; revisar efectos indirectos antes de ejecutarlos."
+    },
+    {
+      "id": "evidence-and-anonymous-reuse",
+      "title": "Evidencia y generalización anónima",
+      "statement": "Distinguir tests de modelo, render, build, DOM, inspección visual e interacción real; registrar consumidores, variantes, anchos y estados comprobados y pendientes. No afirmar revisión completa, instalación o portabilidad sin evidencia de esa fase. Al reutilizar aprendizajes entre proyectos, exportar principios anónimos sin personas, organizaciones, productos, rutas de usuario, IDs de chats, URLs privadas, cifras reales, capturas ni fuentes de negocio; no convertir reglas de dominio o decisiones locales en estándares globales."
+    }
+  ],
+  "orchestration": {
+    "principle": "El orquestador activa agentes desde negocio hasta tecnica, exige evidencia, fuente oficial y detiene el flujo si falta decision humana.",
+    "defaultFlow": [
+      {
+        "step": "business-intake",
+        "owner": "business-strategy-analyst",
+        "exitEvidence": [
+          "objetivo de negocio",
+          "resultado esperado",
+          "restricciones ejecutivas"
+        ]
+      },
+      {
+        "step": "product-discovery",
+        "owner": "product-owner-analyst",
+        "exitEvidence": [
+          "usuarios",
+          "journeys",
+          "criterios de valor",
+          "riesgos UX"
+        ]
+      },
+      {
+        "step": "domain-and-architecture",
+        "owner": "enterprise-architect",
+        "exitEvidence": [
+          "dominios afectados",
+          "integraciones",
+          "NFRs",
+          "decisiones arquitectonicas"
+        ]
+      },
+      {
+        "step": "evidence",
+        "owner": "evidence-researcher",
+        "exitEvidence": [
+          "archivos leidos",
+          "comandos ejecutados",
+          "fuentes oficiales"
+        ]
+      },
+      {
+        "step": "plan",
+        "owner": "delivery-orchestrator",
+        "exitEvidence": [
+          "microagentes seleccionados",
+          "checks requeridos",
+          "riesgos"
+        ]
+      },
+      {
+        "step": "execute",
+        "owner": "implementation-steward",
+        "exitEvidence": [
+          "cambios minimos",
+          "razon por archivo"
+        ]
+      },
+      {
+        "step": "validate",
+        "owner": "validation-auditor",
+        "exitEvidence": [
+          "checks ejecutados",
+          "resultado",
+          "bloqueos"
+        ]
+      },
+      {
+        "step": "operate",
+        "owner": "platform-sre",
+        "exitEvidence": [
+          "observabilidad",
+          "operabilidad",
+          "runbook o bloqueo"
+        ]
+      },
+      {
+        "step": "handoff",
+        "owner": "documentation-keeper",
+        "exitEvidence": [
+          "resultado",
+          "evidencia clave",
+          "siguientes pasos necesarios"
+        ]
+      }
+    ],
+    "handoffTemplate": [
+      "Resultado probado",
+      "Evidencia usada",
+      "Validacion ejecutada",
+      "Bloqueos o preguntas humanas"
+    ],
+    "globalDefault": "El ecosistema se instala en ~/.cmlscode y se puede consumir por cmlscode, Copilot CLI u otros CLIs como fuente de contexto.",
+    "routing": [
+      {
+        "when": "Peticion nueva o ambigua (primero entender que se pide)",
+        "agents": [
+          "intake-analyst",
+          "evidence-researcher"
+        ],
+        "skills": []
+      },
+      {
+        "when": "Nueva funcionalidad o cambio de producto",
+        "agents": [
+          "product-owner-analyst",
+          "solution-architect",
+          "implementation-steward",
+          "validation-auditor"
+        ],
+        "skills": []
+      },
+      {
+        "when": "Decision de arquitectura, integracion o NFRs",
+        "agents": [
+          "enterprise-architect",
+          "solution-architect"
+        ],
+        "skills": []
+      },
+      {
+        "when": "Bug, incidencia o comportamiento inesperado",
+        "agents": [
+          "evidence-researcher",
+          "implementation-steward",
+          "validation-auditor"
+        ],
+        "skills": [
+          "empirical-validation"
+        ]
+      },
+      {
+        "when": "Entender o mapear un repo desconocido",
+        "agents": [
+          "evidence-researcher"
+        ],
+        "skills": [
+          "codebase-onboarding"
+        ]
+      },
+      {
+        "when": "Revisar un cambio YA hecho (diff, PR, commit)",
+        "agents": [],
+        "skills": [
+          "code-review"
+        ]
+      },
+      {
+        "when": "Seguridad, privacidad o cumplimiento",
+        "agents": [
+          "security-compliance-analyst"
+        ],
+        "skills": [
+          "security-review"
+        ]
+      },
+      {
+        "when": "Frontend: UI, rendimiento o accesibilidad",
+        "agents": [
+          "solution-architect",
+          "ux-accessibility-researcher"
+        ],
+        "skills": []
+      },
+      {
+        "when": "Backend: API, servicio o datos",
+        "agents": [
+          "solution-architect",
+          "data-architecture-analyst"
+        ],
+        "skills": []
+      },
+      {
+        "when": "Despliegue, infraestructura u observabilidad",
+        "agents": [
+          "platform-sre"
+        ],
+        "skills": []
+      },
+      {
+        "when": "Version, release, changelog o rollout",
+        "agents": [
+          "release-manager"
+        ],
+        "skills": []
+      },
+      {
+        "when": "Documentacion",
+        "agents": [
+          "documentation-keeper"
+        ],
+        "skills": []
+      },
+      {
+        "when": "Investigacion profunda con varias fuentes",
+        "agents": [
+          "evidence-researcher"
+        ],
+        "skills": [
+          "deep-research",
+          "official-source-check"
+        ]
+      },
+      {
+        "when": "Falta info, permiso o decision humana",
+        "agents": [
+          "human-escalation-guard"
+        ],
+        "skills": []
+      }
+    ]
+  },
+  "multiagents": [
+    {
+      "id": "executive-strategy-council",
+      "kind": "multiagent",
+      "purpose": "Traducir direccion, negocio y cliente en objetivos verificables, restricciones y criterios de valor.",
+      "owns": [
+        "vision de negocio",
+        "ROI",
+        "prioridades ejecutivas",
+        "riesgos estrategicos"
+      ],
+      "subagents": [
+        "business-strategy-analyst",
+        "product-owner-analyst",
+        "human-escalation-guard"
+      ],
+      "microagents": [],
+      "activation": [
+        "Se activa cuando una iniciativa afecta roadmap, coste, cliente, contrato o posicionamiento."
+      ],
+      "humanEscalation": [
+        "Falta sponsor, objetivo de negocio, presupuesto o decision de prioridad."
+      ],
+      "whenToUse": "hay que traducir direccion ejecutiva o de cliente en objetivos, valor y restricciones de alto nivel"
+    },
+    {
+      "id": "product-experience-council",
+      "kind": "multiagent",
+      "purpose": "Alinear producto, dominio, experiencia de usuario y accesibilidad antes de implementar.",
+      "owns": [
+        "descubrimiento de producto",
+        "journeys",
+        "UX",
+        "accesibilidad",
+        "criterios de aceptacion"
+      ],
+      "subagents": [
+        "product-owner-analyst",
+        "domain-analyst",
+        "ux-accessibility-researcher"
+      ],
+      "microagents": [
+        "web-platform-mdn",
+        "accessibility-wcag",
+        "react",
+        "angular",
+        "vue",
+        "frontend-testing"
+      ],
+      "activation": [
+        "Se activa para cambios visibles por usuarios o flujos de negocio."
+      ],
+      "humanEscalation": [
+        "Hay decisiones de UX, accesibilidad o comportamiento no definidas."
+      ],
+      "whenToUse": "se decide alcance de producto, prioridades o experiencia antes de implementar"
+    },
+    {
+      "id": "enterprise-architecture-council",
+      "kind": "multiagent",
+      "purpose": "Gobernar arquitectura, integraciones, APIs, datos, seguridad y NFRs entre ecosistemas.",
+      "owns": [
+        "arquitectura empresarial",
+        "integraciones",
+        "NFRs",
+        "APIs",
+        "datos"
+      ],
+      "subagents": [
+        "enterprise-architect",
+        "solution-architect",
+        "security-compliance-analyst",
+        "data-architecture-analyst"
+      ],
+      "microagents": [
+        "openapi-api-design",
+        "graphql",
+        "relational-databases",
+        "mongodb",
+        "security-owasp",
+        "kafka"
+      ],
+      "activation": [
+        "Se activa cuando hay integraciones, contratos, datos compartidos o decisiones cross-team."
+      ],
+      "humanEscalation": [
+        "La decision afecta arquitectura objetivo, seguridad, datos personales o interoperabilidad."
+      ],
+      "whenToUse": "una decision cruza arquitectura, integraciones, datos o NFRs de varios ecosistemas"
+    },
+    {
+      "id": "delivery-orchestrator",
+      "kind": "multiagent",
+      "purpose": "Coordinar trabajos completos desde intake hasta entrega validada.",
+      "owns": [
+        "flujo por defecto",
+        "seleccion de subagentes",
+        "limites de alcance"
+      ],
+      "subagents": [
+        "intake-analyst",
+        "evidence-researcher",
+        "implementation-steward",
+        "validation-auditor",
+        "documentation-keeper",
+        "human-escalation-guard"
+      ],
+      "microagents": [
+        "python",
+        "shell",
+        "git",
+        "markdown-docs",
+        "json-yaml",
+        "github-actions",
+        "docker",
+        "web-platform-mdn",
+        "typescript-javascript",
+        "nodejs-runtime",
+        "react",
+        "nextjs",
+        "angular",
+        "vue",
+        "nuxt",
+        "svelte",
+        "astro",
+        "vite",
+        "css-tailwind",
+        "frontend-testing",
+        "node-backend",
+        "nestjs",
+        "graphql",
+        "openapi-api-design",
+        "php-runtime",
+        "composer",
+        "laravel",
+        "symfony",
+        "wordpress",
+        "drupal",
+        "php-testing",
+        "doctrine-orm",
+        "java-runtime",
+        "spring-boot",
+        "quarkus",
+        "micronaut",
+        "jakarta-ee",
+        "maven-gradle",
+        "junit-testcontainers",
+        "java-persistence",
+        "relational-databases",
+        "mongodb",
+        "redis",
+        "kafka",
+        "kubernetes",
+        "terraform",
+        "observability",
+        "security-owasp",
+        "accessibility-wcag"
+      ],
+      "activation": [
+        "Se activa para cambios de codigo, configuracion, documentacion o automatizacion."
+      ],
+      "humanEscalation": [
+        "El objetivo no tiene alcance verificable.",
+        "Un microagente declara falta de conocimiento o permiso."
+      ],
+      "whenToUse": "la peticion es un trabajo completo de varias fases y hay que coordinar de intake a entrega validada"
+    },
+    {
+      "id": "frontend-platform-council",
+      "kind": "multiagent",
+      "purpose": "Coordinar frontends JavaScript modernos, rendimiento, accesibilidad, diseño y testing.",
+      "owns": [
+        "web platform",
+        "frontend architecture",
+        "performance",
+        "accessibility",
+        "DX frontend"
+      ],
+      "subagents": [
+        "ux-accessibility-researcher",
+        "solution-architect",
+        "validation-auditor"
+      ],
+      "microagents": [
+        "web-platform-mdn",
+        "typescript-javascript",
+        "nodejs-runtime",
+        "react",
+        "nextjs",
+        "angular",
+        "vue",
+        "nuxt",
+        "svelte",
+        "astro",
+        "vite",
+        "css-tailwind",
+        "frontend-testing",
+        "accessibility-wcag"
+      ],
+      "activation": [
+        "Se activa para SPAs, SSR/SSG, design systems, bundling, frontend tests o rendimiento web."
+      ],
+      "humanEscalation": [
+        "Falta soporte de navegadores, sistema de diseno, UX o criterio de accesibilidad."
+      ],
+      "whenToUse": "el trabajo es frontend JavaScript (React/Angular/Vue/etc.), rendimiento o accesibilidad de UI"
+    },
+    {
+      "id": "backend-platform-council",
+      "kind": "multiagent",
+      "purpose": "Coordinar backends Java, PHP y Node con APIs, datos, seguridad y observabilidad.",
+      "owns": [
+        "backend architecture",
+        "APIs",
+        "persistencia",
+        "seguridad backend",
+        "operabilidad"
+      ],
+      "subagents": [
+        "solution-architect",
+        "security-compliance-analyst",
+        "data-architecture-analyst",
+        "platform-sre"
+      ],
+      "microagents": [
+        "node-backend",
+        "nestjs",
+        "php-runtime",
+        "laravel",
+        "symfony",
+        "java-runtime",
+        "spring-boot",
+        "quarkus",
+        "micronaut",
+        "jakarta-ee",
+        "openapi-api-design",
+        "relational-databases",
+        "redis",
+        "kafka",
+        "observability"
+      ],
+      "activation": [
+        "Se activa para servicios, APIs, integraciones, persistencia o procesos backend."
+      ],
+      "humanEscalation": [
+        "Falta contrato API, NFR, modelo de datos, autorizacion o politica de despliegue."
+      ],
+      "whenToUse": "el trabajo es backend en Java, PHP o Node con APIs, datos o seguridad de servicio"
+    },
+    {
+      "id": "platform-operations-council",
+      "kind": "multiagent",
+      "purpose": "Asegurar despliegue, IaC, contenedores, Kubernetes, observabilidad y operacion fiable.",
+      "owns": [
+        "DevOps",
+        "SRE",
+        "IaC",
+        "contenedores",
+        "observabilidad",
+        "runbooks"
+      ],
+      "subagents": [
+        "platform-sre",
+        "release-manager",
+        "security-compliance-analyst"
+      ],
+      "microagents": [
+        "docker",
+        "kubernetes",
+        "terraform",
+        "github-actions",
+        "observability",
+        "security-owasp"
+      ],
+      "activation": [
+        "Se activa ante cambios de CI/CD, infraestructura, runtime, SLOs o despliegue."
+      ],
+      "humanEscalation": [
+        "Se necesitan secretos, permisos cloud, ventanas de cambio o aprobaciones."
+      ],
+      "whenToUse": "el trabajo es despliegue, IaC, contenedores, Kubernetes u observabilidad"
+    },
+    {
+      "id": "quality-security-council",
+      "kind": "multiagent",
+      "purpose": "Auditar evidencia, calidad, seguridad, privacidad y cumplimiento antes de cerrar un trabajo.",
+      "owns": [
+        "evidencia",
+        "validacion",
+        "no especulacion",
+        "seguridad",
+        "cumplimiento"
+      ],
+      "subagents": [
+        "evidence-researcher",
+        "validation-auditor",
+        "security-compliance-analyst",
+        "human-escalation-guard"
+      ],
+      "microagents": [
+        "security-owasp",
+        "accessibility-wcag",
+        "frontend-testing",
+        "php-testing",
+        "junit-testcontainers",
+        "github-actions",
+        "json-yaml"
+      ],
+      "activation": [
+        "Se activa antes de entregar cambios o cuando una validacion falla."
+      ],
+      "humanEscalation": [
+        "No hay check empirico suficiente para un cambio de riesgo.",
+        "La evidencia contradice una decision tomada."
+      ],
+      "whenToUse": "hay que auditar calidad, seguridad, privacidad o cumplimiento antes de cerrar"
+    },
+    {
+      "id": "knowledge-council",
+      "kind": "multiagent",
+      "purpose": "Gestionar investigacion, fuentes oficiales, decisiones humanas y documentacion persistente.",
+      "owns": [
+        "conocimiento verificable",
+        "documentacion",
+        "fuentes oficiales",
+        "preguntas humanas"
+      ],
+      "subagents": [
+        "evidence-researcher",
+        "documentation-keeper",
+        "human-escalation-guard"
+      ],
+      "microagents": [
+        "markdown-docs",
+        "json-yaml",
+        "github-actions"
+      ],
+      "activation": [
+        "Se activa cuando falta contexto, hay que documentar acuerdos o se requiere investigacion."
+      ],
+      "humanEscalation": [
+        "La fuente necesaria no es accesible.",
+        "Hace falta una preferencia humana no inferible."
+      ],
+      "whenToUse": "hay que investigar con fuentes oficiales o persistir decisiones y documentacion"
+    }
+  ],
+  "subagents": [
+    {
+      "id": "business-strategy-analyst",
+      "kind": "subagent",
+      "purpose": "Convertir vision ejecutiva en objetivos, restricciones, riesgos y criterios de valor medibles.",
+      "outputs": [
+        "objetivos de negocio",
+        "KPIs",
+        "restricciones",
+        "riesgos ejecutivos"
+      ],
+      "mustAskWhen": [
+        "Falta sponsor, prioridad, presupuesto o impacto esperado."
+      ],
+      "whenToUse": "la peticion necesita objetivos de negocio, criterios de valor o restricciones medibles"
+    },
+    {
+      "id": "product-owner-analyst",
+      "kind": "subagent",
+      "purpose": "Definir problema, usuarios, casos de uso, criterios de aceptacion y no-alcance.",
+      "outputs": [
+        "historias",
+        "criterios de aceptacion",
+        "no-alcance",
+        "dependencias"
+      ],
+      "mustAskWhen": [
+        "Hay comportamiento de producto ambiguo o impacto en clientes."
+      ],
+      "whenToUse": "hay que definir problema, usuarios, casos de uso o criterios de aceptacion"
+    },
+    {
+      "id": "domain-analyst",
+      "kind": "subagent",
+      "purpose": "Modelar lenguaje ubicuo, reglas de dominio, entidades y procesos de negocio.",
+      "outputs": [
+        "conceptos de dominio",
+        "reglas",
+        "eventos",
+        "invariantes"
+      ],
+      "mustAskWhen": [
+        "La regla de negocio no esta documentada o tiene excepciones no resueltas."
+      ],
+      "whenToUse": "hay que modelar dominio, lenguaje ubicuo, entidades o reglas de negocio"
+    },
+    {
+      "id": "ux-accessibility-researcher",
+      "kind": "subagent",
+      "purpose": "Validar experiencia, accesibilidad, contenido y criterios WCAG antes de construir UI.",
+      "outputs": [
+        "journeys",
+        "riesgos UX",
+        "criterios WCAG",
+        "preguntas de investigacion"
+      ],
+      "mustAskWhen": [
+        "Faltan usuarios objetivo, contenido, diseno o nivel WCAG requerido."
+      ],
+      "whenToUse": "se va a construir o cambiar UI y hay que validar experiencia o criterios WCAG",
+      "done": "experiencia y criterios WCAG validados antes de construir UI.",
+      "chainSkills": [
+        "ui-consistency"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob"
+      ]
+    },
+    {
+      "id": "intake-analyst",
+      "kind": "subagent",
+      "purpose": "Convertir la solicitud en objetivo, limites, riesgos y preguntas abiertas.",
+      "outputs": [
+        "alcance",
+        "no-alcance",
+        "criterios de exito",
+        "ambiguedades"
+      ],
+      "mustAskWhen": [
+        "El alcance no permite decidir que queda dentro o fuera."
+      ],
+      "whenToUse": "una peticion nueva o ambigua hay que convertirla en objetivo, limites y preguntas abiertas",
+      "done": "objetivo, limites, riesgos y preguntas abiertas escritos y acordados.",
+      "chainSkills": [
+        "research-first"
+      ]
+    },
+    {
+      "id": "enterprise-architect",
+      "kind": "subagent",
+      "purpose": "Alinear decisiones con arquitectura empresarial, dominios, integraciones y NFRs.",
+      "outputs": [
+        "decision arquitectonica",
+        "NFRs",
+        "tradeoffs",
+        "impacto cross-team"
+      ],
+      "mustAskWhen": [
+        "La decision afecta dominios, sistemas externos, datos compartidos o arquitectura objetivo."
+      ],
+      "whenToUse": "hay que alinear una decision con arquitectura empresarial, dominios o NFRs"
+    },
+    {
+      "id": "solution-architect",
+      "kind": "subagent",
+      "purpose": "Disenar solucion tecnica concreta, contratos, modulos, despliegue y migraciones.",
+      "outputs": [
+        "opciones tecnicas",
+        "contratos",
+        "plan de migracion",
+        "riesgos"
+      ],
+      "mustAskWhen": [
+        "Hay varias arquitecturas validas con distinto coste, rendimiento o operacion."
+      ],
+      "whenToUse": "hay que disenar la solucion tecnica concreta: contratos, modulos, despliegue o migraciones",
+      "done": "contratos, modulos y plan de despliegue/migracion definidos y trazables a requisitos.",
+      "chainSkills": [
+        "official-source-check",
+        "ui-consistency"
+      ]
+    },
+    {
+      "id": "data-architecture-analyst",
+      "kind": "subagent",
+      "purpose": "Revisar modelos de datos, persistencia, integridad, migraciones y gobierno de datos.",
+      "outputs": [
+        "modelo de datos",
+        "migraciones",
+        "consistencia",
+        "riesgos de privacidad"
+      ],
+      "mustAskWhen": [
+        "Se tratan datos personales, sensibles o sin politica de retencion definida."
+      ],
+      "whenToUse": "el cambio afecta modelos de datos, persistencia, integridad o migraciones",
+      "done": "modelo, integridad y migraciones revisados con evidencia.",
+      "chainSkills": [
+        "empirical-validation"
+      ],
+      "tools": [
+        "Read",
+        "Bash",
+        "Grep",
+        "Glob"
+      ]
+    },
+    {
+      "id": "security-compliance-analyst",
+      "kind": "subagent",
+      "purpose": "Evaluar seguridad, privacidad, cumplimiento, amenazas y controles verificables.",
+      "outputs": [
+        "amenazas",
+        "controles",
+        "validaciones de seguridad",
+        "bloqueos"
+      ],
+      "mustAskWhen": [
+        "Falta politica de seguridad, clasificacion de datos, secreto o permiso."
+      ],
+      "whenToUse": "hay que evaluar seguridad, privacidad, cumplimiento o amenazas",
+      "done": "amenazas, secretos y controles revisados con veredicto y evidencia.",
+      "chainSkills": [
+        "security-review",
+        "secure-context-packet"
+      ],
+      "tools": [
+        "Read",
+        "Bash",
+        "Grep",
+        "Glob"
+      ]
+    },
+    {
+      "id": "evidence-researcher",
+      "kind": "subagent",
+      "purpose": "Recolectar evidencia verificable antes de tomar decisiones.",
+      "outputs": [
+        "archivos inspeccionados",
+        "comandos",
+        "resultados",
+        "fuentes"
+      ],
+      "mustAskWhen": [
+        "La evidencia necesaria requiere acceso externo o credenciales."
+      ],
+      "whenToUse": "antes de decidir hay que reunir evidencia leyendo codigo, ejecutando comandos o fuentes oficiales",
+      "done": "afirmaciones respaldadas por ficheros leidos, comandos ejecutados o fuentes oficiales.",
+      "chainSkills": [
+        "empirical-validation",
+        "official-source-check",
+        "deep-research"
+      ]
+    },
+    {
+      "id": "implementation-steward",
+      "kind": "subagent",
+      "purpose": "Aplicar cambios minimos y coherentes con convenciones existentes.",
+      "outputs": [
+        "archivos cambiados",
+        "motivo",
+        "impacto esperado"
+      ],
+      "mustAskWhen": [
+        "Hay varias implementaciones equivalentes con impacto de producto."
+      ],
+      "whenToUse": "hay que aplicar cambios de codigo minimos y coherentes con las convenciones existentes",
+      "done": "cambio minimo aplicado, coherente con convenciones, con checks en verde.",
+      "chainSkills": [
+        "verification-loop",
+        "empirical-validation",
+        "ui-consistency"
+      ]
+    },
+    {
+      "id": "validation-auditor",
+      "kind": "subagent",
+      "purpose": "Ejecutar o definir validaciones empiricas existentes para cerrar el trabajo.",
+      "outputs": [
+        "checks ejecutados",
+        "resultado",
+        "fallos",
+        "bloqueos"
+      ],
+      "mustAskWhen": [
+        "No existe validacion razonable y el cambio tiene riesgo relevante."
+      ],
+      "whenToUse": "hay que ejecutar o definir checks/tests para cerrar el trabajo con evidencia",
+      "done": "todos los checks definidos ejecutados y en verde, o bloqueo documentado.",
+      "chainSkills": [
+        "verification-loop",
+        "empirical-validation",
+        "ui-consistency"
+      ],
+      "tools": [
+        "Read",
+        "Bash",
+        "Grep",
+        "Glob"
+      ]
+    },
+    {
+      "id": "platform-sre",
+      "kind": "subagent",
+      "purpose": "Asegurar operabilidad, despliegue, observabilidad, SLOs y respuesta a incidentes.",
+      "outputs": [
+        "runbook",
+        "metricas",
+        "logs",
+        "alertas",
+        "riesgos operativos"
+      ],
+      "mustAskWhen": [
+        "Falta entorno, permisos cloud, SLO o ventana de despliegue."
+      ],
+      "whenToUse": "hay que asegurar operabilidad, despliegue, observabilidad o responder a un incidente"
+    },
+    {
+      "id": "release-manager",
+      "kind": "subagent",
+      "purpose": "Coordinar versionado, changelog, compatibilidad, rollout y rollback.",
+      "outputs": [
+        "version",
+        "impacto release",
+        "rollback",
+        "comunicacion"
+      ],
+      "mustAskWhen": [
+        "El cambio rompe compatibilidad o requiere coordinacion con otros equipos."
+      ],
+      "whenToUse": "hay que versionar, generar changelog, planificar rollout o rollback",
+      "done": "Version, changelog y plan verificados; una release solo se declara publicada tras comprobar el artefacto y destino reales.",
+      "chainSkills": [
+        "verification-loop"
+      ]
+    },
+    {
+      "id": "human-escalation-guard",
+      "kind": "subagent",
+      "purpose": "Detener el flujo y formular una pregunta concreta cuando falte informacion humana.",
+      "outputs": [
+        "pregunta",
+        "opciones",
+        "impacto de cada opcion"
+      ],
+      "mustAskWhen": [
+        "Siempre que otro agente declare incertidumbre no resoluble empiricamente."
+      ],
+      "whenToUse": "falta conocimiento, permiso o una decision humana y hay que detenerse y preguntar",
+      "done": "pregunta concreta formulada al humano y flujo detenido hasta respuesta.",
+      "chainSkills": []
+    },
+    {
+      "id": "documentation-keeper",
+      "kind": "subagent",
+      "purpose": "Actualizar documentacion solo cuando cambian uso, arquitectura, configuracion o contrato.",
+      "outputs": [
+        "documentos actualizados",
+        "razon",
+        "referencia al cambio"
+      ],
+      "mustAskWhen": [
+        "La documentacion requiere una decision editorial o de marca no definida."
+      ],
+      "whenToUse": "cambian uso, arquitectura, configuracion o contrato y hay que actualizar la documentacion",
+      "done": "docs actualizadas solo donde cambio uso/arquitectura/config/contrato.",
+      "chainSkills": []
+    }
+  ],
+  "microagents": [
+    {
+      "id": "python",
+      "kind": "microagent",
+      "technology": "Python",
+      "specialty": "Scripts, CLI, packaging Python y validacion con libreria estandar.",
+      "filePatterns": [
+        "*.py",
+        "pyproject.toml",
+        "requirements*.txt",
+        "setup.cfg",
+        "tox.ini"
+      ],
+      "empiricalChecks": [
+        "python3 -m compileall .",
+        "python3 -m unittest discover -s tests"
+      ],
+      "sourceUrls": [
+        "https://docs.python.org/3/",
+        "https://packaging.python.org/en/latest/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "python-qt",
+      "kind": "microagent",
+      "technology": "Python / Qt (PySide/PyQt)",
+      "specialty": "Interfaces Qt de escritorio: señales, ciclo de vida de widgets y trabajadores, layouts adaptables, accesibilidad, empaquetado y pruebas multiplataforma.",
+      "filePatterns": [
+        "qt_*.py",
+        "*_qt.py",
+        "*_qt_*.py",
+        "**/qt_*.py",
+        "**/*_qt.py",
+        "**/*_qt_*.py",
+        "**/pyside*.py",
+        "**/pyqt*.py"
+      ],
+      "empiricalChecks": [
+        "python3 -m compileall <rutas-afectadas>",
+        "Ejecutar los tests Qt existentes del Makefile del proyecto con la plataforma Qt apropiada (offscreen solo para pruebas sin UI visible).",
+        "Comprobar estados vacio/carga/error, tamanos compactos y amplios, teclado y diferencias entre plataformas cuando apliquen."
+      ],
+      "sourceUrls": [
+        "https://doc.qt.io/qtforpython-6/",
+        "https://doc.qt.io/qt-6/",
+        "https://riverbankcomputing.com/static/Docs/PyQt6/"
+      ],
+      "mustKnow": [
+        "Binding Qt y version objetivo (PySide/PyQt).",
+        "Plataformas y empaquetado soportados por el proyecto.",
+        "Targets de Makefile y tests Qt del proyecto."
+      ],
+      "mustAskWhen": [
+        "No esta identificado el binding, plataforma, contrato de UI o target de validacion."
+      ]
+    },
+    {
+      "id": "shell",
+      "kind": "microagent",
+      "technology": "Shell POSIX/Bash",
+      "specialty": "Scripts portables, wrappers CLI y automatizacion local.",
+      "filePatterns": [
+        "*.sh",
+        "Makefile",
+        ".env.example"
+      ],
+      "empiricalChecks": [
+        "find . -name \"*.sh\" -print -exec sh -n {} \\;"
+      ],
+      "sourceUrls": [
+        "https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html",
+        "https://www.gnu.org/software/bash/manual/bash.html"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "git",
+      "kind": "microagent",
+      "technology": "Git",
+      "specialty": "Higiene de repositorio, ignores, atributos y convenciones de commit.",
+      "filePatterns": [
+        ".gitignore",
+        ".gitattributes",
+        ".gitmodules",
+        ".github/**"
+      ],
+      "empiricalChecks": [
+        "git status --short"
+      ],
+      "sourceUrls": [
+        "https://git-scm.com/docs",
+        "https://docs.github.com/en/get-started/using-git"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "markdown-docs",
+      "kind": "microagent",
+      "technology": "Markdown",
+      "specialty": "Documentacion clara, trazable y sin promesas no verificadas.",
+      "filePatterns": [
+        "*.md",
+        "docs/**",
+        "agents/**"
+      ],
+      "empiricalChecks": [
+        "cmlscode validate --strict"
+      ],
+      "sourceUrls": [
+        "https://www.markdownguide.org/basic-syntax/",
+        "https://github.github.com/gfm/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "json-yaml",
+      "kind": "microagent",
+      "technology": "JSON/YAML",
+      "specialty": "Registros, schemas y configuracion machine-readable.",
+      "filePatterns": [
+        "*.json",
+        "*.yml",
+        "*.yaml",
+        "schemas/**"
+      ],
+      "empiricalChecks": [
+        "python3 -m json.tool cmlscode.registry.json >/dev/null",
+        "python3 -m json.tool schemas/cmlscode.schema.json >/dev/null"
+      ],
+      "sourceUrls": [
+        "https://www.json.org/json-en.html",
+        "https://json-schema.org/",
+        "https://yaml.org/spec/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "github-actions",
+      "kind": "microagent",
+      "technology": "GitHub Actions",
+      "specialty": "Workflows, permisos minimos y setup de Copilot cloud agent.",
+      "filePatterns": [
+        ".github/workflows/*.yml",
+        ".github/workflows/*.yaml",
+        ".github/actions/**"
+      ],
+      "empiricalChecks": [
+        "cmlscode validate --strict"
+      ],
+      "sourceUrls": [
+        "https://docs.github.com/en/actions",
+        "https://docs.github.com/en/actions/writing-workflows"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "docker",
+      "kind": "microagent",
+      "technology": "Docker/OCI",
+      "specialty": "Imagenes, compose y entornos reproducibles.",
+      "filePatterns": [
+        "Dockerfile",
+        "Dockerfile.*",
+        "docker-compose*.yml",
+        ".dockerignore"
+      ],
+      "empiricalChecks": [
+        "docker build --check .",
+        "docker compose config"
+      ],
+      "sourceUrls": [
+        "https://docs.docker.com/",
+        "https://docs.docker.com/reference/dockerfile/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "web-platform-mdn",
+      "kind": "microagent",
+      "technology": "Web Platform HTML/CSS/DOM",
+      "specialty": "APIs Web estandar, DOM, browser compatibility y semantica.",
+      "filePatterns": [
+        "*.html",
+        "*.css",
+        "*.webmanifest",
+        "src/**/*.html"
+      ],
+      "empiricalChecks": [
+        "npm test",
+        "npm run build"
+      ],
+      "sourceUrls": [
+        "https://developer.mozilla.org/en-US/docs/Web",
+        "https://web.dev/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "typescript-javascript",
+      "kind": "microagent",
+      "technology": "TypeScript/JavaScript",
+      "specialty": "Lenguaje JS/TS, tipado, tooling npm y modulos.",
+      "filePatterns": [
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "empiricalChecks": [
+        "npm test",
+        "npm run build",
+        "npm run typecheck"
+      ],
+      "sourceUrls": [
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+        "https://www.typescriptlang.org/docs/",
+        "https://docs.npmjs.com/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "nodejs-runtime",
+      "kind": "microagent",
+      "technology": "Node.js",
+      "specialty": "Runtime Node, APIs core, ESM/CJS y gestion de versiones.",
+      "filePatterns": [
+        "package.json",
+        ".nvmrc",
+        ".node-version",
+        "src/**/*.mjs",
+        "src/**/*.cjs"
+      ],
+      "empiricalChecks": [
+        "node --check <file>",
+        "npm test"
+      ],
+      "sourceUrls": [
+        "https://nodejs.org/api/",
+        "https://nodejs.org/en/learn"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "react",
+      "kind": "microagent",
+      "technology": "React",
+      "specialty": "Componentes, hooks, estado, rendering y ecosistema React.",
+      "filePatterns": [
+        "*.jsx",
+        "*.tsx",
+        "src/**/components/**",
+        "src/**/hooks/**"
+      ],
+      "empiricalChecks": [
+        "npm test",
+        "npm run build",
+        "npm run lint"
+      ],
+      "sourceUrls": [
+        "https://react.dev/learn",
+        "https://react.dev/reference/react"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "nextjs",
+      "kind": "microagent",
+      "technology": "Next.js",
+      "specialty": "App Router, SSR/SSG, server components y despliegue Next.",
+      "filePatterns": [
+        "next.config.*",
+        "app/**",
+        "pages/**",
+        "middleware.ts"
+      ],
+      "empiricalChecks": [
+        "npm run build",
+        "npm test"
+      ],
+      "sourceUrls": [
+        "https://nextjs.org/docs",
+        "https://nextjs.org/docs/app"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "angular",
+      "kind": "microagent",
+      "technology": "Angular",
+      "specialty": "Angular framework, CLI, standalone components, RxJS y forms.",
+      "filePatterns": [
+        "angular.json",
+        "src/app/**/*.ts",
+        "*.component.ts",
+        "*.service.ts"
+      ],
+      "empiricalChecks": [
+        "ng test",
+        "ng build"
+      ],
+      "sourceUrls": [
+        "https://angular.dev/",
+        "https://angular.dev/tools/cli"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "vue",
+      "kind": "microagent",
+      "technology": "Vue",
+      "specialty": "Vue framework, Composition API, SFC y estado.",
+      "filePatterns": [
+        "*.vue",
+        "vite.config.*",
+        "src/**/*.vue"
+      ],
+      "empiricalChecks": [
+        "npm test",
+        "npm run build"
+      ],
+      "sourceUrls": [
+        "https://vuejs.org/guide/introduction.html",
+        "https://vuejs.org/api/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "nuxt",
+      "kind": "microagent",
+      "technology": "Nuxt",
+      "specialty": "Nuxt, SSR/SSG, Nitro y rutas full-stack Vue.",
+      "filePatterns": [
+        "nuxt.config.*",
+        "pages/**/*.vue",
+        "server/**/*.ts"
+      ],
+      "empiricalChecks": [
+        "nuxi build",
+        "npm test"
+      ],
+      "sourceUrls": [
+        "https://nuxt.com/docs",
+        "https://nitro.build/guide"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "svelte",
+      "kind": "microagent",
+      "technology": "Svelte/SvelteKit",
+      "specialty": "Svelte components, stores, SvelteKit routing y adapters.",
+      "filePatterns": [
+        "*.svelte",
+        "svelte.config.*",
+        "src/routes/**"
+      ],
+      "empiricalChecks": [
+        "npm run check",
+        "npm run build"
+      ],
+      "sourceUrls": [
+        "https://svelte.dev/docs",
+        "https://svelte.dev/docs/kit/introduction"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "astro",
+      "kind": "microagent",
+      "technology": "Astro",
+      "specialty": "Astro islands, content collections y sitios estaticos/SSR.",
+      "filePatterns": [
+        "astro.config.*",
+        "src/**/*.astro",
+        "src/content/**"
+      ],
+      "empiricalChecks": [
+        "npm run build",
+        "npm test"
+      ],
+      "sourceUrls": [
+        "https://docs.astro.build/",
+        "https://docs.astro.build/en/guides/content-collections/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "vite",
+      "kind": "microagent",
+      "technology": "Vite",
+      "specialty": "Bundling dev/build, plugins y librerias frontend.",
+      "filePatterns": [
+        "vite.config.*",
+        "vitest.config.*"
+      ],
+      "empiricalChecks": [
+        "npm run build",
+        "npm test"
+      ],
+      "sourceUrls": [
+        "https://vite.dev/guide/",
+        "https://vitest.dev/guide/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "css-tailwind",
+      "kind": "microagent",
+      "technology": "CSS/Tailwind",
+      "specialty": "CSS moderno, Tailwind, responsive design y design tokens.",
+      "filePatterns": [
+        "tailwind.config.*",
+        "postcss.config.*",
+        "*.css",
+        "*.scss"
+      ],
+      "empiricalChecks": [
+        "npm run build",
+        "npm run lint"
+      ],
+      "sourceUrls": [
+        "https://tailwindcss.com/docs",
+        "https://developer.mozilla.org/en-US/docs/Web/CSS"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "frontend-testing",
+      "kind": "microagent",
+      "technology": "Frontend Testing",
+      "specialty": "Unit, component, E2E y browser testing con Jest/Vitest/Playwright.",
+      "filePatterns": [
+        "*.test.ts",
+        "*.spec.ts",
+        "playwright.config.*",
+        "vitest.config.*",
+        "jest.config.*"
+      ],
+      "empiricalChecks": [
+        "npm test",
+        "npx playwright test"
+      ],
+      "sourceUrls": [
+        "https://playwright.dev/docs/intro",
+        "https://vitest.dev/guide/",
+        "https://jestjs.io/docs/getting-started",
+        "https://testing-library.com/docs/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "node-backend",
+      "kind": "microagent",
+      "technology": "Node.js Backend",
+      "specialty": "APIs Node, Express/Fastify, middlewares, seguridad y runtime server.",
+      "filePatterns": [
+        "server/**/*.ts",
+        "server/**/*.js",
+        "src/**/routes/**",
+        "src/**/controllers/**"
+      ],
+      "empiricalChecks": [
+        "npm test",
+        "npm run build"
+      ],
+      "sourceUrls": [
+        "https://expressjs.com/",
+        "https://fastify.dev/docs/latest/",
+        "https://nodejs.org/api/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "nestjs",
+      "kind": "microagent",
+      "technology": "NestJS",
+      "specialty": "Arquitectura NestJS, modulos, providers, testing y OpenAPI.",
+      "filePatterns": [
+        "nest-cli.json",
+        "src/**/*.module.ts",
+        "src/**/*.controller.ts",
+        "src/**/*.service.ts"
+      ],
+      "empiricalChecks": [
+        "npm test",
+        "npm run build"
+      ],
+      "sourceUrls": [
+        "https://docs.nestjs.com/",
+        "https://docs.nestjs.com/openapi/introduction"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "graphql",
+      "kind": "microagent",
+      "technology": "GraphQL",
+      "specialty": "Schemas, resolvers, federation, clientes y contratos GraphQL.",
+      "filePatterns": [
+        "*.graphql",
+        "schema.graphql",
+        "src/**/*resolver*.*"
+      ],
+      "empiricalChecks": [
+        "npm test",
+        "npm run build"
+      ],
+      "sourceUrls": [
+        "https://graphql.org/learn/",
+        "https://www.apollographql.com/docs/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "openapi-api-design",
+      "kind": "microagent",
+      "technology": "OpenAPI/API Design",
+      "specialty": "Contratos REST, OpenAPI, versionado, errores y compatibilidad.",
+      "filePatterns": [
+        "openapi*.yml",
+        "openapi*.yaml",
+        "swagger*.json",
+        "api/**"
+      ],
+      "empiricalChecks": [
+        "npx @redocly/cli lint openapi.yaml",
+        "npm test"
+      ],
+      "sourceUrls": [
+        "https://spec.openapis.org/oas/latest.html",
+        "https://swagger.io/docs/specification/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "php-runtime",
+      "kind": "microagent",
+      "technology": "PHP",
+      "specialty": "PHP runtime, tipos, extensiones y buenas practicas core.",
+      "filePatterns": [
+        "*.php",
+        "php.ini",
+        ".php-version"
+      ],
+      "empiricalChecks": [
+        "php -l <file>",
+        "composer test"
+      ],
+      "sourceUrls": [
+        "https://www.php.net/manual/en/",
+        "https://www.php-fig.org/psr/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "composer",
+      "kind": "microagent",
+      "technology": "Composer",
+      "specialty": "Dependencias PHP, autoloading, scripts y packaging.",
+      "filePatterns": [
+        "composer.json",
+        "composer.lock"
+      ],
+      "empiricalChecks": [
+        "composer validate",
+        "composer install --dry-run"
+      ],
+      "sourceUrls": [
+        "https://getcomposer.org/doc/",
+        "https://packagist.org/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "laravel",
+      "kind": "microagent",
+      "technology": "Laravel",
+      "specialty": "Laravel framework, Artisan, Eloquent, queues, testing y deployment.",
+      "filePatterns": [
+        "artisan",
+        "app/**/*.php",
+        "routes/*.php",
+        "config/*.php",
+        "database/migrations/*.php"
+      ],
+      "empiricalChecks": [
+        "php artisan test",
+        "php artisan route:list",
+        "composer test"
+      ],
+      "sourceUrls": [
+        "https://laravel.com/docs",
+        "https://laravel.com/docs/deployment"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "symfony",
+      "kind": "microagent",
+      "technology": "Symfony",
+      "specialty": "Symfony components, console, HTTP kernel, DI, Messenger y Doctrine.",
+      "filePatterns": [
+        "symfony.lock",
+        "config/packages/*.yaml",
+        "src/Controller/*.php",
+        "src/Command/*.php"
+      ],
+      "empiricalChecks": [
+        "php bin/console lint:container",
+        "php bin/phpunit"
+      ],
+      "sourceUrls": [
+        "https://symfony.com/doc/current/index.html",
+        "https://symfony.com/doc/current/components/index.html"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "wordpress",
+      "kind": "microagent",
+      "technology": "WordPress",
+      "specialty": "Plugins, themes, hooks, WP-CLI y seguridad WordPress.",
+      "filePatterns": [
+        "wp-content/**/*.php",
+        "functions.php",
+        "style.css"
+      ],
+      "empiricalChecks": [
+        "wp plugin list",
+        "php -l <file>"
+      ],
+      "sourceUrls": [
+        "https://developer.wordpress.org/",
+        "https://developer.wordpress.org/cli/commands/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "drupal",
+      "kind": "microagent",
+      "technology": "Drupal",
+      "specialty": "Drupal modules, themes, Drush, config management y APIs.",
+      "filePatterns": [
+        "web/modules/**/*.php",
+        "web/themes/**",
+        "drupal/**"
+      ],
+      "empiricalChecks": [
+        "drush status",
+        "php -l <file>"
+      ],
+      "sourceUrls": [
+        "https://www.drupal.org/docs",
+        "https://www.drush.org/latest/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "php-testing",
+      "kind": "microagent",
+      "technology": "PHP Testing",
+      "specialty": "PHPUnit, Pest, mocks, coverage y test suites PHP.",
+      "filePatterns": [
+        "phpunit.xml*",
+        "pest.php",
+        "tests/**/*.php"
+      ],
+      "empiricalChecks": [
+        "vendor/bin/phpunit",
+        "vendor/bin/pest"
+      ],
+      "sourceUrls": [
+        "https://phpunit.de/documentation.html",
+        "https://pestphp.com/docs/installation"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "doctrine-orm",
+      "kind": "microagent",
+      "technology": "Doctrine ORM",
+      "specialty": "Doctrine ORM/DBAL, entidades, repositorios y migraciones.",
+      "filePatterns": [
+        "src/Entity/*.php",
+        "src/Repository/*.php",
+        "migrations/*.php",
+        "doctrine.yaml"
+      ],
+      "empiricalChecks": [
+        "php bin/console doctrine:schema:validate",
+        "php bin/console doctrine:migrations:status"
+      ],
+      "sourceUrls": [
+        "https://www.doctrine-project.org/projects/orm.html",
+        "https://www.doctrine-project.org/projects/dbal.html"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "java-runtime",
+      "kind": "microagent",
+      "technology": "Java/JDK",
+      "specialty": "Java SE, JDK, concurrencia, records, modules y APIs core.",
+      "filePatterns": [
+        "*.java",
+        "pom.xml",
+        "build.gradle*"
+      ],
+      "empiricalChecks": [
+        "javac -version",
+        "mvn test",
+        "gradle test"
+      ],
+      "sourceUrls": [
+        "https://docs.oracle.com/en/java/",
+        "https://openjdk.org/projects/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "spring-boot",
+      "kind": "microagent",
+      "technology": "Spring Boot",
+      "specialty": "Spring Boot, Spring Framework, Actuator, Data, Security y testing.",
+      "filePatterns": [
+        "pom.xml",
+        "build.gradle*",
+        "src/main/java/**/*.java",
+        "src/main/resources/application*.yml"
+      ],
+      "empiricalChecks": [
+        "mvn test",
+        "gradle test",
+        "mvn spring-boot:run -DskipTests"
+      ],
+      "sourceUrls": [
+        "https://spring.io/projects/spring-boot",
+        "https://docs.spring.io/spring-framework/reference/",
+        "https://docs.spring.io/spring-security/reference/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "quarkus",
+      "kind": "microagent",
+      "technology": "Quarkus",
+      "specialty": "Quarkus, extensions, native images, reactive y Kubernetes-native Java.",
+      "filePatterns": [
+        "src/main/java/**/*.java",
+        "src/main/resources/application.properties",
+        "pom.xml"
+      ],
+      "empiricalChecks": [
+        "mvn test",
+        "mvn quarkus:dev"
+      ],
+      "sourceUrls": [
+        "https://quarkus.io/guides/",
+        "https://quarkus.io/extensions/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "micronaut",
+      "kind": "microagent",
+      "technology": "Micronaut",
+      "specialty": "Micronaut DI, HTTP, data, serverless y cloud-native Java.",
+      "filePatterns": [
+        "micronaut-cli.yml",
+        "src/main/java/**/*.java",
+        "build.gradle*"
+      ],
+      "empiricalChecks": [
+        "gradle test",
+        "mvn test"
+      ],
+      "sourceUrls": [
+        "https://docs.micronaut.io/latest/guide/",
+        "https://micronaut-projects.github.io/micronaut-data/latest/guide/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "jakarta-ee",
+      "kind": "microagent",
+      "technology": "Jakarta EE",
+      "specialty": "Jakarta EE APIs, CDI, JAX-RS, persistence y servidores app.",
+      "filePatterns": [
+        "src/main/java/**/*.java",
+        "web.xml",
+        "persistence.xml"
+      ],
+      "empiricalChecks": [
+        "mvn test",
+        "gradle test"
+      ],
+      "sourceUrls": [
+        "https://jakarta.ee/specifications/",
+        "https://jakarta.ee/learn/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "maven-gradle",
+      "kind": "microagent",
+      "technology": "Maven/Gradle",
+      "specialty": "Builds JVM, dependencias, plugins, wrappers y multi-module.",
+      "filePatterns": [
+        "pom.xml",
+        "settings.xml",
+        "build.gradle",
+        "build.gradle.kts",
+        "gradle.properties"
+      ],
+      "empiricalChecks": [
+        "mvn validate",
+        "gradle tasks"
+      ],
+      "sourceUrls": [
+        "https://maven.apache.org/guides/",
+        "https://docs.gradle.org/current/userguide/userguide.html"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "junit-testcontainers",
+      "kind": "microagent",
+      "technology": "JUnit/Testcontainers",
+      "specialty": "Testing JVM, JUnit 5, Mockito y Testcontainers.",
+      "filePatterns": [
+        "src/test/java/**/*.java",
+        "junit-platform.properties"
+      ],
+      "empiricalChecks": [
+        "mvn test",
+        "gradle test"
+      ],
+      "sourceUrls": [
+        "https://junit.org/junit5/docs/current/user-guide/",
+        "https://java.testcontainers.org/",
+        "https://site.mockito.org/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "java-persistence",
+      "kind": "microagent",
+      "technology": "JPA/Hibernate",
+      "specialty": "JPA, Hibernate ORM, transacciones, migraciones y rendimiento DB.",
+      "filePatterns": [
+        "src/main/java/**/*Entity.java",
+        "persistence.xml",
+        "db/migration/**"
+      ],
+      "empiricalChecks": [
+        "mvn test",
+        "gradle test"
+      ],
+      "sourceUrls": [
+        "https://hibernate.org/orm/documentation/",
+        "https://jakarta.ee/specifications/persistence/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "relational-databases",
+      "kind": "microagent",
+      "technology": "SQL/RDBMS",
+      "specialty": "SQL, migraciones, indices, transacciones y modelado relacional.",
+      "filePatterns": [
+        "*.sql",
+        "db/migration/**",
+        "migrations/**"
+      ],
+      "empiricalChecks": [
+        "psql --version",
+        "mysql --version"
+      ],
+      "sourceUrls": [
+        "https://www.postgresql.org/docs/",
+        "https://dev.mysql.com/doc/",
+        "https://www.sqlite.org/docs.html"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "mongodb",
+      "kind": "microagent",
+      "technology": "MongoDB",
+      "specialty": "Document databases, indexes, aggregation y schema design MongoDB.",
+      "filePatterns": [
+        "**/*mongo*.*",
+        "**/*mongodb*.*"
+      ],
+      "empiricalChecks": [
+        "mongosh --version"
+      ],
+      "sourceUrls": [
+        "https://www.mongodb.com/docs/",
+        "https://www.mongodb.com/docs/manual/core/data-modeling-introduction/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "redis",
+      "kind": "microagent",
+      "technology": "Redis",
+      "specialty": "Cache, streams, locks, TTLs y patrones Redis.",
+      "filePatterns": [
+        "**/*redis*.*"
+      ],
+      "empiricalChecks": [
+        "redis-cli --version"
+      ],
+      "sourceUrls": [
+        "https://redis.io/docs/latest/",
+        "https://redis.io/docs/latest/develop/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "kafka",
+      "kind": "microagent",
+      "technology": "Apache Kafka",
+      "specialty": "Eventos, topics, consumidores, productores, schemas y streaming.",
+      "filePatterns": [
+        "**/*kafka*.*",
+        "**/*schema*.avsc"
+      ],
+      "empiricalChecks": [
+        "kafka-topics --version"
+      ],
+      "sourceUrls": [
+        "https://kafka.apache.org/documentation/",
+        "https://docs.confluent.io/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "kubernetes",
+      "kind": "microagent",
+      "technology": "Kubernetes",
+      "specialty": "Manifests, Helm, workloads, services, ingress y operaciones K8s.",
+      "filePatterns": [
+        "k8s/**/*.yaml",
+        "helm/**",
+        "Chart.yaml",
+        "values*.yaml"
+      ],
+      "empiricalChecks": [
+        "kubectl apply --dry-run=client -f <file>",
+        "helm lint"
+      ],
+      "sourceUrls": [
+        "https://kubernetes.io/docs/",
+        "https://helm.sh/docs/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "terraform",
+      "kind": "microagent",
+      "technology": "Terraform/OpenTofu",
+      "specialty": "IaC, modulos, providers, state y validacion Terraform/OpenTofu.",
+      "filePatterns": [
+        "*.tf",
+        "*.tfvars",
+        ".terraform.lock.hcl"
+      ],
+      "empiricalChecks": [
+        "terraform fmt -check",
+        "terraform validate",
+        "tofu validate"
+      ],
+      "sourceUrls": [
+        "https://developer.hashicorp.com/terraform/docs",
+        "https://opentofu.org/docs/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "observability",
+      "kind": "microagent",
+      "technology": "Observability",
+      "specialty": "Logs, metricas, traces, OpenTelemetry, Prometheus y Grafana.",
+      "filePatterns": [
+        "**/*otel*.*",
+        "**/*prometheus*.*",
+        "grafana/**"
+      ],
+      "empiricalChecks": [
+        "promtool check config prometheus.yml"
+      ],
+      "sourceUrls": [
+        "https://opentelemetry.io/docs/",
+        "https://prometheus.io/docs/",
+        "https://grafana.com/docs/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "security-owasp",
+      "kind": "microagent",
+      "technology": "Application Security/OWASP",
+      "specialty": "Amenazas, controles OWASP, secretos, dependencias y secure coding.",
+      "filePatterns": [
+        "**/*security*.*",
+        "**/*auth*.*",
+        ".github/dependabot.yml"
+      ],
+      "empiricalChecks": [
+        "npm audit",
+        "composer audit",
+        "mvn org.owasp:dependency-check-maven:check"
+      ],
+      "sourceUrls": [
+        "https://owasp.org/www-project-top-ten/",
+        "https://owasp.org/www-project-web-security-testing-guide/",
+        "https://cheatsheetseries.owasp.org/"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    },
+    {
+      "id": "accessibility-wcag",
+      "kind": "microagent",
+      "technology": "Accessibility/WCAG",
+      "specialty": "Accesibilidad web, WCAG, ARIA, teclado y semantica.",
+      "filePatterns": [
+        "*.html",
+        "*.tsx",
+        "*.jsx",
+        "*.vue",
+        "*.svelte",
+        "*.astro"
+      ],
+      "empiricalChecks": [
+        "npx axe --help",
+        "npx playwright test"
+      ],
+      "sourceUrls": [
+        "https://www.w3.org/WAI/standards-guidelines/wcag/",
+        "https://www.w3.org/WAI/ARIA/apg/",
+        "https://developer.mozilla.org/en-US/docs/Web/Accessibility"
+      ],
+      "mustKnow": [
+        "Version objetivo",
+        "herramientas disponibles",
+        "comandos de validacion existentes"
+      ],
+      "mustAskWhen": [
+        "Faltan version, convenciones, permisos o criterio de aceptacion."
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "id": "empirical-validation",
+      "kind": "skill",
+      "purpose": "Producir evidencia ejecutable (comandos, tests, salidas) antes de aceptar cualquier cambio.",
+      "skillPath": "skills/empirical-validation/SKILL.md",
+      "stability": "stable",
+      "cost": "light",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "python",
+        "shell",
+        "frontend-testing",
+        "php-testing",
+        "junit-testcontainers"
+      ],
+      "inputs": [
+        "objetivo del cambio",
+        "comandos de validacion del proyecto"
+      ],
+      "steps": [
+        "Seleccionar los checks minimos suficientes por componentes, dependencias y riesgo, sin suites globales por defecto; conservar guardas y checks obligatorios.",
+        "Reutilizar evidencia vigente del mismo codigo, entradas y entorno relevantes si no hay cambios que la invaliden; ejecutar lo no cubierto y registrar comando, salida, codigo de retorno y alcance.",
+        "Adjuntar la evidencia a la decision; si falla, detener y reportar.",
+        "Distinguir modelo/render/build de visual/interacción real; instalación local de build y portabilidad probada de artefacto generado. Registrar consumidores y estados no comprobados."
+      ],
+      "outputs": [
+        "log de comandos",
+        "resultado de tests",
+        "veredicto pass/fail"
+      ],
+      "sourceUrls": [
+        "https://martinfowler.com/bliki/SelfTestingCode.html"
+      ],
+      "mustAskWhen": [
+        "No existe forma de validar empiricamente el cambio.",
+        "La evidencia contradice el objetivo solicitado."
+      ]
+    },
+    {
+      "id": "secure-context-packet",
+      "kind": "skill",
+      "purpose": "Construir un paquete de contexto de alcance configurable.",
+      "skillPath": "skills/secure-context-packet/SKILL.md",
+      "stability": "stable",
+      "cost": "light",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "markdown-docs",
+        "json-yaml"
+      ],
+      "inputs": [
+        "raiz del proyecto"
+      ],
+      "steps": [
+        "Recorrer archivos relevantes según el alcance solicitado.",
+        "Emitir un paquete de contexto trazable en markdown o json."
+      ],
+      "outputs": [
+        "context packet"
+      ],
+      "sourceUrls": [
+        "https://modelcontextprotocol.io/"
+      ],
+      "mustAskWhen": []
+    },
+    {
+      "id": "official-source-check",
+      "kind": "skill",
+      "purpose": "Verificar el comportamiento esperado contra documentacion oficial antes de asumir.",
+      "skillPath": "skills/official-source-check/SKILL.md",
+      "stability": "stable",
+      "cost": "light",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "web-platform-mdn",
+        "security-owasp",
+        "accessibility-wcag"
+      ],
+      "inputs": [
+        "tecnologia o API afectada"
+      ],
+      "steps": [
+        "Resolver el sourceUrl oficial del microagente implicado.",
+        "Contrastar la version y el comportamiento documentado.",
+        "Citar la fuente en la decision."
+      ],
+      "outputs": [
+        "referencia oficial citada",
+        "nota de version"
+      ],
+      "sourceUrls": [
+        "https://developer.mozilla.org/"
+      ],
+      "mustAskWhen": [
+        "La fuente oficial no cubre el caso o esta desactualizada."
+      ]
+    },
+    {
+      "id": "research-first",
+      "kind": "skill",
+      "purpose": "Buscar soluciones existentes antes de construir a medida y decidir adoptar, extender, componer o construir con evidencia.",
+      "skillPath": "skills/research-first/SKILL.md",
+      "stability": "stable",
+      "cost": "light",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "python",
+        "shell",
+        "json-yaml"
+      ],
+      "whenToUse": [
+        "Antes de implementar una utilidad, integracion o patron desde cero.",
+        "Cuando es probable que ya exista una solucion en repo, paquetes o skills."
+      ],
+      "triggers": [
+        "antes de construir una utilidad nueva",
+        "al elegir una libreria o un MCP"
+      ],
+      "steps": [
+        "Enunciar la necesidad exacta.",
+        "Buscar en repo, skills, registry y paquetes/MCPs oficiales.",
+        "Clasificar candidatos y decidir adoptar/extender/componer/construir con evidencia."
+      ],
+      "outputs": [
+        "decision de reuso trazable"
+      ],
+      "sourceUrls": [
+        "https://github.com/affaan-m/ECC"
+      ],
+      "mustAskWhen": [
+        "Hay varias opciones validas con distinto coste o mantenimiento."
+      ]
+    },
+    {
+      "id": "self-evaluation",
+      "kind": "skill",
+      "purpose": "Autoevaluar la salida en 5 ejes con evidencia y un scorecard 1-5 antes de entregar.",
+      "skillPath": "skills/self-evaluation/SKILL.md",
+      "stability": "stable",
+      "cost": "light",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "markdown-docs"
+      ],
+      "whenToUse": [
+        "Despues de cualquier tarea no trivial, antes de entregarla."
+      ],
+      "triggers": [
+        "tras completar una tarea no trivial",
+        "antes de entregar un resultado al humano"
+      ],
+      "steps": [
+        "Puntuar 1-5 exactitud, completitud, claridad, accionabilidad y concision con evidencia.",
+        "Listar 1-2 mejoras concretas si algun eje < 4."
+      ],
+      "outputs": [
+        "scorecard 1-5 con evidencia"
+      ],
+      "sourceUrls": [
+        "https://github.com/affaan-m/ECC"
+      ],
+      "mustAskWhen": [
+        "La autoevaluacion revela un hueco que requiere decision humana."
+      ]
+    },
+    {
+      "id": "verification-loop",
+      "kind": "skill",
+      "purpose": "Iterar cambio, validacion y correccion hasta que la evidencia confirme el objetivo, sin declarar exito con checks en rojo.",
+      "skillPath": "skills/verification-loop/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "python",
+        "shell",
+        "frontend-testing"
+      ],
+      "whenToUse": [
+        "Al implementar cualquier cambio con checks ejecutables.",
+        "Cuando un check falla y hay que converger."
+      ],
+      "triggers": [
+        "al implementar un cambio con checks disponibles",
+        "cuando un test o build falla"
+      ],
+      "steps": [
+        "Aplicar el cambio minimo necesario.",
+        "Ejecutar solo los checks minimos suficientes del alcance afectado o reutilizar evidencia vigente; ampliar por impacto, fallos o cobertura insuficiente demostrados, o requisitos explicitos, sin retirar guardas ni checks obligatorios.",
+        "Corregir la causa y repetir los checks invalidados hasta verde; no cerrar con checks requeridos en rojo o sin evidencia vigente.",
+        "En UI, revisar consumidores y variantes con ui-consistency; no presentar render/build como interacción real."
+      ],
+      "outputs": [
+        "evidencia de checks en verde"
+      ],
+      "sourceUrls": [
+        "https://github.com/affaan-m/ECC"
+      ],
+      "mustAskWhen": [
+        "El bucle no converge y la causa requiere decision o acceso ausente."
+      ]
+    },
+    {
+      "id": "tdd-workflow",
+      "kind": "skill",
+      "purpose": "Desarrollo dirigido por tests con ciclo RED-GREEN-REFACTOR.",
+      "skillPath": "skills/tdd-workflow/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "python",
+        "shell",
+        "frontend-testing"
+      ],
+      "whenToUse": [
+        "Funcionalidad nueva o bug reproducible."
+      ],
+      "triggers": [
+        "al implementar una funcionalidad nueva",
+        "al corregir un bug"
+      ],
+      "steps": [
+        "Escribir un test que falle por la razon correcta.",
+        "Implementar lo minimo para pasarlo.",
+        "Refactorizar con la suite en verde."
+      ],
+      "outputs": [
+        "resultado trazable con evidencia"
+      ],
+      "sourceUrls": [
+        "https://github.com/affaan-m/ECC"
+      ],
+      "mustAskWhen": [
+        "El comportamiento esperado es ambiguo."
+      ]
+    },
+    {
+      "id": "code-review",
+      "kind": "skill",
+      "purpose": "Revisar un cambio por correccion, alcance, seguridad, tests y claridad con evidencia.",
+      "skillPath": "skills/code-review/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "python",
+        "json-yaml",
+        "markdown-docs"
+      ],
+      "whenToUse": [
+        "Antes de aprobar o mergear un cambio."
+      ],
+      "triggers": [
+        "antes de aprobar o mergear",
+        "tras modificar codigo"
+      ],
+      "steps": [
+        "Revisar correccion, alcance, seguridad, tests y claridad.",
+        "Adjuntar hallazgo, ubicacion y severidad."
+      ],
+      "outputs": [
+        "resultado trazable con evidencia"
+      ],
+      "sourceUrls": [
+        "https://github.com/affaan-m/ECC"
+      ],
+      "mustAskWhen": [
+        "Hay un trade-off de diseno que requiere decision humana."
+      ]
+    },
+    {
+      "id": "security-review",
+      "kind": "skill",
+      "purpose": "Buscar secretos, validacion de inputs, dependencias inseguras y debilitamiento de configuracion.",
+      "skillPath": "skills/security-review/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "security-owasp",
+        "shell",
+        "json-yaml"
+      ],
+      "whenToUse": [
+        "Cuando el usuario solicita una revisión de seguridad."
+      ],
+      "triggers": [
+        "revision de seguridad solicitada"
+      ],
+      "steps": [
+        "Buscar secretos expuestos.",
+        "Validar inputs no confiables.",
+        "Verificar dependencias y configuracion."
+      ],
+      "outputs": [
+        "resultado trazable con evidencia"
+      ],
+      "sourceUrls": [
+        "https://github.com/affaan-m/ECC"
+      ],
+      "mustAskWhen": []
+    },
+    {
+      "id": "deep-research",
+      "kind": "skill",
+      "purpose": "Investigar con varias fuentes, verificar de forma adversarial y sintetizar con citas trazables.",
+      "skillPath": "skills/deep-research/SKILL.md",
+      "stability": "stable",
+      "cost": "heavy",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "markdown-docs",
+        "json-yaml"
+      ],
+      "whenToUse": [
+        "Preguntas que requieren varias fuentes o con riesgo factual."
+      ],
+      "triggers": [
+        "al responder con varias fuentes"
+      ],
+      "steps": [
+        "Descomponer en sub-preguntas verificables.",
+        "Recoger evidencia de varias fuentes.",
+        "Verificar de forma adversarial y sintetizar con citas."
+      ],
+      "outputs": [
+        "resultado trazable con evidencia"
+      ],
+      "sourceUrls": [
+        "https://github.com/affaan-m/ECC"
+      ],
+      "mustAskWhen": [
+        "La informacion no esta en fuentes verificables."
+      ]
+    },
+    {
+      "id": "codebase-onboarding",
+      "kind": "skill",
+      "purpose": "Mapear un repo desconocido con evidencia antes de proponer cambios.",
+      "skillPath": "skills/codebase-onboarding/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "markdown-docs",
+        "shell",
+        "python"
+      ],
+      "whenToUse": [
+        "Primer contacto con un repo."
+      ],
+      "triggers": [
+        "al empezar en un repo desconocido"
+      ],
+      "steps": [
+        "Leer README, AGENTS.md/CLAUDE.md, Makefile y manifiestos.",
+        "Localizar puntos de entrada y comandos de build/test.",
+        "Resumir el mapa verificado antes de tocar nada."
+      ],
+      "outputs": [
+        "resultado trazable con evidencia"
+      ],
+      "sourceUrls": [
+        "https://github.com/affaan-m/ECC"
+      ],
+      "mustAskWhen": [
+        "El repo carece de comandos de validacion claros."
+      ]
+    },
+    {
+      "id": "spec-driven-development",
+      "kind": "skill",
+      "purpose": "Desarrollo dirigido por especificacion (SDD, GitHub Spec Kit): constitution, spec, plan y tasks antes de implementar.",
+      "skillPath": "skills/spec-driven-development/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "markdown-docs",
+        "json-yaml"
+      ],
+      "whenToUse": [
+        "Al arrancar una feature (greenfield) o modernizar (brownfield)."
+      ],
+      "triggers": [
+        "al arrancar una funcionalidad nueva",
+        "cuando se pide spec/plan/tareas antes de implementar"
+      ],
+      "steps": [
+        "Acordar constitution y spec (el QUE) con evidencia.",
+        "Plan y tasks verificables.",
+        "Analizar consistencia e implementar validando."
+      ],
+      "outputs": [
+        "constitution.md, spec.md, plan.md, tasks.md"
+      ],
+      "sourceUrls": [
+        "https://github.com/github/spec-kit"
+      ],
+      "mustAskWhen": [
+        "La spec tiene ambiguedad de alcance, UX, negocio o seguridad."
+      ]
+    },
+    {
+      "id": "agentic-loop",
+      "kind": "skill",
+      "purpose": "Conducir el bucle agentico (contexto -> accion -> verificacion -> repetir) con definicion de hecho objetiva, condiciones de parada y presupuesto.",
+      "skillPath": "skills/agentic-loop/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "python",
+        "shell",
+        "frontend-testing",
+        "php-testing",
+        "junit-testcontainers"
+      ],
+      "inputs": [
+        "objetivo",
+        "definicion de hecho verificable",
+        "presupuesto (iteraciones/tiempo)"
+      ],
+      "steps": [
+        "Fija la definicion de hecho objetiva y el presupuesto antes de actuar.",
+        "Itera: reune contexto -> aplica el cambio minimo -> verifica con checks reales -> decide.",
+        "Detecta no-progreso (mismo error 2 veces) y cambia de estrategia o escala.",
+        "Compacta y re-ancla el objetivo entre iteraciones; respeta el presupuesto.",
+        "Cierra solo con evidencia en verde; si agotas el tope, sintetiza el mejor resultado."
+      ],
+      "outputs": [
+        "evidencia por iteracion",
+        "veredicto de hecho/no-hecho",
+        "resumen condensado"
+      ],
+      "sourceUrls": [
+        "https://www.anthropic.com/engineering/building-effective-agents",
+        "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+      ],
+      "mustAskWhen": [
+        "No hay forma de verificar 'hecho' objetivamente.",
+        "Se agota el presupuesto sin converger.",
+        "Una accion irreversible requiere decision humana."
+      ]
+    },
+    {
+      "id": "ui-consistency",
+      "kind": "skill",
+      "purpose": "Aplicar y verificar coherencia transversal, semántica de acciones, contenido compacto, listados y responsive en cambios de UI.",
+      "skillPath": "skills/ui-consistency/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "web-platform-mdn",
+        "frontend-testing",
+        "accessibility-wcag"
+      ],
+      "inputs": [
+        "decisión UI aprobada",
+        "consumidores y convenciones del proyecto"
+      ],
+      "steps": [
+        "Inventariar consumidores, variantes, hooks, modelo y estilos reales.",
+        "Aplicar componentes e identidad semántica compartidos conservando dominio y defaults.",
+        "Validar checks mínimos y distinguir evidencia de código, visual e interacción real."
+      ],
+      "outputs": [
+        "inventario de impacto",
+        "evidencia focal y límites"
+      ],
+      "sourceUrls": [
+        "https://www.w3.org/WAI/WCAG22/quickref/"
+      ],
+      "mustAskWhen": [
+        "Falta decisión visual, semántica o de alcance necesaria."
+      ]
+    }
+  ],
+  "mcps": [
+    {
+      "id": "filesystem",
+      "kind": "mcp",
+      "purpose": "Acceso de lectura al arbol del proyecto para que los runtimes razonen con contexto real.",
+      "transport": "stdio",
+      "command": "npx -y @modelcontextprotocol/server-filesystem .",
+      "capabilities": [
+        "resources",
+        "tools"
+      ],
+      "scopes": [
+        "read"
+      ],
+      "sourceUrls": [
+        "https://modelcontextprotocol.io/",
+        "https://github.com/modelcontextprotocol/servers"
+      ],
+      "mustAskWhen": [
+        "Se solicita escritura o borrado de archivos.",
+        "La ruta sale del alcance del proyecto."
+      ]
+    },
+    {
+      "id": "git",
+      "kind": "mcp",
+      "purpose": "Inspeccion de historial, diffs y estado del repositorio en modo lectura.",
+      "transport": "stdio",
+      "command": "npx -y @modelcontextprotocol/server-git --repository .",
+      "capabilities": [
+        "tools"
+      ],
+      "scopes": [
+        "read"
+      ],
+      "sourceUrls": [
+        "https://modelcontextprotocol.io/",
+        "https://git-scm.com/docs"
+      ],
+      "mustAskWhen": [
+        "Se solicita commit, push, rebase o reset.",
+        "La operacion es destructiva o irreversible."
+      ]
+    },
+    {
+      "id": "fetch-docs",
+      "kind": "mcp",
+      "purpose": "Recuperar documentacion oficial desde sourceUrls verificados para contrastar comportamiento.",
+      "transport": "http",
+      "url": "https://modelcontextprotocol.io/",
+      "capabilities": [
+        "tools"
+      ],
+      "scopes": [
+        "read"
+      ],
+      "sourceUrls": [
+        "https://modelcontextprotocol.io/"
+      ],
+      "mustAskWhen": [
+        "La URL no esta en la lista de fuentes oficiales del ecosistema."
+      ]
+    }
+  ],
+  "harnesses": [
+    {
+      "id": "delivery-harness",
+      "kind": "harness",
+      "purpose": "Arnes por defecto de entrega: equipa cualquier runtime con el flujo completo de negocio a validacion.",
+      "appliesTo": [
+        "cmlscode",
+        "claude",
+        "copilot",
+        "codex",
+        "cursor",
+        "gemini"
+      ],
+      "enforces": [
+        "bounded-scope",
+        "evidence-first",
+        "no-speculation",
+        "human-escalation"
+      ],
+      "wires": {
+        "multiagents": [
+          "delivery-orchestrator",
+          "quality-security-council"
+        ],
+        "subagents": [
+          "evidence-researcher",
+          "implementation-steward",
+          "validation-auditor",
+          "human-escalation-guard"
+        ],
+        "microagents": [],
+        "skills": [
+          "empirical-validation",
+          "secure-context-packet",
+          "official-source-check",
+          "ui-consistency"
+        ],
+        "mcps": [
+          "filesystem",
+          "git"
+        ]
+      },
+      "guardrails": [
+        "Routing de microagentes determinista por filePatterns; no se asume tecnologia.",
+        "Ejecutar lo ya aprobado dentro de su alcance; confirmar decisiones nuevas no cubiertas, incluidas las visuales, y acciones que requieran acceso o autorización ausentes."
+      ],
+      "requiredEvidence": [
+        "archivos leidos",
+        "comandos ejecutados",
+        "fuentes oficiales",
+        "Para UI: inventario de consumidores y límites de inspección visual/interacción real."
+      ],
+      "humanCheckpoints": [
+        "Cambio fuera de alcance",
+        "Accion irreversible",
+        "Varias opciones validas de producto o arquitectura"
+      ],
+      "sourceUrls": [
+        "https://modelcontextprotocol.io/"
+      ]
+    },
+    {
+      "id": "review-harness",
+      "kind": "harness",
+      "purpose": "Arnes de revision en solo lectura para auditar codigo y seguridad sin modificar el repositorio.",
+      "appliesTo": [
+        "claude",
+        "copilot",
+        "codex"
+      ],
+      "enforces": [
+        "bounded-scope",
+        "evidence-first",
+        "no-speculation"
+      ],
+      "wires": {
+        "multiagents": [
+          "quality-security-council"
+        ],
+        "subagents": [
+          "validation-auditor",
+          "security-compliance-analyst",
+          "evidence-researcher"
+        ],
+        "microagents": [
+          "security-owasp"
+        ],
+        "skills": [
+          "empirical-validation",
+          "official-source-check"
+        ],
+        "mcps": [
+          "filesystem",
+          "git"
+        ]
+      },
+      "guardrails": [
+        "Solo lectura: prohibido cualquier scope de escritura en mcps.",
+        "No proponer cambios sin evidencia citada."
+      ],
+      "requiredEvidence": [
+        "hallazgos con archivo y linea",
+        "referencia oficial"
+      ],
+      "humanCheckpoints": [
+        "Se requiere una accion fuera del alcance de la revision solicitada"
+      ],
+      "sourceUrls": [
+        "https://owasp.org/"
+      ]
+    },
+    {
+      "id": "discovery-harness",
+      "kind": "harness",
+      "purpose": "Arnes de descubrimiento de negocio y producto antes de tocar codigo.",
+      "appliesTo": [
+        "cmlscode",
+        "claude",
+        "gemini"
+      ],
+      "enforces": [
+        "bounded-scope",
+        "human-escalation"
+      ],
+      "wires": {
+        "multiagents": [
+          "executive-strategy-council",
+          "product-experience-council"
+        ],
+        "subagents": [
+          "business-strategy-analyst",
+          "product-owner-analyst",
+          "ux-accessibility-researcher",
+          "human-escalation-guard"
+        ],
+        "microagents": [],
+        "skills": [
+          "secure-context-packet"
+        ],
+        "mcps": [
+          "filesystem"
+        ]
+      },
+      "guardrails": [
+        "No presentar descubrimiento como implementacion completada.",
+        "Consultar si falta una decision indispensable que no puede inferirse del encargo."
+      ],
+      "requiredEvidence": [
+        "objetivo de negocio",
+        "usuarios y journeys",
+        "criterios de valor"
+      ],
+      "humanCheckpoints": [
+        "Falta sponsor, presupuesto o decision de prioridad"
+      ],
+      "sourceUrls": [
+        "https://modelcontextprotocol.io/"
+      ]
+    }
+  ],
+  "harnessTargets": [
+    {
+      "id": "claude",
+      "harness": "Claude Code",
+      "scope": "home+project",
+      "state": "native",
+      "files": [
+        {
+          "path": "~/.claude/CLAUDE.md",
+          "format": "managed-block+import"
+        },
+        {
+          "path": "<project>/CLAUDE.md",
+          "format": "managed-block (@AGENTS.md)"
+        },
+        {
+          "path": "~/.claude/skills/cmlscode/<id>/SKILL.md",
+          "format": "skill-folder"
+        },
+        {
+          "path": "~/.claude/settings.json",
+          "format": "hooks"
+        },
+        {
+          "path": "~/.claude/contexts/<mode>.md",
+          "format": "context"
+        }
+      ],
+      "supportedAssets": [
+        "rules",
+        "skills",
+        "hooks",
+        "memory",
+        "mcps"
+      ],
+      "unsupportedSurfaces": []
+    },
+    {
+      "id": "copilot",
+      "harness": "GitHub Copilot",
+      "scope": "home+project",
+      "state": "instruction",
+      "files": [
+        {
+          "path": "~/.copilot/copilot-instructions.md",
+          "format": "managed-block"
+        },
+        {
+          "path": "<project>/.github/copilot-instructions.md",
+          "format": "instructions"
+        },
+        {
+          "path": "<project>/AGENTS.md",
+          "format": "conduct"
+        }
+      ],
+      "supportedAssets": [
+        "rules",
+        "skills",
+        "mcps"
+      ],
+      "unsupportedSurfaces": [
+        "native-hooks",
+        "memory-autoload"
+      ]
+    },
+    {
+      "id": "codex",
+      "harness": "Codex CLI",
+      "scope": "home+project",
+      "state": "instruction",
+      "files": [
+        {
+          "path": "~/.codex/AGENTS.md",
+          "format": "managed-block"
+        },
+        {
+          "path": "<project>/AGENTS.md",
+          "format": "conduct"
+        },
+        {
+          "path": "<project>/AGENTS.override.md",
+          "format": "conduct-override"
+        },
+        {
+          "path": "<project>/.agents/skills/<id>/SKILL.md",
+          "format": "skill-surface"
+        }
+      ],
+      "supportedAssets": [
+        "rules",
+        "skills",
+        "mcps"
+      ],
+      "unsupportedSurfaces": [
+        "native-hooks",
+        "memory-autoload"
+      ]
+    },
+    {
+      "id": "gemini",
+      "harness": "Gemini",
+      "scope": "home",
+      "state": "instruction",
+      "files": [
+        {
+          "path": "~/.gemini/GEMINI.md",
+          "format": "managed-block"
+        }
+      ],
+      "supportedAssets": [
+        "rules",
+        "skills"
+      ],
+      "unsupportedSurfaces": [
+        "native-hooks",
+        "memory-autoload"
+      ]
+    },
+    {
+      "id": "antigravity",
+      "harness": "Google Antigravity",
+      "scope": "project",
+      "state": "instruction",
+      "files": [
+        {
+          "path": "<project>/.agents/rules/cmlscode.md",
+          "format": "rule"
+        }
+      ],
+      "supportedAssets": [
+        "rules",
+        "skills"
+      ],
+      "unsupportedSurfaces": [
+        "native-hooks",
+        "memory-autoload"
+      ]
+    },
+    {
+      "id": "cursor",
+      "harness": "Cursor",
+      "scope": "home+project",
+      "state": "adapter",
+      "files": [
+        {
+          "path": "~/.cursor/cmlscode/rules/cmlscode.mdc",
+          "format": "mdc"
+        },
+        {
+          "path": "<project>/.cursor/rules/cmlscode.mdc",
+          "format": "mdc"
+        },
+        {
+          "path": "<project>/.cursor/skills/<id>.mdc",
+          "format": "mdc"
+        }
+      ],
+      "supportedAssets": [
+        "rules",
+        "skills",
+        "mcps"
+      ],
+      "unsupportedSurfaces": [
+        "native-hooks"
+      ]
+    }
+  ],
+  "hooks": [
+    {
+      "id": "verification-on-stop",
+      "event": "Stop",
+      "matcher": "*",
+      "script": "verification_on_stop.py",
+      "intent": "Recordar antes de cerrar que los checks minimos suficientes del alcance deben estar en verde con evidencia vigente, sin suites globales por defecto ni retirar guardas o checks obligatorios (no bloqueante a proposito: bloquear el Stop atraparia el bucle).",
+      "scope": "project",
+      "async": false,
+      "targets": [
+        "claude"
+      ],
+      "instructionFallbackFor": [
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ]
+    }
+  ],
+  "memory": {
+    "description": "Memoria operativa: contextos tipificados inyectables y aprendizajes (instincts) con confianza y alcance. Derivado de ECC (contexts/ + continuous-learning).",
+    "home": "~/.cmlscode/memory/<project-hash>",
+    "contexts": [
+      {
+        "id": "dev",
+        "whenToUse": "Mientras se implementa y valida codigo."
+      },
+      {
+        "id": "review",
+        "whenToUse": "Al revisar cambios antes de cerrar."
+      },
+      {
+        "id": "research",
+        "whenToUse": "Al investigar antes de construir."
+      }
+    ],
+    "instincts": {
+      "store": "instincts.json",
+      "scopes": [
+        "project",
+        "global"
+      ],
+      "confidenceRange": [
+        0.3,
+        0.9
+      ],
+      "promotion": "Un instinct de proyecto que reaparece en 2+ proyectos con confianza >= 0.8 se promueve a global."
+    }
+  },
+  "schedules": [
+    {
+      "id": "weekly-validate",
+      "cron": "0 9 * * 1",
+      "command": "cmlscode validate --strict",
+      "description": "Validar el registry y la paridad cada lunes a las 09:00."
+    },
+    {
+      "id": "weekly-harness-audit",
+      "cron": "0 9 * * 1",
+      "command": "cmlscode harness audit",
+      "description": "Auditar la matriz de capacidades multi-CLI cada lunes."
+    },
+    {
+      "id": "weekly-observe",
+      "cron": "0 8 * * 1",
+      "command": "cmlscode observe",
+      "description": "Aprender de los chats locales de los CLIs cada lunes (aprendizaje continuo)."
+    }
+  ],
+  "privacy": {
+    "selfHosted": true,
+    "telemetry": "none",
+    "dataHome": "~/.cmlscode",
+    "network": "Solo se accede a red para consultar los sourceUrls oficiales declarados; nunca se envian datos del usuario.",
+    "statement": "cmlscode es autoalojado y sin telemetria. Todo el estado (registry, skills, memoria) vive localmente en ~/.cmlscode; no se recopilan ni envian datos del usuario. Principio compartido con Hermes.",
+    "modelPolicy": "cmlscode NUNCA escribe ni modifica la seleccion de modelo del usuario en ninguna herramienta (Copilot, VS Code, etc.); solo anade conducta, skills, subagentes y hooks. Setup detecta lo instalado y configura solo eso; re-ejecuta `cmlscode setup --global` tras instalar una herramienta nueva."
+  },
+  "specFirst": {
+    "standard": "GitHub Spec-Driven Development (Spec Kit)",
+    "sourceUrl": "https://github.com/github/spec-kit",
+    "phases": [
+      "constitution",
+      "specify",
+      "clarify",
+      "plan",
+      "tasks",
+      "analyze",
+      "implement"
+    ],
+    "artifacts": [
+      ".specify/memory/constitution.md",
+      "specs/NNN-<feature>/spec.md",
+      "specs/NNN-<feature>/plan.md",
+      "specs/NNN-<feature>/tasks.md"
+    ],
+    "constitutionSource": "cmlscode rules + conventions",
+    "scaffold": "cmlscode spec init --feature <name>"
+  },
+  "learning": {
+    "description": "cmlscode aprende de los chats locales de todos los CLIs y sugiere skills por patrones comunes. Privacy-first: solo guarda terminos derivados (no el texto), redacta secretos, local sin telemetria.",
+    "observationsStore": "~/.cmlscode/memory/observations.jsonl",
+    "thresholds": {
+      "minCount": 3,
+      "minSources": 1,
+      "limit": 15
+    },
+    "sources": [
+      {
+        "id": "claude",
+        "glob": "~/.claude/projects/**/*.jsonl",
+        "type": "jsonl",
+        "typeFilter": "user",
+        "fields": [
+          "message.content"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "copilot",
+        "glob": "~/.copilot/session-state/**/events.jsonl",
+        "type": "jsonl",
+        "typeFilter": null,
+        "fields": [
+          "data.content",
+          "data.text",
+          "data.message",
+          "data.prompt"
+        ],
+        "confidence": "experimental"
+      },
+      {
+        "id": "codex",
+        "glob": "~/.codex/sessions/**/*.jsonl",
+        "type": "jsonl",
+        "typeFilter": null,
+        "fields": [
+          "content",
+          "text",
+          "message",
+          "data.content",
+          "data.text"
+        ],
+        "confidence": "experimental"
+      },
+      {
+        "id": "gemini",
+        "glob": "~/.gemini/**/*.json",
+        "type": "json",
+        "typeFilter": null,
+        "fields": [
+          "content",
+          "text",
+          "prompt"
+        ],
+        "confidence": "experimental"
+      }
+    ]
+  },
+  "commands": {
+    "version": "cmlscode version",
+    "validate": "cmlscode validate --strict --project-root .",
+    "context": "cmlscode context --format markdown",
+    "agents": "cmlscode agents",
+    "list": "cmlscode list",
+    "listSkills": "cmlscode list skills",
+    "listMcps": "cmlscode list mcps",
+    "listHarnesses": "cmlscode list harnesses",
+    "show": "cmlscode show <id>",
+    "route": "cmlscode route <archivo-o-tecnologia>",
+    "run": "cmlscode run <agent-id> --dry-run",
+    "init": "cmlscode init --target /ruta/a/proyecto",
+    "setupGlobal": "cmlscode setup --global",
+    "install": "make install",
+    "dist": "make dist"
+  },
+  "globalDefaults": {
+    "home": "~/.cmlscode",
+    "files": [
+      "AGENTS.md",
+      "cmlscode.registry.json",
+      "agent-context.md"
+    ],
+    "installerBehavior": "El instalador ejecuta 'cmlscode setup --global' para materializar el ecosistema (reglas, agentes, skills, mcps y arneses) en el equipo.",
+    "consumerClis": [
+      "cmlscode",
+      "GitHub Copilot CLI",
+      "Claude Code",
+      "Codex CLI",
+      "Antigravity/Gemini",
+      "Cursor"
+    ]
+  },
+  "update": {
+    "source": "github",
+    "repo": "cmlozanos/cmlscode",
+    "releasesApi": "https://api.github.com/repos/cmlozanos/cmlscode/releases/latest",
+    "latestInstaller": "https://github.com/cmlozanos/cmlscode/releases/latest/download/cmlscode-latest-installer.sh",
+    "latestWheel": "https://github.com/cmlozanos/cmlscode/releases/latest/download/cmlscode-latest-py3-none-any.whl"
+  },
+  "loopContract": {
+    "principle": "Trabaja en bucle: reune contexto -> actua -> verifica contra ground truth -> repite, hasta cumplir una definicion de hecho objetiva y verificable.",
+    "rules": [
+      "Define 'hecho' de forma objetiva ANTES de empezar (p. ej. 'tests verdes y sin errores de lint'), nunca 'parece correcto'.",
+      "Cierra cada iteracion con evidencia real del entorno para los checks minimos suficientes segun componentes, dependencias y riesgo; reutiliza evidencia vigente no invalidada, sin suites globales por defecto ni retirar guardas o checks obligatorios.",
+      "Para por varias condiciones a la vez: hecho cumplido, tope de iteraciones, sin progreso, o presupuesto agotado.",
+      "Sin progreso = fallo: si se repite el mismo error o accion, cambia de estrategia o escala al humano; no reintentes lo mismo.",
+      "Al alcanzar el tope, sintetiza el mejor resultado posible con lo hecho; nunca termines en silencio.",
+      "Entre iteraciones compacta el contexto (resume el log) y re-ancla el objetivo desde ficheros durables (AGENTS.md, spec); evita el goal drift.",
+      "Presupuesto explicito: acota tiempo, llamadas y tokens; ante un bucle de coste, corta (circuit breaker).",
+      "Trata los errores de herramienta como texto a razonar, no como excepcion; reintenta 429/5xx con backoff y detente en 401/403/422.",
+      "Delega trabajo paralelo en subagentes con contexto aislado que devuelvan un RESUMEN condensado, no su transcripcion.",
+      "Checkpoint humano antes de acciones irreversibles (push a main, borrados, despliegues, envios externos)."
+    ]
+  }
+}

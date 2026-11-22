@@ -1,0 +1,394 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/cmlscode.schema.json",
+  "title": "cmlscode agent ecosystem registry",
+  "type": "object",
+  "required": [
+    "version",
+    "name",
+    "rules",
+    "orchestration",
+    "multiagents",
+    "subagents",
+    "microagents"
+  ],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "name": {
+      "const": "cmlscode"
+    },
+    "agentTaxonomy": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/agentTaxonomyEntry"
+      }
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    },
+    "orchestration": {
+      "type": "object"
+    },
+    "multiagents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/agent"
+      }
+    },
+    "subagents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/agent"
+      }
+    },
+    "microagents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/microagent"
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skill"
+      }
+    },
+    "mcps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/mcp"
+      }
+    },
+    "harnesses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/harness"
+      }
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "statement"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "statement": {
+          "type": "string"
+        }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "purpose"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        }
+      }
+    },
+    "agentTaxonomyEntry": {
+      "type": "object",
+      "required": [
+        "kind",
+        "label",
+        "configures",
+        "responsibility"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "configures": {
+          "type": "string"
+        },
+        "responsibility": {
+          "type": "string"
+        }
+      }
+    },
+    "microagent": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "technology",
+        "filePatterns",
+        "empiricalChecks",
+        "mustAskWhen"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "microagent"
+        },
+        "technology": {
+          "type": "string"
+        },
+        "filePatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "empiricalChecks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mustAskWhen": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "purpose",
+        "steps"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "skill"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "appliesTo": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sourceUrls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mustAskWhen": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mcp": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "purpose",
+        "transport"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "mcp"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "transport": {
+          "enum": [
+            "stdio",
+            "http",
+            "sse"
+          ]
+        },
+        "command": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "tools",
+              "resources",
+              "prompts"
+            ]
+          }
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "read",
+              "write"
+            ]
+          }
+        },
+        "sourceUrls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mustAskWhen": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "harness": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "purpose",
+        "appliesTo",
+        "enforces"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "harness"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "appliesTo": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "enforces": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "wires": {
+          "type": "object",
+          "properties": {
+            "multiagents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "subagents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "microagents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "skills": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mcps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "guardrails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requiredEvidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "humanCheckpoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sourceUrls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

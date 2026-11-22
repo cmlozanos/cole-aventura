@@ -1,0 +1,128 @@
+
+> cole-aventura@1.0.0 check
+> npm test && npm run build
+
+
+> cole-aventura@1.0.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: catálogo: seis cursos españoles y un pack declarativo con seis temas
+ok 1 - catálogo: seis cursos españoles y un pack declarativo con seis temas
+  ---
+  duration_ms: 0.945291
+  ...
+# Subtest: sesión por defecto, determinismo, mezcla equilibrada e identificadores únicos
+ok 2 - sesión por defecto, determinismo, mezcla equilibrada e identificadores únicos
+  ---
+  duration_ms: 1.5655
+  ...
+# Subtest: generador numbers: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 3 - generador numbers: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 7.167125
+  ...
+# Subtest: generador compare: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 4 - generador compare: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 4.481292
+  ...
+# Subtest: generador addition: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 5 - generador addition: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 6.034083
+  ...
+# Subtest: generador subtraction: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 6 - generador subtraction: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 5.434292
+  ...
+# Subtest: generador problems: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 7 - generador problems: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 5.423334
+  ...
+# Subtest: generador shapes: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 8 - generador shapes: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 3.364
+  ...
+# Subtest: entradas inválidas del generador no producen sesiones
+ok 9 - entradas inválidas del generador no producen sesiones
+  ---
+  duration_ms: 0.31025
+  ...
+# Subtest: estado inicial independiente, guardado booleano y lectura de la misma clave
+ok 10 - estado inicial independiente, guardado booleano y lectura de la misma clave
+  ---
+  duration_ms: 0.368292
+  ...
+# Subtest: corrupción, versión desconocida y almacenamiento bloqueado recuperan estado
+ok 11 - corrupción, versión desconocida y almacenamiento bloqueado recuperan estado
+  ---
+  duration_ms: 0.19575
+  ...
+# Subtest: recordSession acumula sin mutar y aísla actividad, tema y perfil
+ok 12 - recordSession acumula sin mutar y aísla actividad, tema y perfil
+  ---
+  duration_ms: 0.334
+  ...
+# Subtest: sesiones inválidas no modifican ni sustituyen el estado
+ok 13 - sesiones inválidas no modifican ni sustituyen el estado
+  ---
+  duration_ms: 0.282833
+  ...
+# Subtest: createProfile devuelve estado nuevo activo, genérico y con máximo seis perfiles
+ok 14 - createProfile devuelve estado nuevo activo, genérico y con máximo seis perfiles
+  ---
+  duration_ms: 0.196834
+  ...
+# Subtest: lectura sanea perfiles duplicados, referencias y progreso corrupto sin perder datos válidos
+ok 15 - lectura sanea perfiles duplicados, referencias y progreso corrupto sin perder datos válidos
+  ---
+  duration_ms: 0.438417
+  ...
+# Subtest: lectura limita perfiles, repara temas rotos y rechaza acumulaciones inseguras
+ok 16 - lectura limita perfiles, repara temas rotos y rechaza acumulaciones inseguras
+  ---
+  duration_ms: 0.235334
+  ...
+# Subtest: mixto con results reparte temas una vez por sesión y conserva el reparto al persistir
+ok 17 - mixto con results reparte temas una vez por sesión y conserva el reparto al persistir
+  ---
+  duration_ms: 0.328542
+  ...
+# Subtest: results en tema individual no duplica contadores y mixto parcial solo añade temas presentes
+ok 18 - results en tema individual no duplica contadores y mixto parcial solo añade temas presentes
+  ---
+  duration_ms: 0.182
+  ...
+# Subtest: results inválidos rechazan toda la sesión sin modificar datos
+ok 19 - results inválidos rechazan toda la sesión sin modificar datos
+  ---
+  duration_ms: 0.200542
+  ...
+# Subtest: saneamiento mantiene el límite de sesiones por tema
+ok 20 - saneamiento mantiene el límite de sesiones por tema
+  ---
+  duration_ms: 0.107458
+  ...
+# Subtest: persistencia funciona sin Object.hasOwn como en Chrome 95
+ok 21 - persistencia funciona sin Object.hasOwn como en Chrome 95
+  ---
+  duration_ms: 0.079458
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 143.2205
+
+> cole-aventura@1.0.0 build
+> node tools/build.mjs
+
+Built 11 assets; offline cache cole-aventura-d7736a2845cb19e8

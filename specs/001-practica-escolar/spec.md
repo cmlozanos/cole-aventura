@@ -1,0 +1,2 @@
+# Práctica escolar
+Elegir perfil genérico, curso y actividad. Primer pack: 1.º Primaria, números 1–10, mayor/menor, sumas, restas no negativas, problemas de una operación y círculo/cuadrado/rectángulo/triángulo. Actividades breves con feedback explicado, pistas y repaso mixto. Guardar avances por perfil en este navegador. Nuevos packs declarativos. Sin nombres personales, cuentas, anuncios ni llamadas externas durante el uso.

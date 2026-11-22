@@ -1,0 +1,15 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --project=chromium
+
+
+Running 6 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:30:1 › catálogo, seis temas y cursos futuros honestos (2.3s)
+  ✓  2 [chromium] › tests/browser/app.spec.js:52:1 › error, pista, resumen y persistencia aislada por explorador (788ms)
+  ✓  3 [chromium] › tests/browser/app.spec.js:75:1 › repaso mixto cubre todos los temas y finaliza (983ms)
+  ✓  4 [chromium] › tests/browser/app.spec.js:94:1 › responsive, teclado, offline real y caché aislada (422ms)
+  ✓  5 [chromium] › tests/browser/app.spec.js:125:1 › almacenamiento bloqueado no rompe la práctica (350ms)
+  ✓  6 [chromium] › tests/browser/app.spec.js:136:1 › foco, alternativas accesibles y cambios entre pestañas (826ms)
+
+  6 passed (7.5s)
