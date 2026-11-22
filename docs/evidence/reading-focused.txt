@@ -1,0 +1,14 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --project=chromium -g día noche|cuentos|fuentes locales|puerta y controles|inicio desbloqueado
+
+
+Running 5 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:142:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (1.9s)
+  ✓  2 [chromium] › tests/browser/app.spec.js:234:1 › puerta y controles adultos caben en móvil y horizontal; escapar no desbloquea (386ms)
+  ✓  3 [chromium] › tests/browser/app.spec.js:304:1 › día noche sistema siguen preferencia y guardan elección manual (505ms)
+  ✓  4 [chromium] › tests/browser/app.spec.js:321:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (1.3s)
+  ✓  5 [chromium] › tests/browser/app.spec.js:351:1 › fuentes locales y temas completos sin scroll en adultos (400ms)
+
+  5 passed (6.1s)

@@ -15,3 +15,6 @@ Configurar exige multiplicación aleatoria en cada apertura. Eliminar párrafos 
 
 ## Recorrido rápido (vigente)
 Sin botón/texto Pausa. Sorpresa activa al cargar y alterna temas; Inicio permite cambiar manualmente. Minimizar lectura y transición modal a650ms. Reanudar automáticamente al cerrar Adultos/volver visible sin nuevos controles; mantener puntos/audio/puerta/no-scroll.
+
+## Lectura y apariencia (vigente)
+Modo día/noche/sistema persistente con controles protegidos de adultos. Tipografía escolar española local y alternativa de imprenta alfabetizadora. Actividad Cuentos accesible en Inicio: tres páginas cortas combinadas aleatoriamente, palabras pulsables, sílabas revisadas por color y subrayado, pronunciación completa solo con Voz adulta activa. Pregunta de comprensión, punto único, no-scroll, offline contenido/fuentes, no grabación.

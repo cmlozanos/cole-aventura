@@ -36,3 +36,7 @@ Los únicos controles infantiles son Inicio, pausa y acceso Adultos. `parent-gat
 ## Recorrido rápido vigente
 
 Arranque en Sorpresa automático (sin botón inicial); selección manual disponible solo al volver a Inicio. No exponer pausa: suspender internamente por diálogo/visibilidad y reanudar automáticamente. Transición650ms, sin mínimos ficticios en bootstrap. Consignas cortas y operaciones simbólicas; las pistas gráficas y nombres accesibles siguen obligatorios.
+
+## Lectura y apariencia
+
+`theme.js` gestiona light/dark/system, escucha cambios sistema y persiste preferencia sin tocar sesión/audio. `reading.css` define paletas y fuentes locales. `reading.js` contiene vocabulario silabeado explícito y composición de minicuentos; no incorporar palabras sin segmentación validada. No usar algoritmos simples de vocales para texto arbitrario. Cada página debe caber desde320×568/667×375 y tener palabras con nombre accesible completo. El color no es único canal: subrayado sólido/punteado. `app.js` mantiene navegación de cuento independiente de generador matemático, con puntos por comprensión y voz condicionada al consentimiento adulto.

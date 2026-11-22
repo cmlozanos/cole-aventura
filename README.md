@@ -48,3 +48,11 @@ Se retiran textos explicativos y acciones redundantes del diálogo. Tras acertar
 ### Recorrido rápido vigente
 
 La app abre directamente **Sorpresa**, alternando tipos de ejercicio sin repetir tema seguido. Cabecera: solo Inicio y Adultos; se retira pausa. Cerrar Adultos o volver a la app reanuda automáticamente. Consignas y feedback más breves, con operación simbólica y ayuda visual. La transición de acierto dura **650ms** (antes3,5s); el loader inicial solo espera la carga real, sin demora añadida.
+
+## Día/noche y lectura
+
+En **Adultos → Aspecto**: ☀ Día, ☾ Noche o ◐ Sistema (predeterminado). La elección se guarda; Sistema sigue cambios del dispositivo. El tema cubre ejercicios, cuentos, controles y diálogos.
+
+**Adultos → Letra** permite Escolar (**Playwrite ES**, modelo manuscrito de España investigado por Primarium) o Imprenta (**Andika**, diseñada para alfabetización). No hay una tipografía única de todos los colegios: elegir la que coincida con el material de clase. Ambas se sirven localmente bajo SIL OFL y funcionan offline tras caché; no se descarga nada de Google durante el juego. Fuentes y límites en `docs/READING-THEME-RESEARCH.md`.
+
+**Inicio → Cuentos**: minicuentos aleatorios de tres páginas, con64 combinaciones locales y pregunta final. Palabras pulsables, sílabas en colores y subrayado sólido/punteado. Las sílabas están revisadas en el vocabulario de cuentos, no se adivinan para cualquier texto. La palabra se pronuncia completa (sin guiones) solo si un adulto ha activado Voz; por defecto sigue silenciada. Puede requerir una voz española instalada/conexión según navegador. No hay reconocimiento ni grabación de voz. Avance manual para leer sin prisa; acertar comprensión suma un punto, tocar palabras no.

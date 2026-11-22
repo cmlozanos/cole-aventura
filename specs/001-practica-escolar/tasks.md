@@ -36,3 +36,10 @@
 - Abrir Sorpresa al cargar, alternar temas y conservar Inicio manual.
 - Consignas mínimas, feedback gráfico, transición650ms.
 - Revalidar recorridos afectados y publicación.
+
+## Día/noche y cuentos
+- Investigar Playwrite ES/Primarium, Andika y criterios silábicos oficiales; licencias locales.
+- Preferencia persistente light/dark/system y seguimiento vivo del sistema.
+- Paletas completas y tipografías escolares/lectoras, sin nuevas opciones infantiles.
+- Cuentos combinables con vocabulario silabeado, palabras tocables y voz consentida.
+- Validar generación, tema, fuentes, audio, comprensión, offline y no-scroll.

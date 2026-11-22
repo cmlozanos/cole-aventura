@@ -1,0 +1,14 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --project=chromium -g cuentos|fuentes|colores|día noche
+
+
+Running 5 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:304:1 › día noche sistema siguen preferencia y guardan elección manual (853ms)
+  ✓  2 [chromium] › tests/browser/app.spec.js:321:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (1.3s)
+  ✓  3 [chromium] › tests/browser/app.spec.js:351:1 › fuentes locales y temas completos sin scroll en adultos (418ms)
+  ✓  4 [chromium] › tests/browser/app.spec.js:365:1 › cuentos y fuentes funcionan offline con los audios apagados (382ms)
+  ✓  5 [chromium] › tests/browser/app.spec.js:379:1 › colores de texto y botones legibles en ambos temas (685ms)
+
+  5 passed (4.5s)

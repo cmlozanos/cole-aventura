@@ -1,3 +1,5 @@
+import { createTheme } from './theme.js';
+import { createStory, renderWord } from './reading.js';
 import { activities } from './catalog.js';
 import { createSession } from './exercises.js';
 import { shapeSvg } from './art.js';
@@ -11,6 +13,13 @@ const main = document.querySelector('#main');
 const controls = document.querySelector('.controls');
 const audio = createAudio(window);
 const motion = createMotion(window);
+const theme = createTheme(window);
+let readingFont = 'school';
+try { readingFont = localStorage.getItem('cole-aventura-reading-font') === 'print' ? 'print' : 'school'; } catch {}
+document.documentElement.dataset.readingFont = readingFont;
+let story = null;
+let storyPage = 0;
+let storyQuestion = false;
 const scores = createScoreSession(window);
 const options = document.querySelector('#options');
 const transition = document.querySelector('#transition');
@@ -58,12 +67,14 @@ function renderControls() {
 }
 function render() {
   renderControls();
-  main.classList.toggle('paused',paused && scene === 'game');
+  main.classList.toggle('paused',paused && scene !== 'home');
   main.classList.toggle('home-screen',scene === 'home');
+  main.classList.toggle('reading-screen',scene === 'story');
   if (scene === 'home') {
-    main.innerHTML = `<div class="home-heading"><span class="home-mascot" aria-hidden="true">✦</span><h1>¡Elige tu aventura!</h1></div><div class="game-grid"><button class="game-tile random-tile" data-game="mixed"><span aria-hidden="true">⤨</span><strong>¡Sorpresa!</strong></button>${activities[0].topics.map(topic=>`<button class="game-tile" data-game="${topic.id}"><span aria-hidden="true">${esc(topic.symbol)}</span><strong>${esc(topic.title)}</strong></button>`).join('')}</div>`;
+    main.innerHTML = `<div class="home-heading"><span class="home-mascot" aria-hidden="true">✦</span><h1>¡Elige tu aventura!</h1></div><div class="game-grid"><button class="game-tile random-tile" data-game="mixed"><span aria-hidden="true">⤨</span><strong>¡Sorpresa!</strong></button><button class="game-tile" data-game="stories"><span aria-hidden="true">▤</span><strong>Cuentos</strong></button>${activities[0].topics.map(topic=>`<button class="game-tile" data-game="${topic.id}"><span aria-hidden="true">${esc(topic.symbol)}</span><strong>${esc(topic.title)}</strong></button>`).join('')}</div>`;
     return;
   }
+  if (scene === 'story') { renderStory(); return; }
   main.innerHTML = `<h1>${esc(question.prompt)}</h1><section class="picture" aria-label="Dibujos del reto">${question.visual.kind === 'shape' && !assisted && !solved ? '<div class="shape-cue" aria-hidden="true">?</div>' : renderLearningVisual(question,assisted,solved)}</section><div class="answers" role="group" aria-label="Elige una respuesta">${question.choices.map(choice => `<button data-answer="${esc(choice)}" aria-label="${esc(choice)}" class="answer ${selected === choice ? (solved ? 'correct' : 'retry') : ''}" ${solved || paused ? 'disabled' : ''}>${question.visual.kind === 'shape' ? `<span class="choice-shape" style="transform:rotate(${question.angle}deg)">${shapeSvg(shapes[choice],true)}</span>` : esc(choice)}</button>`).join('')}</div><div class="celebration" aria-hidden="true">${solved ? '<i>★</i>'.repeat(7) : ''}</div><p class="feedback ${solved ? 'success' : ''}" role="status" aria-live="polite">${esc(feedback)}</p><p class="sr-only" id="audio-status" role="status"></p>`;
   main.querySelectorAll('[data-counter]').forEach(counter => {
     const active = counted.includes(counter.dataset.counter);
@@ -77,6 +88,7 @@ function nextQuestion() {
   closeTransition();
   cancelAdvance(); audio.stop(); generation++;
   if (updatePending) { location.reload(); return; }
+  if (topicMode === 'stories') { startStory(); return; }
   const pool = topics.filter(topic => topic !== previousTopic);
   const topic = topicMode === 'mixed' ? pool[Math.floor(Math.random() * pool.length)] : topicMode;
   let candidate;
@@ -110,8 +122,24 @@ function showHome() {
   render(); motion.enter(main); main.focus({preventScroll:true});
 }
 function startGame(mode) {
-  topicMode = mode; scene = 'game'; paused = document.hidden;
+  topicMode = mode; scene = mode === 'stories' ? 'story' : 'game'; paused = document.hidden;
   scores.touch(); nextQuestion();
+}
+function startStory() {
+  audio.stop(); generation++; questionId = `${runId}-${++questionNumber}`;
+  const previous = story?.id;
+  for (let attempt=0;attempt<6;attempt++) { story=createStory(); if (story.id !== previous) break; }
+  for (let i=story.question.choices.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [story.question.choices[i],story.question.choices[j]]=[story.question.choices[j],story.question.choices[i]]; }
+  storyPage = 0; storyQuestion = false;
+  scene = 'story'; solved = false; assisted = false; selected = null; feedback = '';
+  render(); motion.enter(main); main.focus({preventScroll:true});
+}
+function renderStory() {
+  const content = storyQuestion
+    ? `<h1>${esc(story.question.prompt)}</h1><div class="story-answers">${story.question.choices.map(choice=>`<button class="answer" data-story-answer="${esc(choice)}" ${paused || solved ? 'disabled' : ''}>${esc(choice)}</button>`).join('')}</div>`
+    : `<h1>${esc(story.title)}</h1><div class="story-page" role="group" aria-label="Página ${storyPage+1} de ${story.pages.length}">${story.pages[storyPage].map((token,index)=>renderWord(token,index)).join(' ')}</div>`;
+  main.innerHTML = `<div class="story-scene" aria-hidden="true">${story.symbol}</div>${content}<div class="story-footer"><span class="page-dots" aria-label="${storyQuestion ? 'Pregunta' : `Página ${storyPage+1} de ${story.pages.length}`}">${story.pages.map((_,i)=>`<i class="${i === storyPage && !storyQuestion ? 'active' : ''}"></i>`).join('')}</span>${!storyQuestion ? `<button data-action="story-next" aria-label="Siguiente página" ${paused ? 'disabled' : ''}>→</button>` : ''}</div><p class="feedback" role="status">${esc(feedback)}</p>`;
+  main.querySelectorAll('[data-word]').forEach(node=>{node.disabled=paused;});
 }
 function closeTransition() {
   if (transition.open) transition.close();
@@ -128,11 +156,11 @@ function showTransition() {
   transition.querySelector('.transition-card').focus({preventScroll:true});
 }
 function renderParentOptions() {
-  options.innerHTML = `<div class="dialog-heading"><h2 id="options-title">Adultos</h2><button class="close-dialog" data-action="close-options" aria-label="Cerrar">×</button></div><div class="manual-actions"><button data-action="voice" aria-pressed="${audio.voice}">${icon('voice',!audio.voice)} Voz</button><button data-action="effects" aria-pressed="${audio.effects}">${icon('effects',!audio.effects)} Sonidos</button><button data-action="motion" aria-pressed="${motion.enabled}">✦ Animaciones</button><button data-action="new-question" ${scene === 'home' ? 'disabled' : ''}>↻ Otro reto</button><button data-action="reset-score">☆ Reiniciar puntos</button></div>`;
+  options.innerHTML = `<div class="dialog-heading"><h2 id="options-title">Adultos</h2><button class="close-dialog" data-action="close-options" aria-label="Cerrar">×</button></div><div class="manual-actions"><button data-action="voice" aria-pressed="${audio.voice}">${icon('voice',!audio.voice)} Voz</button><button data-action="effects" aria-pressed="${audio.effects}">${icon('effects',!audio.effects)} Sonidos</button><button data-action="motion" aria-pressed="${motion.enabled}">✦ Animaciones</button><button data-action="new-question" ${scene === 'home' ? 'disabled' : ''}>↻ Otro reto</button><button data-action="reset-score">☆ Reiniciar puntos</button></div><fieldset class="preference-row"><legend>Aspecto</legend>${[['light','☀ Día'],['dark','☾ Noche'],['system','◐ Sistema']].map(([mode,label])=>`<button data-theme="${mode}" aria-pressed="${theme.mode === mode}">${label}</button>`).join('')}</fieldset><fieldset class="preference-row"><legend>Letra</legend><button data-font="school" aria-pressed="${readingFont === 'school'}">Escolar</button><button data-font="print" aria-pressed="${readingFont === 'print'}">Imprenta</button></fieldset>`;
 }
 function openOptions() {
   if (transition.open) return;
-  if (scene === 'game') { paused = true; cancelAdvance(); audio.stop(); motion.stop(); render(); }
+  if (scene !== 'home') { paused = true; cancelAdvance(); audio.stop(); motion.stop(); render(); }
   parentUnlocked = false;
   parentChallenge = createParentChallenge(Math.random,parentChallenge);
   options.innerHTML = `<div class="dialog-heading"><h2 id="options-title">Adultos</h2><button class="close-dialog" data-action="close-options" aria-label="Cerrar">×</button></div><form id="parent-form" autocomplete="off"><label for="parent-answer" class="parent-challenge">${parentChallenge.a} × ${parentChallenge.b} = ?</label><input id="parent-answer" name="answer" inputmode="numeric" pattern="[0-9]+" aria-label="Resultado de la multiplicación" required><button class="gate-submit" type="submit" aria-label="Entrar">→</button><span id="parent-error" role="status"></span></form>`;
@@ -156,6 +184,8 @@ document.addEventListener('click', event => {
   if (transition.open) return;
   const action = target.dataset.action;
   if (['voice','effects','motion','reset-score','new-question'].includes(action) && (!parentUnlocked || !options.open)) return;
+  if (target.dataset.theme && parentUnlocked && options.open) { theme.set(target.dataset.theme); renderParentOptions(); options.querySelector(`[data-theme="${theme.mode}"]`).focus(); return; }
+  if (target.dataset.font && parentUnlocked && options.open) { readingFont=target.dataset.font; document.documentElement.dataset.readingFont=readingFont; try {localStorage.setItem('cole-aventura-reading-font',readingFont);} catch {} renderParentOptions(); options.querySelector(`[data-font="${readingFont}"]`).focus(); return; }
   if (target.dataset.game) { startGame(target.dataset.game); return; }
   if (action === 'home') { showHome(); return; }
   if (action === 'options') { openOptions(); return; }
@@ -172,7 +202,29 @@ document.addEventListener('click', event => {
     audio.toggleEffects(); target.setAttribute('aria-pressed',String(audio.effects)); target.innerHTML = `${icon('effects',!audio.effects)} Sonidos`;
     return;
   }
-  if (scene !== 'game' || paused || solved) return;
+  if (paused || solved || scene === 'home') return;
+  if (scene === 'story') {
+    if (target.hasAttribute('data-word')) {
+      scores.touch(); renderControls();
+      main.querySelectorAll('[data-word]').forEach(node=>node.classList.remove('speaking-word'));
+      target.classList.add('speaking-word');
+      const token = story.pages[storyPage][Number(target.dataset.word)];
+      if (audio.voice) audio.speak(token.text.replace(/[.,!?¿¡]/g,''));
+      else { feedback='🔇'; main.querySelector('.feedback').textContent=feedback; }
+    }
+    if (action === 'story-next') {
+      audio.stop(); scores.touch(); feedback='';
+      if (storyPage < story.pages.length-1) storyPage++; else storyQuestion=true;
+      render(); motion.enter(main);
+    }
+    if (target.hasAttribute('data-story-answer')) {
+      solved = target.dataset.storyAnswer === story.question.answer;
+      feedback = solved ? '✓' : '↻';
+      if (solved) { scores.award(questionId); render(); showTransition(); scheduleAdvance(); }
+      else { scores.touch(); render(); }
+    }
+    return;
+  }
   if (target.hasAttribute('data-counter')) {
     scores.touch(); renderControls();
     const active = !counted.includes(target.dataset.counter);
@@ -196,17 +248,17 @@ options.addEventListener('close',()=>{
   const requestNext = options.dataset.next === 'true'; delete options.dataset.next;
   parentUnlocked = false; options.innerHTML='';
   if (requestNext) { paused = document.hidden; scores.touch(); nextQuestion(); return; }
-  if (scene === 'game' && !document.hidden) { paused = false; scores.touch(); render(); if (solved) scheduleAdvance(); else audio.speak(question.prompt); }
+  if (scene !== 'home' && !document.hidden) { paused = false; scores.touch(); render(); if (solved) scheduleAdvance(); else if (scene === 'game') audio.speak(question.prompt); }
   else renderControls();
   controls.querySelector('[data-action="options"]').focus();
 });
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { if (scene === 'game' && !transition.open) paused = true; cancelAdvance(); audio.stop(); motion.stop(); if (!transition.open) render(); } else {
-    if (scene === 'game' && !options.open) { paused = false; render(); if (solved) scheduleAdvance(); } else renderControls();
+  if (document.hidden) { if (scene !== 'home' && !transition.open) paused = true; cancelAdvance(); audio.stop(); motion.stop(); if (!transition.open) render(); } else {
+    if (scene !== 'home' && !options.open) { paused = false; render(); if (solved) scheduleAdvance(); } else renderControls();
   }
 });
 window.addEventListener('pageshow',event=>{
-  if (event.persisted && !document.hidden && scene === 'game' && !options.open) { paused = false; render(); if (solved) scheduleAdvance(); }
+  if (event.persisted && !document.hidden && scene !== 'home' && !options.open) { paused = false; render(); if (solved) scheduleAdvance(); }
 });
 window.addEventListener('pagehide', () => { cancelAdvance(); audio.stop(); motion.stop(); });
 window.addEventListener('storage', event => { if (event.key === 'cole-aventura-session-v1') renderControls(); });

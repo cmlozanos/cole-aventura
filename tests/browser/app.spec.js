@@ -146,7 +146,7 @@ test('inicio desbloqueado, puntos por reto una vez y opciones manuales',async({p
   await expect(page.locator('#score strong')).toHaveText('1');
   await expect(page.locator('#transition')).not.toBeVisible({timeout:5000});
   await page.getByRole('button',{name:'Inicio',exact:true}).click();
-  await expect(page.locator('[data-game]')).toHaveCount(7);
+  await expect(page.locator('[data-game]')).toHaveCount(8);
   await expect(page.locator('[data-game]:disabled')).toHaveCount(0);
   await expect(page.locator('#score strong')).toHaveText('1');
   await page.reload();
@@ -299,4 +299,92 @@ test('BFCache reanuda transición y otro reto manual solo genera una pregunta',a
   await expect(page.locator('#options')).not.toBeVisible();
   await expect(page.locator('[data-answer]').first()).toBeEnabled();
   await expect(page.getByText('Pausa',{exact:true})).toHaveCount(0);
+});
+
+test('día noche sistema siguen preferencia y guardan elección manual',async({page})=>{
+  await page.emulateMedia({colorScheme:'dark'});await prepare(page);
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+  await page.emulateMedia({colorScheme:'light'});
+  await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+  await unlockParents(page);await page.locator('[data-theme="dark"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+  await page.getByRole('button',{name:'Cerrar',exact:true}).click();await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+  await unlockParents(page);await page.locator('[data-theme="system"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+  await page.locator('[data-font="print"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-reading-font','print');
+  await page.getByRole('button',{name:'Cerrar',exact:true}).click();await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-reading-font','print');
+});
+
+test('cuentos sílabas palabras pulsables audio consentido y comprensión',async({page})=>{
+  await prepare(page);await page.getByRole('button',{name:'Inicio',exact:true}).click();
+  await page.locator('[data-game="stories"]').click();
+  await expect(page.locator('[data-word]').first()).toBeVisible();
+  await expect(page.locator('.reading-syllable').first()).toBeVisible();
+  await page.locator('[data-word]').first().click();
+  expect(await page.evaluate(()=>window.audioCalls.speech)).toBe(0);
+  await unlockParents(page);await page.getByRole('button',{name:'Voz',exact:true}).click();
+  await page.getByRole('button',{name:'Cerrar',exact:true}).click();
+  await page.locator('[data-word]').first().click();
+  expect(await page.evaluate(()=>window.audioCalls.speech)).toBe(1);
+  const pages=[];
+  for(let i=0;i<3;i++){
+    pages.push(await page.locator('.story-page').innerText());
+    for(const viewport of [{width:320,height:568},{width:667,height:375},{width:768,height:1024}]){
+      await page.setViewportSize(viewport);await page.evaluate(()=>document.fonts.ready);
+      expect(await page.evaluate(()=>({scroll:document.documentElement.scrollHeight>innerHeight+1||document.documentElement.scrollWidth>innerWidth+1,clipped:[...document.querySelectorAll('.reading-word,.story-footer button')].some(n=>{const r=n.getBoundingClientRect();return r.top<0||r.bottom>innerHeight+1||r.left<0||r.right>innerWidth+1;})}))).toEqual({scroll:false,clipped:false});
+    }
+    await page.getByRole('button',{name:'Siguiente página',exact:true}).click();
+  }
+  await expect(page.locator('[data-story-answer]')).toHaveCount(4);
+  const choices=await page.locator('[data-story-answer]').evaluateAll(nodes=>nodes.map(n=>n.dataset.storyAnswer));
+  const answer=choices.find(choice=>pages[0].toLocaleLowerCase('es').includes(choice));
+  expect(answer).toBeTruthy();
+  await page.locator('[data-story-answer]').filter({hasText:answer}).click();
+  await expect(page.locator('.transition-score')).toContainText('1');
+  await expect(page.locator('#transition')).not.toBeVisible({timeout:1800});
+  await expect(page.locator('[data-word]').first()).toBeVisible();
+});
+
+test('fuentes locales y temas completos sin scroll en adultos',async({page})=>{
+  await prepare(page);await page.evaluate(()=>document.fonts.ready);
+  expect(await page.evaluate(()=>document.fonts.check('24px "Playwrite ES"','a g ñ á é í ó ú ü'))).toBe(true);
+  expect(await page.evaluate(()=>document.fonts.check('24px Andika','a g ñ á é í ó ú ü'))).toBe(true);
+  await unlockParents(page);
+  for(const mode of ['dark','light']){
+    await page.locator(`[data-theme="${mode}"]`).click();
+    for(const viewport of [{width:320,height:568},{width:667,height:375}]){
+      await page.setViewportSize(viewport);
+      expect(await page.locator('#options').evaluate(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1&&n.scrollHeight<=n.clientHeight+1;})).toBe(true);
+    }
+  }
+});
+
+test('cuentos y fuentes funcionan offline con los audios apagados',async({page,context,browserName})=>{
+  test.skip(browserName!=='chromium','Navegación offline real cubierta con Chromium; limitación de runtime WebKit documentada.');
+  await prepare(page);await page.evaluate(()=>navigator.serviceWorker.ready);
+  await expect.poll(()=>page.evaluate(()=>!!navigator.serviceWorker.controller)).toBe(true);
+  await context.setOffline(true);await page.reload();
+  await page.getByRole('button',{name:'Inicio',exact:true}).click();await page.locator('[data-game="stories"]').click();
+  await page.evaluate(()=>document.fonts.ready);
+  await expect(page.locator('[data-word]').first()).toBeVisible();
+  expect(await page.evaluate(()=>document.fonts.check('24px "Playwrite ES"','ñá'))).toBe(true);
+  await page.locator('[data-word]').first().click();
+  expect(await page.evaluate(()=>window.audioCalls)).toEqual({speech:0,contexts:0});
+  await context.setOffline(false);
+});
+
+test('colores de texto y botones legibles en ambos temas',async({page})=>{
+  await prepare(page);
+  for(const colorScheme of ['light','dark']){
+    await page.emulateMedia({colorScheme});await page.waitForTimeout(200);
+    const ratio=await page.locator('header button').first().evaluate(n=>{
+      const rgb=s=>s.match(/[\d.]+/g).slice(0,3).map(Number).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
+      const lum=c=>c[0]*.2126+c[1]*.7152+c[2]*.0722;
+      const s=getComputedStyle(n);const a=lum(rgb(s.color)),b=lum(rgb(s.backgroundColor));return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+    });
+    expect(ratio).toBeGreaterThan(4.5);
+  }
 });
