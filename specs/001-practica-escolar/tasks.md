@@ -49,3 +49,9 @@
 - Decorador transversal seguro e idempotente, sin partir glifos ni alterar atributos/voz.
 - Sustituir marca cromática por línea fina discreta conservando palabra ligada.
 - Probar errores, confirmación, menús, ejercicios, cuentos, fuente, nombres accesibles y no-scroll.
+
+## Tablet antigua
+- Reproducir motor95 y viewports tablet/rotación, diferenciar de Android físico.
+- Corregir medida visible y cabecera, layout home corto y diálogo teclado.
+- Centralizar iconos de títulos sin alterar texto/sílabas.
+- Verificar suite moderna, regresión95, PWA y limpieza temporal acotada.

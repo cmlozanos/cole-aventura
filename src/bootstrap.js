@@ -1,3 +1,5 @@
+import { trackViewport } from './viewport.js';
+trackViewport(window);
 import { observeSyllables } from './syllables.js';
 observeSyllables(document.body);
 const loader = document.querySelector('#boot-loader');

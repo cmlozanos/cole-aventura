@@ -63,3 +63,9 @@ El selector nativo de aspecto muestra solo iconos (◐/☀/☾), con nombres acc
 ## Ayuda silábica discreta y letra continua (matización vigente)
 
 Se descarta color alterno por sílaba y división de glifos en spans: cada palabra conserva un único nodo de texto para mantener uniones/ligaduras reales de Playwrite ES. Solo una línea fina segmentada bajo las sílabas, mismo color de texto, sin espacios, guiones, animaciones de letras ni cambios de tamaño. Metadatos silábicos no se pronuncian. El decorador no reescribe nodos sin palabras conocidas, evitando bucles de MutationObserver. Pistas de color de temas no implican colorear letras por sílabas.
+
+## Galaxy Tab4 y títulos iconográficos
+
+Petición explícita de investigar/emular scroll y compatibilidad, más iconos en títulos. Se prueba Chromium95 real desktop con viewport tablet, no solo UA; límites físicos documentados en GALAXY-TAB4.md. Causas reproducidas: home550–600ancho corto heredaba cinco filas que no caben y fuente ligada hacía cabecera más alta que su pista fija. Riesgo confirmado de100vh frente barras Android y dvh no soportado en95, corregido con medición de viewport visible. No se oculta overflow ni reducen globalmente botones.
+
+Todos los títulos de matemáticas/cuento/comprensión llevan SVG semántico decorativo por tipo, manteniendo texto/nombre/sílabas. Sin nuevas librerías ni recursos externos. Archivo temporal de navegador antiguo acotado y excluido de Git; se limpia tras validar. Tooling reproducible declarado en Makefile/tools existentes y nueva prueba browser, con ejecutable explícito.

@@ -21,3 +21,6 @@ Modo día/noche/sistema persistente con controles protegidos de adultos. Tipogra
 
 ## Sílabas discretas transversales (vigente)
 Apoyo silábico en todo el vocabulario visible. Palabras completas en una sola corrida de texto ligada, sin separación de letras/guiones/espacios añadidos ni colores alternos. Solo subrayado fino segmentado, mismo color de texto. Voz y accesibilidad leen palabras íntegras. Diccionario explícito y test de cobertura; iconos/cifras no se silabean.
+
+## Galaxy Tab4 e iconos (vigente)
+Altura de área visible adaptada a navegador antiguo/standalone/barras/teclado; no scroll por layout ni recorte. Mantener botones tocables y fuente ligada. Títulos de todas las actividades con SVG semántico además de texto accesible. Compatibilidad motor95 comprobada con límites de emulación declarados.

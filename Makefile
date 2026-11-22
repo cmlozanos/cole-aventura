@@ -15,3 +15,8 @@ test-browser: build
 	npm run test:e2e
 check:
 	npm run check
+
+.PHONY: test-tab4
+test-tab4: build
+	@test -n "$(CHROME95_PATH)" || (echo 'Set CHROME95_PATH to an existing Chromium 95 executable'; exit 1)
+	CHROME95_PATH="$(CHROME95_PATH)" npm run test:e2e -- tests/browser/tab4.spec.js --project=chrome95

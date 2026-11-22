@@ -48,3 +48,7 @@ No hay selector de familia ni preferencia print activa. Todos los consumidores d
 ## Sílabas transversales (vigente)
 
 `syllable-lexicon.js` cubre vocabulario visible existente; añadir cualquier palabra nueva exige revisar segmentación y test de cobertura. `syllables.js` decora nodos de texto sin tocar HTML/atributos/valores/iconos ni motor de voz. MutationObserver aplica a renders y mensajes dinámicos, desconecta durante su propio cambio y no duplica spans. Los tokens de cuentos ya marcados quedan excluidos. No confundir apoyo por sílabas con acentuación tónica automática.
+
+## Viewport e iconos de títulos
+
+`viewport.js` fija --app-height desde área visible real; no reintroducir alturas100dvh sin fallback. Las pruebas de rotación esperan el evento resize del navegador antes de medir el layout estabilizado, en lugar de asumir sincronía con setViewportSize. `topic-icons.js` centraliza iconos SVG semánticos para todos los títulos de ejercicios/cuentos; no inferirlos desde la traducción. Mantener aria-hidden y texto original silabeado.

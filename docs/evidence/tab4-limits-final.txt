@@ -1,0 +1,11 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test tests/browser/app.spec.js --grep límites visuales
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:123:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (862ms)
+  ✓  2 [webkit] › tests/browser/app.spec.js:123:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (1.0s)
+
+  2 passed (3.3s)

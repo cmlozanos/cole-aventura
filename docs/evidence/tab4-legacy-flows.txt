@@ -1,0 +1,13 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test tests/browser/app.spec.js --project=chrome95 -g error no avanza|puerta de adultos|cuentos sílabas|offline real
+
+
+Running 4 tests using 1 worker
+
+  ✓  1 [chrome95] › tests/browser/app.spec.js:65:1 › error no avanza y acierto cubre toda la ventana sin interacción (2.5s)
+  ✓  2 [chrome95] › tests/browser/app.spec.js:112:1 › offline real Chromium y no borra progreso antiguo (204ms)
+  ✓  3 [chrome95] › tests/browser/app.spec.js:214:1 › puerta de adultos bloquea configuración y se renueva tras cerrar (436ms)
+  ✓  4 [chrome95] › tests/browser/app.spec.js:324:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (2.0s)
+
+  4 passed (5.8s)

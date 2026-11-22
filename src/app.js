@@ -1,3 +1,4 @@
+import { topicIcon } from './topic-icons.js';
 import { createTheme } from './theme.js';
 import { createStory, renderWord } from './reading.js';
 import { activities } from './catalog.js';
@@ -72,7 +73,7 @@ function render() {
     return;
   }
   if (scene === 'story') { renderStory(); return; }
-  main.innerHTML = `<h1>${esc(question.prompt)}</h1><section class="picture" aria-label="Dibujos del reto">${question.visual.kind === 'shape' && !assisted && !solved ? '<div class="shape-cue" aria-hidden="true">?</div>' : renderLearningVisual(question,assisted,solved)}</section><div class="answers" role="group" aria-label="Elige una respuesta">${question.choices.map(choice => `<button data-answer="${esc(choice)}" aria-label="${esc(choice)}" class="answer ${selected === choice ? (solved ? 'correct' : 'retry') : ''}" ${solved || paused ? 'disabled' : ''}>${question.visual.kind === 'shape' ? `<span class="choice-shape" style="transform:rotate(${question.angle}deg)">${shapeSvg(shapes[choice],true)}</span>` : esc(choice)}</button>`).join('')}</div><div class="celebration" aria-hidden="true">${solved ? '<i>★</i>'.repeat(7) : ''}</div><p class="feedback ${solved ? 'success' : ''}" role="status" aria-live="polite">${esc(feedback)}</p><p class="sr-only" id="audio-status" role="status"></p>`;
+  main.innerHTML = `<h1 class="exercise-heading">${topicIcon(question.topicId)}<span>${esc(question.prompt)}</span></h1><section class="picture" aria-label="Dibujos del reto">${question.visual.kind === 'shape' && !assisted && !solved ? '<div class="shape-cue" aria-hidden="true">?</div>' : renderLearningVisual(question,assisted,solved)}</section><div class="answers" role="group" aria-label="Elige una respuesta">${question.choices.map(choice => `<button data-answer="${esc(choice)}" aria-label="${esc(choice)}" class="answer ${selected === choice ? (solved ? 'correct' : 'retry') : ''}" ${solved || paused ? 'disabled' : ''}>${question.visual.kind === 'shape' ? `<span class="choice-shape" style="transform:rotate(${question.angle}deg)">${shapeSvg(shapes[choice],true)}</span>` : esc(choice)}</button>`).join('')}</div><div class="celebration" aria-hidden="true">${solved ? '<i>★</i>'.repeat(7) : ''}</div><p class="feedback ${solved ? 'success' : ''}" role="status" aria-live="polite">${esc(feedback)}</p><p class="sr-only" id="audio-status" role="status"></p>`;
   main.querySelectorAll('[data-counter]').forEach(counter => {
     const active = counted.includes(counter.dataset.counter);
     counter.setAttribute('aria-pressed',String(active));
@@ -133,8 +134,8 @@ function startStory() {
 }
 function renderStory() {
   const content = storyQuestion
-    ? `<h1>${esc(story.question.prompt)}</h1><div class="story-answers">${story.question.choices.map(choice=>`<button class="answer" data-story-answer="${esc(choice)}" ${paused || solved ? 'disabled' : ''}>${esc(choice)}</button>`).join('')}</div>`
-    : `<h1>${esc(story.title)}</h1><div class="story-page" role="group" aria-label="Página ${storyPage+1} de ${story.pages.length}">${story.pages[storyPage].map((token,index)=>renderWord(token,index)).join(' ')}</div>`;
+    ? `<h1 class="exercise-heading">${topicIcon('stories')}<span>${esc(story.question.prompt)}</span></h1><div class="story-answers">${story.question.choices.map(choice=>`<button class="answer" data-story-answer="${esc(choice)}" ${paused || solved ? 'disabled' : ''}>${esc(choice)}</button>`).join('')}</div>`
+    : `<h1 class="exercise-heading">${topicIcon('stories')}<span>${esc(story.title)}</span></h1><div class="story-page" role="group" aria-label="Página ${storyPage+1} de ${story.pages.length}">${story.pages[storyPage].map((token,index)=>renderWord(token,index)).join(' ')}</div>`;
   main.innerHTML = `<div class="story-scene" aria-hidden="true">${story.symbol}</div>${content}<div class="story-footer"><span class="page-dots" aria-label="${storyQuestion ? 'Pregunta' : `Página ${storyPage+1} de ${story.pages.length}`}">${story.pages.map((_,i)=>`<i class="${i === storyPage && !storyQuestion ? 'active' : ''}"></i>`).join('')}</span>${!storyQuestion ? `<button data-action="story-next" aria-label="Siguiente página" ${paused ? 'disabled' : ''}>→</button>` : ''}</div><p class="feedback" role="status">${esc(feedback)}</p>`;
   main.querySelectorAll('[data-word]').forEach(node=>{node.disabled=paused;});
 }

@@ -1,0 +1,11 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test tests/browser/tab4.spec.js --project=chrome95
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chrome95] › tests/browser/tab4.spec.js:13:1 › Tab4 tablet viewport orientations home all topics stories and title icons (21.6s)
+  ✓  2 [chrome95] › tests/browser/tab4.spec.js:35:1 › legacy toolbar and keyboard visual viewport height without clipping (1.5s)
+
+  2 passed (23.7s)

@@ -67,3 +67,7 @@ Toda la interfaz usa **Playwrite ES**, la misma letra ligada de «Elige tu avent
 Menús, botones, consignas, ajustes, errores y cuentos comparten un subrayado silábico fino, del mismo color que el texto. Se conservan palabras, tildes y puntuación completas para voz y accesibilidad. No se añaden guiones ni underscores al texto. El vocabulario actual se segmenta explícitamente y se valida; no se afirma resolver cualquier palabra externa automáticamente. El selector de aspecto usa iconos para evitar texto nativo que no puede colorearse por sílabas. Reiniciar puntos requiere dos toques: solicitar y confirmar.
 
 Las palabras no se fragmentan: mantienen un único texto y su letra ligada continua, sin colores alternos ni animaciones por letras.
+
+### Tablets antiguas (Galaxy Tab4)
+
+Ajuste de altura visible para Chrome95, barras y teclado, sin depender de100dvh. Inicio y cabecera adaptados a orientación/anchura efectiva; no se esconden controles con overflow. Títulos con iconos SVG por actividad. `make test-tab4 CHROME95_PATH=/ruta/a/Chromium95` ejecuta regresión específica sin descargar navegador. Investigación y alcance en `docs/GALAXY-TAB4.md`: motor95 real comprobado en escritorio; instalación/GPU/barras de la tablet física requieren confirmación en el dispositivo.

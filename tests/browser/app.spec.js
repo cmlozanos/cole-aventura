@@ -93,6 +93,7 @@ test('todos los tipos y ayudas caben sin scroll ni contenido cortado',async({pag
       await page.getByRole('button',{name:q.choices.find(c=>c!==q.answer),exact:true}).click();
       for(const viewport of viewports){
         await page.setViewportSize(viewport);
+        await expect.poll(()=>page.evaluate(()=>parseInt(document.documentElement.style.getPropertyValue('--app-height')))).toBe(viewport.height);
         const layout=await page.evaluate(()=>{
           const boxes=[...document.querySelectorAll('h1,.lv-visual,.answer,.feedback,header button')].map(n=>n.getBoundingClientRect());
           const picture=document.querySelector('.picture').getBoundingClientRect();
@@ -123,13 +124,15 @@ test('límites visuales 10 objetos, ayudas y problemas largos sin scroll',async(
   await prepare(page);
   for(const viewport of [{width:320,height:568},{width:360,height:640},{width:667,height:375}]){
     await page.setViewportSize(viewport);
+        await expect.poll(()=>page.evaluate(()=>parseInt(document.documentElement.style.getPropertyValue('--app-height')))).toBe(viewport.height);
     for(const v of [{kind:'operation',a:10,b:0,operator:'+'},{kind:'operation',a:10,b:10,operator:'−'},{kind:'compare',a:10,b:9},{kind:'count',count:10}]){
       await page.evaluate(async visual=>{
         const {renderLearningVisual}=await import('./src/learning-visuals.js');
-        document.querySelector('h1').textContent='Hugo tiene 10 pegatinas y regala 10. ¿Cuántas le quedan?';
+        document.querySelector('h1>span').textContent='Hugo tiene 10 pegatinas y regala 10. ¿Cuántas le quedan?';
         document.querySelector('.picture').innerHTML=renderLearningVisual({visual},true,false);
         document.querySelector('.feedback').textContent='↻ Empieza en 10 y cuenta 10 hacia atrás.';
       },v);
+      await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
       expect(await page.evaluate(()=>{
         const p=document.querySelector('.picture').getBoundingClientRect();const v=document.querySelector('.lv-visual').getBoundingClientRect();
         return document.documentElement.scrollHeight<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1&&v.top>=p.top-1&&v.bottom<=p.bottom+1;
@@ -158,6 +161,7 @@ test('inicio desbloqueado, puntos por reto una vez y opciones manuales',async({p
   await page.getByRole('button',{name:'Cerrar',exact:true}).click();
   for(const viewport of [{width:320,height:568},{width:667,height:375},{width:768,height:1024}]){
     await page.setViewportSize(viewport);
+        await expect.poll(()=>page.evaluate(()=>parseInt(document.documentElement.style.getPropertyValue('--app-height')))).toBe(viewport.height);
     const layout=await page.evaluate(()=>({scroll:document.documentElement.scrollHeight>innerHeight+1||document.documentElement.scrollWidth>innerWidth+1,outside:[...document.querySelectorAll('[data-game],header button,#score')].some(n=>{const b=n.getBoundingClientRect();return b.left<0||b.right>innerWidth+1||b.top<0||b.bottom>innerHeight+1;})}));
     expect(layout).toEqual({scroll:false,outside:false});
   }
@@ -236,6 +240,7 @@ test('puerta y controles adultos caben en móvil y horizontal; escapar no desblo
   await page.getByRole('button',{name:'Para adultos',exact:true}).click();
   for(const viewport of [{width:320,height:568},{width:667,height:375}]){
     await page.setViewportSize(viewport);
+        await expect.poll(()=>page.evaluate(()=>parseInt(document.documentElement.style.getPropertyValue('--app-height')))).toBe(viewport.height);
     expect(await page.locator('#options').evaluate(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1&&n.scrollHeight<=n.clientHeight+1;})).toBe(true);
   }
   await page.keyboard.press('Escape');
@@ -243,6 +248,7 @@ test('puerta y controles adultos caben en móvil y horizontal; escapar no desblo
   await unlockParents(page);
   for(const viewport of [{width:320,height:568},{width:667,height:375}]){
     await page.setViewportSize(viewport);
+        await expect.poll(()=>page.evaluate(()=>parseInt(document.documentElement.style.getPropertyValue('--app-height')))).toBe(viewport.height);
     expect(await page.locator('#options').evaluate(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1&&n.scrollHeight<=n.clientHeight+1;})).toBe(true);
   }
 });
@@ -330,7 +336,8 @@ test('cuentos sílabas palabras pulsables audio consentido y comprensión',async
   for(let i=0;i<3;i++){
     pages.push(await page.locator('.story-page').innerText());
     for(const viewport of [{width:320,height:568},{width:667,height:375},{width:768,height:1024}]){
-      await page.setViewportSize(viewport);await page.evaluate(()=>document.fonts.ready);
+      await page.setViewportSize(viewport);
+        await expect.poll(()=>page.evaluate(()=>parseInt(document.documentElement.style.getPropertyValue('--app-height')))).toBe(viewport.height);await page.evaluate(()=>document.fonts.ready);
       expect(await page.evaluate(()=>({scroll:document.documentElement.scrollHeight>innerHeight+1||document.documentElement.scrollWidth>innerWidth+1,clipped:[...document.querySelectorAll('.reading-word,.story-footer button')].some(n=>{const r=n.getBoundingClientRect();return r.top<0||r.bottom>innerHeight+1||r.left<0||r.right>innerWidth+1;})}))).toEqual({scroll:false,clipped:false});
     }
     await page.getByRole('button',{name:'Siguiente página',exact:true}).click();
@@ -353,6 +360,7 @@ test('fuentes locales y temas completos sin scroll en adultos',async({page})=>{
     await unlockParents(page);
     for(const viewport of [{width:320,height:568},{width:667,height:375}]){
       await page.setViewportSize(viewport);
+        await expect.poll(()=>page.evaluate(()=>parseInt(document.documentElement.style.getPropertyValue('--app-height')))).toBe(viewport.height);
       expect(await page.locator('#options').evaluate(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1&&n.scrollHeight<=n.clientHeight+1;})).toBe(true);
     }
     await expect(page.locator('#options [data-theme]')).toHaveCount(0);
@@ -398,6 +406,7 @@ test('aspecto público no cambia pregunta puntos ni abre puerta adulta',async({p
   }
   for(const viewport of [{width:320,height:568},{width:667,height:375}]){
     await page.setViewportSize(viewport);
+        await expect.poll(()=>page.evaluate(()=>parseInt(document.documentElement.style.getPropertyValue('--app-height')))).toBe(viewport.height);
     expect(await page.getByRole('combobox',{name:'Aspecto',exact:true}).evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight;})).toBe(true);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight)).toBe(true);
   }
