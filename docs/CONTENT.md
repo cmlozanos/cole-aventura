@@ -16,3 +16,7 @@
 5. Probar límites, respuestas únicas, explicaciones, rutas de error, progreso aislado, móvil y uso offline. Revisar el contenido con un adulto/docente.
 
 El primer pack usa problemas de una operación con enteros 0–10, sumas ≤10 y restas ≥0. En figuras, los rectángulos dibujados no son cuadrados para evitar opciones ambiguas; no se enseña que un cuadrado no pueda pertenecer a la familia de los rectángulos. El primer banco no cubre todos los enfoques didácticos de cada tema.
+
+## Presentación infantil vigente
+
+La portada ya no expone cursos sin actividades ni tablas de progreso: se centra en 1.º. `src/learning-visuals.js` convierte el contrato de pregunta en objetos SVG manipulables, grupos y recta numérica; `src/child.css` adapta las superficies infantiles sin cambiar la zona familiar. Las preguntas siguen siendo puras y los IDs de progreso permanecen estables. Cambiar de actividad o curso en una futura ampliación debe conservar esta separación y probar el nuevo recorrido infantil; no añadir menús vacíos por anticipado.

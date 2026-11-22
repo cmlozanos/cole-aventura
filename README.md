@@ -10,9 +10,9 @@ Una PWA de práctica escolar por cursos de Educación Primaria española. Sesion
 - Distinguir el mayor y el menor.
 - Sumar hasta 10 y restar sin resultados negativos, incluido el cero.
 - Resolver problemas breves de una operación.
-- Reconocer círculo, cuadrado, rectángulo y triángulo.
+- Reconocer círculo, cuadrado, rectángulo y triángulo escuchando el nombre y tocando su dibujo.
 
-Cada tema ofrece cinco preguntas aleatorias. «Repasar todo» combina doce, dos por tema. Las respuestas se comprueban antes de avanzar; los errores permiten reintentar con una pista. El resumen distingue aciertos independientes de preguntas resueltas con ayuda. No hay cronómetro, notas oficiales ni rankings. Los cursos de 2.º a 6.º ya tienen su espacio, pero no se inventa contenido para ellos.
+Cada juego ofrece cinco preguntas. «¡Empezar!» elige seis, una por tema. Tocar una respuesta la comprueba automáticamente; los errores dan apoyo visual sin avanzar. Tras acertar, aparece la explicación y el siguiente reto llega automáticamente, con opción de pausa o siguiente manual. La voz lee la pregunta al empezar y puede silenciarse. Los objetos se pueden tocar para marcar lo contado; las restas tachan los objetos que se quitan y las pistas muestran la recta numérica. El final celebra los retos practicados; los detalles de aciertos y ayuda quedan en Zona familiar. No hay cronómetro, notas oficiales ni rankings. La pantalla infantil se centra exclusivamente en 1.º de Primaria; el modelo conserva la capacidad de incorporar nuevos cursos sin mostrarlos vacíos a los niños.
 
 ## Usar e instalar
 

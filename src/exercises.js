@@ -44,7 +44,7 @@ function questionFor(topicId, rng) {
   if (topicId === 'shapes') {
     const selected = shapes[integer(shapes.length - 1)];
     return {
-      prompt: '¿Cómo se llama esta figura?', answer: selected.name,
+      prompt: `Toca: ${selected.name.toLowerCase()}.`, answer: selected.name,
       choices: shapes.map(({ name }) => name), explanation: selected.description,
       hint: 'Fíjate en sus lados y sus esquinas.',
       visual: { kind: 'shape', shape: selected.shape },

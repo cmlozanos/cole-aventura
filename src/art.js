@@ -11,5 +11,5 @@ export const garden = `<svg viewBox="0 0 450 320" role="img" aria-label="Un pequ
 export function shapeSvg(shape, decorative = false) {
   const paths = {circle:'<circle cx="60" cy="60" r="43"/>',square:'<rect x="18" y="18" width="84" height="84" rx="5"/>',rectangle:'<rect x="5" y="32" width="110" height="56" rx="5"/>',triangle:'<path d="M60 12L111 103H9Z" stroke-linejoin="round"/>'};
   const descriptions = {circle:'Una línea curva cerrada, sin lados rectos ni esquinas.',square:'Cuatro lados iguales y cuatro esquinas rectas.',rectangle:'Cuatro esquinas rectas, dos lados largos y dos cortos.',triangle:'Tres lados rectos y tres esquinas.'};
-  return `<svg viewBox="0 0 120 120" ${decorative ? 'aria-hidden="true"' : 'role="img" aria-label="${descriptions[shape]}"'} fill="#e7b46b" stroke="#9e662a" stroke-width="3">${paths[shape] || paths.circle}</svg>`;
+  return `<svg viewBox="0 0 120 120" ${decorative ? 'aria-hidden="true"' : `role="img" aria-label="${descriptions[shape]}"`} fill="#e7b46b" stroke="#9e662a" stroke-width="3">${paths[shape] || paths.circle}</svg>`;
 }
