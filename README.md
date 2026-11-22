@@ -44,3 +44,7 @@ make test-browser  # Chromium y WebKit instalados
 La cabecera infantil muestra solo Inicio, pausa y acceso Adultos. **Voz, efectos y configuración ya no se exponen al niño**: cada apertura exige una multiplicación aleatoria. Al cerrar se bloquea de nuevo; no se guarda un acceso desbloqueado. Es una barrera local de uso, no una verificación de edad ni autenticación fuerte.
 
 Se retiran textos explicativos y acciones redundantes del diálogo. Tras acertar, el intervalo hasta siguiente reto ocupa toda la ventana con una celebración/indicador sin botones, sin interacción ni cierre por Escape; los puntos siguen visibles. No es una descarga simulada ni muestra porcentajes. Se cierra automáticamente al llegar el siguiente reto. Las consignas y pistas didácticas se conservan.
+
+### Recorrido rápido vigente
+
+La app abre directamente **Sorpresa**, alternando tipos de ejercicio sin repetir tema seguido. Cabecera: solo Inicio y Adultos; se retira pausa. Cerrar Adultos o volver a la app reanuda automáticamente. Consignas y feedback más breves, con operación simbólica y ayuda visual. La transición de acierto dura **650ms** (antes3,5s); el loader inicial solo espera la carga real, sin demora añadida.

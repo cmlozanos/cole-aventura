@@ -22,7 +22,7 @@ function questionFor(topicId, rng) {
   if (topicId === 'numbers') {
     const count = integer(9) + 1;
     return {
-      prompt: '¿Cuántos elementos hay?', answer: String(count),
+      prompt: '¿Cuántos?', answer: String(count),
       explanation: `Al contar de uno en uno llegamos a ${count}.`,
       hint: 'Señala cada elemento una sola vez mientras cuentas.',
       visual: { kind: 'count', count },
@@ -34,7 +34,7 @@ function questionFor(topicId, rng) {
     const greater = rng() < 0.5;
     const answer = String(greater ? Math.max(a, b) : Math.min(a, b));
     return {
-      prompt: `¿Qué número es ${greater ? 'mayor' : 'menor'}: ${a} o ${b}?`, answer,
+      prompt: `¿Cuál es ${greater ? 'mayor' : 'menor'}?`, answer,
       choices: [String(a), String(b)],
       explanation: `${answer} es ${greater ? 'mayor' : 'menor'} que ${answer === String(a) ? b : a}.`,
       hint: greater ? 'El mayor representa más cantidad.' : 'El menor representa menos cantidad.',
@@ -58,9 +58,9 @@ function questionFor(topicId, rng) {
   const name = ['Ana', 'Leo', 'Eva', 'Hugo'][integer(3)];
   const prompt = topicId === 'problems'
     ? addition
-      ? `${name} tiene ${a} pegatinas y recibe ${b} más. ¿Cuántas tiene ahora?`
-      : `${name} tiene ${a} pegatinas y regala ${b}. ¿Cuántas le quedan?`
-    : `¿Cuánto es ${a} ${operator} ${b}?`;
+      ? `${name} tiene ${a}. Recibe ${b}. ¿Cuántas hay?`
+      : `${name} tiene ${a}. Regala ${b}. ¿Cuántas quedan?`
+    : `${a} ${operator} ${b} = ?`;
   return {
     prompt, answer,
     explanation: `${a} ${operator} ${b} = ${answer}. ${addition ? 'Al juntar' : 'Al quitar'} contamos ${answer}.`,

@@ -12,3 +12,6 @@ Botón Inicio siempre accesible, todos los juegos disponibles. Contador general 
 
 ## Simplificación adulta y transición (vigente)
 Configurar exige multiplicación aleatoria en cada apertura. Eliminar párrafos explicativos de puntos/expiración y botones redundantes. Cabecera infantil Inicio/pausa/Adultos. Tras acertar, intervalo completo hasta siguiente pregunta cubierto por loader/dialog de ventana completa, sin interacción ni cierre por teclado; puntos visibles y cierre automático. Los errores permanecen en reto con ayuda. Conservar defaults de audio y no-scroll.
+
+## Recorrido rápido (vigente)
+Sin botón/texto Pausa. Sorpresa activa al cargar y alterna temas; Inicio permite cambiar manualmente. Minimizar lectura y transición modal a650ms. Reanudar automáticamente al cerrar Adultos/volver visible sin nuevos controles; mantener puntos/audio/puerta/no-scroll.

@@ -33,3 +33,9 @@ Investigación y comparación oficial en MOTION-RESEARCH.md. Se adoptan entradas
 Cabecera infantil: Inicio, pausa y acceso Adultos; voz/efectos/animaciones/reinicio/cambio manual de reto quedan detrás de multiplicación aleatoria2–9, nueva en cada apertura. Se elimina explicación de puntos/expiración y botones duplicados de continuar/cerrar: cierre es icono y reanudar sigue en cabecera. Puerta se bloquea al cerrar, también Escape. Se conservan nombres accesibles y error necesario, consignas de aprendizaje y avisos de fallo. No se presenta esta puerta local como autenticación o control parental fuerte.
 
 Tras acierto el tiempo existente hasta siguiente reto queda cubierto inmediatamente por dialog nativo de ventana completa, sin interacción; puntos visibles dentro del modal. No se puede pulsar controles de fondo ni cerrar con Escape/Tab/Enter. Los errores no abren loader. Al ocultar se detiene temporizador; al volver continúa automáticamente. Las fuentes y distinción entre transición y carga real están en MOTION-RESEARCH.md.
+
+## Menos lectura, sin pausa y sorpresa automática (petición posterior)
+
+Cabecera queda solo Inicio y Adultos. No hay botón ni texto «Pausa». Suspensión interna solo mientras documento oculto o diálogo adulto, con reanudación automática al volver/cerrar (también BFCache). La aplicación abre directamente el modo Sorpresa, que elige un tema diferente del anterior; Inicio conserva todos los temas y Sorpresa disponibles. Consignas reducidas a «¿Cuántos?», comparación corta y operación simbólica; problemas conservan acción y pregunta mínimas. Feedback visual ✓/↻ y ayuda gráfica en vez de más párrafos; voz opcional de acierto breve.
+
+Transición modal650ms en vez de3500ms (81% menos), sin añadir mínimo al loader de importación. Silencio inicial, puntos, expiración, no-scroll y puerta adulta se mantienen. No se recargan documentos globales ni se ejecutan suites ajenas: lectura dirigida de app/generador y tests afectados.

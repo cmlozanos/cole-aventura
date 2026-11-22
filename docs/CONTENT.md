@@ -32,3 +32,7 @@ Inicio expone los seis temas y sorpresa sin desbloqueos. `score-session.js` aís
 ## Configuración adulta vigente
 
 Los únicos controles infantiles son Inicio, pausa y acceso Adultos. `parent-gate.js` genera/valida multiplicación sin almacenar solución; el controlador destruye acceso al cerrar el diálogo. No se añaden opciones directamente a cabecera. La transición postacierto es `#transition` modal full-window sin controles, independiente de `#options` y del loader real de bootstrap. Los nuevos flujos deben probar fondo inoperable, teclado, autoreanudación, viewport y reduced-motion.
+
+## Recorrido rápido vigente
+
+Arranque en Sorpresa automático (sin botón inicial); selección manual disponible solo al volver a Inicio. No exponer pausa: suspender internamente por diálogo/visibilidad y reanudar automáticamente. Transición650ms, sin mínimos ficticios en bootstrap. Consignas cortas y operaciones simbólicas; las pistas gráficas y nombres accesibles siguen obligatorios.

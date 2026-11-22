@@ -30,3 +30,9 @@
 - Configuración oculta a niño, quitar explicaciones redundantes.
 - Full-window postacierto no interactivo, puntos y siguiente automático.
 - Regresiones teclado/modal/no-scroll, audio y sesión de puntos.
+
+## Recorrido rápido
+- Retirar pausa visible y reanudar configuración/visibilidad/BFCache automáticamente.
+- Abrir Sorpresa al cargar, alternar temas y conservar Inicio manual.
+- Consignas mínimas, feedback gráfico, transición650ms.
+- Revalidar recorridos afectados y publicación.
