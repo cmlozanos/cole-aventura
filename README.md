@@ -58,3 +58,6 @@ En el selector **Aspecto de la cabecera**, sin entrar en Adultos: ☀ Día, ☾ 
 **Inicio → Cuentos**: minicuentos aleatorios de tres páginas, con64 combinaciones locales y pregunta final. Palabras pulsables, sílabas en colores y subrayado sólido/punteado. Las sílabas están revisadas en el vocabulario de cuentos, no se adivinan para cualquier texto. La palabra se pronuncia completa (sin guiones) solo si un adulto ha activado Voz; por defecto sigue silenciada. Puede requerir una voz española instalada/conexión según navegador. No hay reconocimiento ni grabación de voz. Avance manual para leer sin prisa; acertar comprensión suma un punto, tocar palabras no.
 
 El aspecto es accesible para todos. El selector Día/Noche/Sistema no pide multiplicación ni cambia el ejercicio o los puntos; solo los demás ajustes permanecen protegidos.
+
+### Tipografía única vigente
+Toda la interfaz usa **Playwrite ES**, la misma letra ligada de «Elige tu aventura»: botones, cuentos, ajustes, puntos y mensajes. Se retira la alternativa de imprenta. La fuente se precarga desde la propia app y sigue disponible offline. El aspecto Día/Noche/Sistema continúa en cabecera, accesible para todos.

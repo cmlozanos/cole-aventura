@@ -1,7 +1,5 @@
-@font-face { font-family:Andika; src:url('../public/fonts/andika-regular.ttf') format('truetype'); font-weight:400; font-style:normal; font-display:swap; }
 @font-face { font-family:'Playwrite ES'; src:url('../public/fonts/playwrite-es.ttf') format('truetype'); font-weight:100 400; font-style:normal; font-display:swap; }
-:root { --page:#f3f6fc; --ink:#233e61; --surface:#fff; --button:#e5ecff; --button-ink:#284781; --soft:#fff5db; --line:#c5d2f1; --syllable-a:#244ba1; --syllable-b:#97364e; --reader:'Playwrite ES',Andika,sans-serif; font-family:Andika,sans-serif; background:var(--page); color:var(--ink); }
-:root[data-reading-font=print] { --reader:Andika,sans-serif; }
+:root { --page:#f3f6fc; --ink:#233e61; --surface:#fff; --button:#e5ecff; --button-ink:#284781; --soft:#fff5db; --line:#c5d2f1; --syllable-a:#244ba1; --syllable-b:#97364e; --reader:'Playwrite ES',cursive; font-family:var(--reader); background:var(--page); color:var(--ink); }
 :root[data-theme=dark] { --page:#141e30; --ink:#e7edf7; --surface:#202e44; --button:#30415f; --button-ink:#edf2ff; --soft:#3b3527; --line:#506585; --syllable-a:#a9ccff; --syllable-b:#ffb5ca; }
 @media(prefers-color-scheme:dark) { :root:not([data-theme]) { --page:#141e30; --ink:#e7edf7; --surface:#202e44; --button:#30415f; --button-ink:#edf2ff; --soft:#3b3527; --line:#506585; --syllable-a:#a9ccff; --syllable-b:#ffb5ca; } }
 body,dialog,#boot-loader,#transition,#transition::backdrop { background:var(--page); color:var(--ink); }
@@ -11,7 +9,7 @@ body,dialog,#boot-loader,#transition,#transition::backdrop { background:var(--pa
 .lv-empty { color:var(--ink); }
 .lv-sticker>path:first-child { stroke:var(--ink); }
 .lv-value,.lv-tick { color:var(--ink); }
-.parent-challenge,#parent-answer { font-family:Andika,sans-serif; }
+.parent-challenge,#parent-answer { font-family:var(--reader); }
 #parent-answer { background:var(--surface); color:var(--ink); border-color:var(--line); }
 .game-tile:nth-child(3n),.game-tile:nth-child(3n+1) { background:var(--surface); }
 .game-tile { box-shadow:0 3px 0 var(--line); }
@@ -19,9 +17,9 @@ body,dialog,#boot-loader,#transition,#transition::backdrop { background:var(--pa
 .random-tile { background:#355aca!important; color:white; }
 .random-tile>span { color:#ffdc70; }
 h1 { font-family:var(--reader); font-weight:400; line-height:1.7; font-size:clamp(20px,2.8vw,29px); }
-.game-tile strong,.feedback { font-family:Andika,sans-serif; font-weight:400; }
+.game-tile strong,.feedback { font-family:var(--reader); font-weight:400; }
 .feedback { color:var(--ink); }
-.score,.transition-score { font-family:Andika,sans-serif; }
+.score,.transition-score { font-family:var(--reader); }
 .preference-row { border:0; padding:0; margin:10px 0 0; display:flex; gap:6px; }
 .preference-row legend { font-size:13px; padding:0 0 5px; }
 .preference-row button { flex:1; min-height:44px; background:var(--button); color:var(--button-ink); border-radius:10px; padding:6px 4px; font-size:13px; }
@@ -73,3 +71,10 @@ h1 { font-family:var(--reader); font-weight:400; line-height:1.7; font-size:clam
 .theme-switch { font:inherit; font-size:13px; min-height:44px; max-width:115px; border:0; border-radius:16px; padding:5px 8px; background:var(--button); color:var(--button-ink); cursor:pointer; }
 .theme-switch:focus-visible { outline:3px solid #996014; outline-offset:2px; }
 @media(max-width:360px) { .theme-switch { max-width:106px; padding:5px; } }
+
+/* One linked school hand across every text surface, not just headings. */
+body,body *,body *::before,body *::after { font-family:var(--reader); font-synthesis:none; }
+button,input,select,option,strong,h2 { font-weight:400; }
+.game-tile strong { line-height:1.8; }
+.theme-switch { max-width:125px; font-size:12px; }
+#options .manual-actions button { line-height:1.8; }

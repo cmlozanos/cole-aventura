@@ -14,9 +14,6 @@ const controls = document.querySelector('.controls');
 const audio = createAudio(window);
 const motion = createMotion(window);
 const theme = createTheme(window);
-let readingFont = 'school';
-try { readingFont = localStorage.getItem('cole-aventura-reading-font') === 'print' ? 'print' : 'school'; } catch {}
-document.documentElement.dataset.readingFont = readingFont;
 let story = null;
 let storyPage = 0;
 let storyQuestion = false;
@@ -156,7 +153,7 @@ function showTransition() {
   transition.querySelector('.transition-card').focus({preventScroll:true});
 }
 function renderParentOptions() {
-  options.innerHTML = `<div class="dialog-heading"><h2 id="options-title">Adultos</h2><button class="close-dialog" data-action="close-options" aria-label="Cerrar">×</button></div><div class="manual-actions"><button data-action="voice" aria-pressed="${audio.voice}">${icon('voice',!audio.voice)} Voz</button><button data-action="effects" aria-pressed="${audio.effects}">${icon('effects',!audio.effects)} Sonidos</button><button data-action="motion" aria-pressed="${motion.enabled}">✦ Animaciones</button><button data-action="new-question" ${scene === 'home' ? 'disabled' : ''}>↻ Otro reto</button><button data-action="reset-score">☆ Reiniciar puntos</button></div><fieldset class="preference-row"><legend>Letra</legend><button data-font="school" aria-pressed="${readingFont === 'school'}">Escolar</button><button data-font="print" aria-pressed="${readingFont === 'print'}">Imprenta</button></fieldset>`;
+  options.innerHTML = `<div class="dialog-heading"><h2 id="options-title">Adultos</h2><button class="close-dialog" data-action="close-options" aria-label="Cerrar">×</button></div><div class="manual-actions"><button data-action="voice" aria-pressed="${audio.voice}">${icon('voice',!audio.voice)} Voz</button><button data-action="effects" aria-pressed="${audio.effects}">${icon('effects',!audio.effects)} Sonidos</button><button data-action="motion" aria-pressed="${motion.enabled}">✦ Animaciones</button><button data-action="new-question" ${scene === 'home' ? 'disabled' : ''}>↻ Otro reto</button><button data-action="reset-score">☆ Reiniciar puntos</button></div>`;
 }
 function openOptions() {
   if (transition.open) return;
@@ -187,7 +184,6 @@ document.addEventListener('click', event => {
   if (transition.open) return;
   const action = target.dataset.action;
   if (['voice','effects','motion','reset-score','new-question'].includes(action) && (!parentUnlocked || !options.open)) return;
-  if (target.dataset.font && parentUnlocked && options.open) { readingFont=target.dataset.font; document.documentElement.dataset.readingFont=readingFont; try {localStorage.setItem('cole-aventura-reading-font',readingFont);} catch {} renderParentOptions(); options.querySelector(`[data-font="${readingFont}"]`).focus(); return; }
   if (target.dataset.game) { startGame(target.dataset.game); return; }
   if (action === 'home') { showHome(); return; }
   if (action === 'options') { openOptions(); return; }

@@ -49,3 +49,7 @@ Cuentos queda disponible en Inicio, separado del modo Sorpresa matemático para 
 ## Aspecto público (corrección expresa)
 
 Día/Noche/Sistema deja de ser ajuste adulto. Se mueve a selector nativo compacto siempre disponible en cabecera, con nombre accesible Aspecto y los tres estados explícitos. No añade diálogo ni multiplicación, no cambia pregunta/puntos/audio. Letra y resto de controles permanecen protegidos. Se mantiene persistencia y seguimiento del sistema del módulo probado. Alcance mínimo: controlador/CSS/tests de consumidores de tema; no modificar modelos de lectura/sesión.
+
+## Fuente ligada única (corrección expresa)
+
+Por petición y referencia visual del usuario se aplica Playwrite ES (la de «Elige tu aventura») transversalmente: títulos, botones, etiquetas, cifras, selector público, cuentos, sílabas, puerta/configuración, loaders y mensajes. Se retira selector Escolar/Imprenta y no se lee la preferencia histórica de imprenta (sin borrar datos). Una sola familia CSS heredada, sin negrita sintética y con precarga local. SVG de iconos conserva su geometría. No se alteran sílabas, audio, puntos ni tema público.

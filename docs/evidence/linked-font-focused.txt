@@ -1,0 +1,11 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --grep misma letra ligada
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta (1.0s)
+  ✓  2 [webkit] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta (1.3s)
+
+  2 passed (6.6s)

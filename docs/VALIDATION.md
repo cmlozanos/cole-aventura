@@ -92,3 +92,9 @@ Resultado:97/97 tests puros+build y40/40 recorridos completos Chromium/WebKit en
 ## Aspecto público
 
 Cambio de acceso únicamente: selector nativo en cabecera para Día/Noche/Sistema, retirado de Adultos. Tests focales de tema público, persistencia, seguimiento sistema, configuración aún protegida y layout320×568/667×375 en ambos motores. No se repite suite global browser porque no cambian ejercicios/sesión/audio. Se reutilizan sus evidencias vigentes. Modelo/build verificado por check del proyecto. Evidencia public-theme-*.txt.
+
+## Fuente ligada transversal
+
+Inventario de consumidores reales: child.css/reading.css, controles nativos, etiquetas home, lectura, cifras/score, diálogos, loader/bootstrap y texto SVG. Playwrite ES única en todas las superficies con font-synthesis:none, sin selector alternativo. Regresión DOM comprueba fontFamily calculado de todos los nodos con texto en ejercicio/inicio/puerta/settings/cuento, incluso habiendo preferencia histórica print. Se revalidan layouts porque la letra ligada tiene métricas distintas; conservar no-scroll sin ocultar contenido.
+
+Resultados:97 tests puros/build verdes; suite browser46 verdes+1omitido (offline WebKit conocido) y1fallo de serialización CSS del propio test (WebKit devuelve nombre de familia sin comillas). Se normalizó solo las comillas de fontFamily; regresión focal2/2 en ambos motores verde. El layout y resto de recorridos no cambió tras ese ajuste de test. Capturas linked-font-home/mobile revisadas. No se modifican licencias/fuentes originales ni datos previos.

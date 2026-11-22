@@ -40,3 +40,7 @@ Arranque en Sorpresa automático (sin botón inicial); selección manual disponi
 ## Lectura y apariencia
 
 `theme.js` gestiona light/dark/system, escucha cambios sistema y persiste preferencia sin tocar sesión/audio. `reading.css` define paletas y fuentes locales. `reading.js` contiene vocabulario silabeado explícito y composición de minicuentos; no incorporar palabras sin segmentación validada. No usar algoritmos simples de vocales para texto arbitrario. Cada página debe caber desde320×568/667×375 y tener palabras con nombre accesible completo. El color no es único canal: subrayado sólido/punteado. `app.js` mantiene navegación de cuento independiente de generador matemático, con puntos por comprensión y voz condicionada al consentimiento adulto.
+
+## Tipografía ligada única (vigente)
+
+No hay selector de familia ni preferencia print activa. Todos los consumidores de texto heredan --reader=Playwrite ES, incluidos controles nativos y texto SVG. Mantener la misma fuente en nuevos botones/dialogs y probar métricas en móvil/horizontal; no reintroducir una familia distinta por conveniencia local.

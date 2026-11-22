@@ -1,0 +1,96 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test
+
+
+Running 48 tests using 1 worker
+
+  ✓   1 [chromium] › tests/browser/app.spec.js:40:1 › juego aleatorio, inicio accesible y audio silencioso (913ms)
+  ✓   2 [chromium] › tests/browser/app.spec.js:52:1 › audio solo tras multiplicación y apagado de nuevo al recargar (453ms)
+  ✓   3 [chromium] › tests/browser/app.spec.js:65:1 › error no avanza y acierto cubre toda la ventana sin interacción (1.8s)
+  ✓   4 [chromium] › tests/browser/app.spec.js:82:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (11.1s)
+  ✓   5 [chromium] › tests/browser/app.spec.js:111:1 › offline real Chromium y no borra progreso antiguo (298ms)
+  ✓   6 [chromium] › tests/browser/app.spec.js:122:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (252ms)
+  ✓   7 [chromium] › tests/browser/app.spec.js:142:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (1.5s)
+  ✓   8 [chromium] › tests/browser/app.spec.js:166:1 › loader real, reduced motion y expiración tras más de una hora (1.1s)
+  ✓   9 [chromium] › tests/browser/app.spec.js:179:1 › cookie de respaldo real y juego sin almacenamiento (645ms)
+  ✓  10 [chromium] › tests/browser/app.spec.js:190:1 › loader solo durante carga real (1.1s)
+  ✓  11 [chromium] › tests/browser/app.spec.js:202:1 › fallo de módulo muestra reintento sin loader eterno (258ms)
+  ✓  12 [chromium] › tests/browser/app.spec.js:210:1 › puerta de adultos bloquea configuración y se renueva tras cerrar (461ms)
+  ✓  13 [chromium] › tests/browser/app.spec.js:234:1 › puerta y controles adultos caben en móvil y horizontal; escapar no desbloquea (407ms)
+  ✓  14 [chromium] › tests/browser/app.spec.js:250:1 › transición respeta movimiento reducido y no puede dar puntos duplicados (1.1s)
+  ✓  15 [chromium] › tests/browser/app.spec.js:262:1 › sorpresa automática, dos iconos y transición menor de un segundo (3.0s)
+  ✓  16 [chromium] › tests/browser/app.spec.js:277:1 › cerrar adultos y volver visible reanudan sin botón de pausa (1.0s)
+  ✓  17 [chromium] › tests/browser/app.spec.js:291:1 › BFCache reanuda transición y otro reto manual solo genera una pregunta (1.4s)
+  ✓  18 [chromium] › tests/browser/app.spec.js:304:1 › día noche sistema siguen preferencia y guardan elección manual (341ms)
+  ✓  19 [chromium] › tests/browser/app.spec.js:318:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (1.3s)
+  ✓  20 [chromium] › tests/browser/app.spec.js:348:1 › fuentes locales y temas completos sin scroll en adultos (467ms)
+  ✓  21 [chromium] › tests/browser/app.spec.js:363:1 › cuentos y fuentes funcionan offline con los audios apagados (378ms)
+  ✓  22 [chromium] › tests/browser/app.spec.js:377:1 › colores de texto y botones legibles en ambos temas (672ms)
+  ✓  23 [chromium] › tests/browser/app.spec.js:391:1 › aspecto público no cambia pregunta puntos ni abre puerta adulta (305ms)
+  ✓  24 [chromium] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta (672ms)
+  ✓  25 [webkit] › tests/browser/app.spec.js:40:1 › juego aleatorio, inicio accesible y audio silencioso (1.3s)
+  ✓  26 [webkit] › tests/browser/app.spec.js:52:1 › audio solo tras multiplicación y apagado de nuevo al recargar (658ms)
+  ✓  27 [webkit] › tests/browser/app.spec.js:65:1 › error no avanza y acierto cubre toda la ventana sin interacción (2.2s)
+  ✓  28 [webkit] › tests/browser/app.spec.js:82:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (11.3s)
+  ✓  29 [webkit] › tests/browser/app.spec.js:111:1 › offline real Chromium y no borra progreso antiguo (290ms)
+  ✓  30 [webkit] › tests/browser/app.spec.js:122:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (219ms)
+  ✓  31 [webkit] › tests/browser/app.spec.js:142:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (1.7s)
+  ✓  32 [webkit] › tests/browser/app.spec.js:166:1 › loader real, reduced motion y expiración tras más de una hora (1.1s)
+  ✓  33 [webkit] › tests/browser/app.spec.js:179:1 › cookie de respaldo real y juego sin almacenamiento (627ms)
+  ✓  34 [webkit] › tests/browser/app.spec.js:190:1 › loader solo durante carga real (288ms)
+  ✓  35 [webkit] › tests/browser/app.spec.js:202:1 › fallo de módulo muestra reintento sin loader eterno (188ms)
+  ✓  36 [webkit] › tests/browser/app.spec.js:210:1 › puerta de adultos bloquea configuración y se renueva tras cerrar (568ms)
+  ✓  37 [webkit] › tests/browser/app.spec.js:234:1 › puerta y controles adultos caben en móvil y horizontal; escapar no desbloquea (462ms)
+  ✓  38 [webkit] › tests/browser/app.spec.js:250:1 › transición respeta movimiento reducido y no puede dar puntos duplicados (1.1s)
+  ✓  39 [webkit] › tests/browser/app.spec.js:262:1 › sorpresa automática, dos iconos y transición menor de un segundo (3.2s)
+  ✓  40 [webkit] › tests/browser/app.spec.js:277:1 › cerrar adultos y volver visible reanudan sin botón de pausa (1.1s)
+  ✓  41 [webkit] › tests/browser/app.spec.js:291:1 › BFCache reanuda transición y otro reto manual solo genera una pregunta (1.6s)
+  ✓  42 [webkit] › tests/browser/app.spec.js:304:1 › día noche sistema siguen preferencia y guardan elección manual (320ms)
+  ✓  43 [webkit] › tests/browser/app.spec.js:318:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (2.8s)
+  ✓  44 [webkit] › tests/browser/app.spec.js:348:1 › fuentes locales y temas completos sin scroll en adultos (610ms)
+  -  45 [webkit] › tests/browser/app.spec.js:363:1 › cuentos y fuentes funcionan offline con los audios apagados
+  ✓  46 [webkit] › tests/browser/app.spec.js:377:1 › colores de texto y botones legibles en ambos temas (638ms)
+  ✓  47 [webkit] › tests/browser/app.spec.js:391:1 › aspecto público no cambia pregunta puntos ni abre puerta adulta (237ms)
+  ✘  48 [webkit] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta (208ms)
+
+
+  1) [webkit] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 14
+
+    - Array []
+    + Array [
+    +   "SPAN.",
+    +   "STRONG.",
+    +   "OPTION.",
+    +   "OPTION.",
+    +   "OPTION.",
+    +   "H1.",
+    +   "BUTTON.answer ",
+    +   "BUTTON.answer ",
+    +   "BUTTON.answer ",
+    +   "BUTTON.answer ",
+    +   "SPAN.transition-star",
+    +   "H2.",
+    + ]
+
+      410 |   async function verify(){
+      411 |     const mismatches=await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(n=>[...n.childNodes].some(c=>c.nodeType===Node.TEXT_NODE&&c.textContent.trim())).filter(n=>!getComputedStyle(n).fontFamily.startsWith('"Playwrite ES"')).map(n=>n.tagName+'.'+n.className));
+    > 412 |     expect(mismatches).toEqual([]);
+          |                        ^
+      413 |   }
+      414 |   await verify();await page.getByRole('button',{name:'Inicio',exact:true}).click();await verify();
+      415 |   await unlockParents(page);await verify();await expect(page.locator('[data-font]')).toHaveCount(0);
+        at verify (/Users/carlos.lozanosoto/personal/repositories/cole-aventura/tests/browser/app.spec.js:412:24)
+        at /Users/carlos.lozanosoto/personal/repositories/cole-aventura/tests/browser/app.spec.js:414:3
+
+    Error Context: test-results/app-misma-letra-ligada-en--a0d17-ntigua-preferencia-imprenta-webkit/error-context.md
+
+  1 failed
+    [webkit] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta
+  1 skipped
+  46 passed (1.1m)

@@ -312,10 +312,7 @@ test('día noche sistema siguen preferencia y guardan elección manual',async({p
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
   await page.getByRole('combobox',{name:'Aspecto',exact:true}).selectOption('system');
   await expect(page.locator('html')).toHaveAttribute('data-theme','light');
-  await unlockParents(page);await page.locator('[data-font="print"]').click();
-  await expect(page.locator('html')).toHaveAttribute('data-reading-font','print');
-  await page.getByRole('button',{name:'Cerrar',exact:true}).click();await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-reading-font','print');
+
 });
 
 test('cuentos sílabas palabras pulsables audio consentido y comprensión',async({page})=>{
@@ -351,7 +348,6 @@ test('cuentos sílabas palabras pulsables audio consentido y comprensión',async
 test('fuentes locales y temas completos sin scroll en adultos',async({page})=>{
   await prepare(page);await page.evaluate(()=>document.fonts.ready);
   expect(await page.evaluate(()=>document.fonts.check('24px "Playwrite ES"','a g ñ á é í ó ú ü'))).toBe(true);
-  expect(await page.evaluate(()=>document.fonts.check('24px Andika','a g ñ á é í ó ú ü'))).toBe(true);
   for(const mode of ['dark','light']){
     await page.getByRole('combobox',{name:'Aspecto',exact:true}).selectOption(mode);
     await unlockParents(page);
@@ -405,4 +401,18 @@ test('aspecto público no cambia pregunta puntos ni abre puerta adulta',async({p
     expect(await page.getByRole('combobox',{name:'Aspecto',exact:true}).evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight;})).toBe(true);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight)).toBe(true);
   }
+});
+
+
+test('misma letra ligada en todo, también con antigua preferencia imprenta',async({page})=>{
+  await page.addInitScript(()=>localStorage.setItem('cole-aventura-reading-font','print'));
+  await prepare(page);await page.evaluate(()=>document.fonts.ready);
+  async function verify(){
+    const mismatches=await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(n=>[...n.childNodes].some(c=>c.nodeType===Node.TEXT_NODE&&c.textContent.trim())).filter(n=>getComputedStyle(n).fontFamily.split(',')[0].replace(/["']/g,'').trim() !== 'Playwrite ES').map(n=>n.tagName+'.'+n.className));
+    expect(mismatches).toEqual([]);
+  }
+  await verify();await page.getByRole('button',{name:'Inicio',exact:true}).click();await verify();
+  await unlockParents(page);await verify();await expect(page.locator('[data-font]')).toHaveCount(0);
+  await page.getByRole('button',{name:'Cerrar',exact:true}).click();
+  await page.locator('[data-game="stories"]').click();await verify();
 });
