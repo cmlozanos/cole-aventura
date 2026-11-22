@@ -1,0 +1,17 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --grep día noche|fuentes locales|aspecto público|puerta de adultos
+
+
+Running 8 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:210:1 › puerta de adultos bloquea configuración y se renueva tras cerrar (797ms)
+  ✓  2 [chromium] › tests/browser/app.spec.js:304:1 › día noche sistema siguen preferencia y guardan elección manual (455ms)
+  ✓  3 [chromium] › tests/browser/app.spec.js:351:1 › fuentes locales y temas completos sin scroll en adultos (471ms)
+  ✓  4 [chromium] › tests/browser/app.spec.js:395:1 › aspecto público no cambia pregunta puntos ni abre puerta adulta (285ms)
+  ✓  5 [webkit] › tests/browser/app.spec.js:210:1 › puerta de adultos bloquea configuración y se renueva tras cerrar (1.1s)
+  ✓  6 [webkit] › tests/browser/app.spec.js:304:1 › día noche sistema siguen preferencia y guardan elección manual (610ms)
+  ✓  7 [webkit] › tests/browser/app.spec.js:351:1 › fuentes locales y temas completos sin scroll en adultos (637ms)
+  ✓  8 [webkit] › tests/browser/app.spec.js:395:1 › aspecto público no cambia pregunta puntos ni abre puerta adulta (290ms)
+
+  8 passed (8.0s)

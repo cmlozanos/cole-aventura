@@ -306,13 +306,13 @@ test('día noche sistema siguen preferencia y guardan elección manual',async({p
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
   await page.emulateMedia({colorScheme:'light'});
   await expect(page.locator('html')).toHaveAttribute('data-theme','light');
-  await unlockParents(page);await page.locator('[data-theme="dark"]').click();
+  await page.getByRole('combobox',{name:'Aspecto',exact:true}).selectOption('dark');
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
-  await page.getByRole('button',{name:'Cerrar',exact:true}).click();await page.reload();
+  await expect(page.locator('#options')).not.toBeVisible();await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
-  await unlockParents(page);await page.locator('[data-theme="system"]').click();
+  await page.getByRole('combobox',{name:'Aspecto',exact:true}).selectOption('system');
   await expect(page.locator('html')).toHaveAttribute('data-theme','light');
-  await page.locator('[data-font="print"]').click();
+  await unlockParents(page);await page.locator('[data-font="print"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-reading-font','print');
   await page.getByRole('button',{name:'Cerrar',exact:true}).click();await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-reading-font','print');
@@ -352,13 +352,15 @@ test('fuentes locales y temas completos sin scroll en adultos',async({page})=>{
   await prepare(page);await page.evaluate(()=>document.fonts.ready);
   expect(await page.evaluate(()=>document.fonts.check('24px "Playwrite ES"','a g ñ á é í ó ú ü'))).toBe(true);
   expect(await page.evaluate(()=>document.fonts.check('24px Andika','a g ñ á é í ó ú ü'))).toBe(true);
-  await unlockParents(page);
   for(const mode of ['dark','light']){
-    await page.locator(`[data-theme="${mode}"]`).click();
+    await page.getByRole('combobox',{name:'Aspecto',exact:true}).selectOption(mode);
+    await unlockParents(page);
     for(const viewport of [{width:320,height:568},{width:667,height:375}]){
       await page.setViewportSize(viewport);
       expect(await page.locator('#options').evaluate(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1&&n.scrollHeight<=n.clientHeight+1;})).toBe(true);
     }
+    await expect(page.locator('#options [data-theme]')).toHaveCount(0);
+    await page.getByRole('button',{name:'Cerrar',exact:true}).click();
   }
 });
 
@@ -386,5 +388,21 @@ test('colores de texto y botones legibles en ambos temas',async({page})=>{
       const s=getComputedStyle(n);const a=lum(rgb(s.color)),b=lum(rgb(s.backgroundColor));return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
     });
     expect(ratio).toBeGreaterThan(4.5);
+  }
+});
+
+
+test('aspecto público no cambia pregunta puntos ni abre puerta adulta',async({page})=>{
+  await prepare(page);const prompt=await page.locator('h1').textContent();
+  for(const mode of ['dark','light','system']){
+    await page.getByRole('combobox',{name:'Aspecto',exact:true}).selectOption(mode);
+    await expect(page.locator('#options')).not.toBeVisible();
+    await expect(page.locator('h1')).toHaveText(prompt);
+    await expect(page.locator('#score strong')).toHaveText('0');
+  }
+  for(const viewport of [{width:320,height:568},{width:667,height:375}]){
+    await page.setViewportSize(viewport);
+    expect(await page.getByRole('combobox',{name:'Aspecto',exact:true}).evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight;})).toBe(true);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight)).toBe(true);
   }
 });

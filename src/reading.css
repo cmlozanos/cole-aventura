@@ -69,3 +69,7 @@ h1 { font-family:var(--reader); font-weight:400; line-height:1.7; font-size:clam
 :root[data-theme=dark] .transition-star,:root[data-theme=dark] .loading-star { color:#ffdc8b; }
 :root[data-theme=dark] .parent-error { color:#ffb5ca; }
 @media(max-height:550px) and (min-width:550px) { #options .preference-row { display:inline-flex; width:calc(50% - 5px); vertical-align:top; } #options .preference-row+.preference-row { margin-left:6px; } }
+
+.theme-switch { font:inherit; font-size:13px; min-height:44px; max-width:115px; border:0; border-radius:16px; padding:5px 8px; background:var(--button); color:var(--button-ink); cursor:pointer; }
+.theme-switch:focus-visible { outline:3px solid #996014; outline-offset:2px; }
+@media(max-width:360px) { .theme-switch { max-width:106px; padding:5px; } }

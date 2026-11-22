@@ -62,7 +62,7 @@ function renderControls() {
   const snapshot = scores.read();
   document.querySelector('#score strong').textContent = snapshot.points;
   document.querySelector('#score').setAttribute('aria-label',`${snapshot.points} puntos de esta sesión`);
-  controls.innerHTML = control('home','Inicio','home',scene === 'home')
+  controls.innerHTML = `<select class="theme-switch" aria-label="Aspecto" title="Día, noche o sistema">${[['system','◐ Sistema'],['light','☀ Día'],['dark','☾ Noche']].map(([mode,label])=>`<option value="${mode}" ${theme.mode === mode ? 'selected' : ''}>${label}</option>`).join('')}</select>` + control('home','Inicio','home',scene === 'home')
     + control('options','Para adultos','settings',options.open);
 }
 function render() {
@@ -156,7 +156,7 @@ function showTransition() {
   transition.querySelector('.transition-card').focus({preventScroll:true});
 }
 function renderParentOptions() {
-  options.innerHTML = `<div class="dialog-heading"><h2 id="options-title">Adultos</h2><button class="close-dialog" data-action="close-options" aria-label="Cerrar">×</button></div><div class="manual-actions"><button data-action="voice" aria-pressed="${audio.voice}">${icon('voice',!audio.voice)} Voz</button><button data-action="effects" aria-pressed="${audio.effects}">${icon('effects',!audio.effects)} Sonidos</button><button data-action="motion" aria-pressed="${motion.enabled}">✦ Animaciones</button><button data-action="new-question" ${scene === 'home' ? 'disabled' : ''}>↻ Otro reto</button><button data-action="reset-score">☆ Reiniciar puntos</button></div><fieldset class="preference-row"><legend>Aspecto</legend>${[['light','☀ Día'],['dark','☾ Noche'],['system','◐ Sistema']].map(([mode,label])=>`<button data-theme="${mode}" aria-pressed="${theme.mode === mode}">${label}</button>`).join('')}</fieldset><fieldset class="preference-row"><legend>Letra</legend><button data-font="school" aria-pressed="${readingFont === 'school'}">Escolar</button><button data-font="print" aria-pressed="${readingFont === 'print'}">Imprenta</button></fieldset>`;
+  options.innerHTML = `<div class="dialog-heading"><h2 id="options-title">Adultos</h2><button class="close-dialog" data-action="close-options" aria-label="Cerrar">×</button></div><div class="manual-actions"><button data-action="voice" aria-pressed="${audio.voice}">${icon('voice',!audio.voice)} Voz</button><button data-action="effects" aria-pressed="${audio.effects}">${icon('effects',!audio.effects)} Sonidos</button><button data-action="motion" aria-pressed="${motion.enabled}">✦ Animaciones</button><button data-action="new-question" ${scene === 'home' ? 'disabled' : ''}>↻ Otro reto</button><button data-action="reset-score">☆ Reiniciar puntos</button></div><fieldset class="preference-row"><legend>Letra</legend><button data-font="school" aria-pressed="${readingFont === 'school'}">Escolar</button><button data-font="print" aria-pressed="${readingFont === 'print'}">Imprenta</button></fieldset>`;
 }
 function openOptions() {
   if (transition.open) return;
@@ -178,13 +178,15 @@ options.addEventListener('submit',event=>{
 });
 transition.addEventListener('cancel',event=>event.preventDefault());
 transition.addEventListener('keydown',event=>{ if (['Escape','Tab','Enter',' '].includes(event.key)) event.preventDefault(); });
+controls.addEventListener('change',event=>{
+  if (event.target.matches('.theme-switch') && !transition.open) theme.set(event.target.value);
+});
 document.addEventListener('click', event => {
   const target = event.target.closest('button');
   if (!target) return;
   if (transition.open) return;
   const action = target.dataset.action;
   if (['voice','effects','motion','reset-score','new-question'].includes(action) && (!parentUnlocked || !options.open)) return;
-  if (target.dataset.theme && parentUnlocked && options.open) { theme.set(target.dataset.theme); renderParentOptions(); options.querySelector(`[data-theme="${theme.mode}"]`).focus(); return; }
   if (target.dataset.font && parentUnlocked && options.open) { readingFont=target.dataset.font; document.documentElement.dataset.readingFont=readingFont; try {localStorage.setItem('cole-aventura-reading-font',readingFont);} catch {} renderParentOptions(); options.querySelector(`[data-font="${readingFont}"]`).focus(); return; }
   if (target.dataset.game) { startGame(target.dataset.game); return; }
   if (action === 'home') { showHome(); return; }
