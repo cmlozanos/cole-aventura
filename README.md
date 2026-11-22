@@ -61,3 +61,9 @@ El aspecto es accesible para todos. El selector Día/Noche/Sistema no pide multi
 
 ### Tipografía única vigente
 Toda la interfaz usa **Playwrite ES**, la misma letra ligada de «Elige tu aventura»: botones, cuentos, ajustes, puntos y mensajes. Se retira la alternativa de imprenta. La fuente se precarga desde la propia app y sigue disponible offline. El aspecto Día/Noche/Sistema continúa en cabecera, accesible para todos.
+
+### Sílabas en toda la app
+
+Menús, botones, consignas, ajustes, errores y cuentos comparten un subrayado silábico fino, del mismo color que el texto. Se conservan palabras, tildes y puntuación completas para voz y accesibilidad. No se añaden guiones ni underscores al texto. El vocabulario actual se segmenta explícitamente y se valida; no se afirma resolver cualquier palabra externa automáticamente. El selector de aspecto usa iconos para evitar texto nativo que no puede colorearse por sílabas. Reiniciar puntos requiere dos toques: solicitar y confirmar.
+
+Las palabras no se fragmentan: mantienen un único texto y su letra ligada continua, sin colores alternos ni animaciones por letras.

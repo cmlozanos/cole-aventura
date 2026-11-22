@@ -59,7 +59,7 @@ function renderControls() {
   const snapshot = scores.read();
   document.querySelector('#score strong').textContent = snapshot.points;
   document.querySelector('#score').setAttribute('aria-label',`${snapshot.points} puntos de esta sesión`);
-  controls.innerHTML = `<select class="theme-switch" aria-label="Aspecto" title="Día, noche o sistema">${[['system','◐ Sistema'],['light','☀ Día'],['dark','☾ Noche']].map(([mode,label])=>`<option value="${mode}" ${theme.mode === mode ? 'selected' : ''}>${label}</option>`).join('')}</select>` + control('home','Inicio','home',scene === 'home')
+  controls.innerHTML = `<select class="theme-switch" aria-label="Aspecto" title="Día, noche o sistema">${[['system','◐','Sistema'],['light','☀','Día'],['dark','☾','Noche']].map(([mode,symbol,label])=>`<option value="${mode}" aria-label="${label}" ${theme.mode === mode ? 'selected' : ''}>${symbol}</option>`).join('')}</select>` + control('home','Inicio','home',scene === 'home')
     + control('options','Para adultos','settings',options.open);
 }
 function render() {
@@ -189,7 +189,11 @@ document.addEventListener('click', event => {
   if (action === 'options') { openOptions(); return; }
   if (action === 'close-options') { options.close(); renderControls(); return; }
   if (action === 'motion') { motion.toggle(); target.setAttribute('aria-pressed',String(motion.enabled)); return; }
-  if (action === 'reset-score') { if (window.confirm('¿Reiniciar a cero los puntos de esta sesión?')) { scores.reset(); renderControls(); } return; }
+  if (action === 'reset-score') {
+    if (target.dataset.confirm === 'true') { scores.reset(); renderControls(); target.dataset.confirm='false'; target.textContent='☆ Reiniciar puntos'; }
+    else { target.dataset.confirm='true'; target.textContent='¿Confirmar reinicio?'; }
+    return;
+  }
   if (action === 'new-question') { options.dataset.next = 'true'; options.close(); return; }
   if (action === 'voice') {
     audio.toggleVoice(); target.setAttribute('aria-pressed',String(audio.voice)); target.innerHTML = `${icon('voice',!audio.voice)} Voz`;

@@ -44,3 +44,7 @@ Arranque en Sorpresa automático (sin botón inicial); selección manual disponi
 ## Tipografía ligada única (vigente)
 
 No hay selector de familia ni preferencia print activa. Todos los consumidores de texto heredan --reader=Playwrite ES, incluidos controles nativos y texto SVG. Mantener la misma fuente en nuevos botones/dialogs y probar métricas en móvil/horizontal; no reintroducir una familia distinta por conveniencia local.
+
+## Sílabas transversales (vigente)
+
+`syllable-lexicon.js` cubre vocabulario visible existente; añadir cualquier palabra nueva exige revisar segmentación y test de cobertura. `syllables.js` decora nodos de texto sin tocar HTML/atributos/valores/iconos ni motor de voz. MutationObserver aplica a renders y mensajes dinámicos, desconecta durante su propio cambio y no duplica spans. Los tokens de cuentos ya marcados quedan excluidos. No confundir apoyo por sílabas con acentuación tónica automática.

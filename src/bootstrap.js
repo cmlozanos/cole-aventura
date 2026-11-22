@@ -1,3 +1,5 @@
+import { observeSyllables } from './syllables.js';
+observeSyllables(document.body);
 const loader = document.querySelector('#boot-loader');
 try {
   await import('./app.js');

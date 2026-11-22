@@ -1,0 +1,76 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --grep sílabas|inicio desbloqueado|fuentes locales|misma letra
+
+  ✓   4 [chromium] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta (690ms)
+  ✓   5 [chromium] › tests/browser/app.spec.js:420:1 › sílabas en todas las superficies sin alterar palabras ni nombres accesibles (1.2s)
+  ✓   6 [chromium] › tests/browser/app.spec.js:456:1 › sílabas discretas conservan letra ligada y palabra sin fragmentar (454ms)
+  ✓   7 [webkit] › tests/browser/app.spec.js:142:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (2.0s)
+  ✓   8 [webkit] › tests/browser/app.spec.js:318:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (1.6s)
+  ✓   9 [webkit] › tests/browser/app.spec.js:348:1 › fuentes locales y temas completos sin scroll en adultos (565ms)
+  ✓  10 [webkit] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta (686ms)
+  ✓  11 [webkit] › tests/browser/app.spec.js:420:1 › sílabas en todas las superficies sin alterar palabras ni nombres accesibles (1.2s)
+  ✓  12 [webkit] › tests/browser/app.spec.js:456:1 › sílabas discretas conservan letra ligada y palabra sin fragmentar (730ms)
+
+
+  1) [chromium] › tests/browser/app.spec.js:142:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: '¿Confirmar reinicio?', exact: true })
+
+
+      154 |   await unlockParents(page);
+      155 |   await page.getByRole('button',{name:'Reiniciar puntos',exact:false}).click();
+    > 156 |   await page.getByRole('button',{name:'¿Confirmar reinicio?',exact:true}).click();
+          |                                                                           ^
+      157 |   await expect(page.locator('#score strong')).toHaveText('0');
+      158 |   await page.getByRole('button',{name:'Cerrar',exact:true}).click();
+      159 |   for(const viewport of [{width:320,height:568},{width:667,height:375},{width:768,height:1024}]){
+        at /Users/carlos.lozanosoto/personal/repositories/cole-aventura/tests/browser/app.spec.js:156:75
+
+    Error Context: test-results/app-inicio-desbloqueado-pu-ec26d-una-vez-y-opciones-manuales-chromium/error-context.md
+
+  2) [chromium] › tests/browser/app.spec.js:318:1 › cuentos sílabas palabras pulsables audio consentido y comprensión
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4173/
+    Call log:
+      - navigating to "http://127.0.0.1:4173/", waiting until "load"
+
+
+      15 |     };
+      16 |   });
+    > 17 |   await page.goto('./');
+         |              ^
+      18 |   return page.evaluate(async()=>{
+      19 |     const {createSession}=await import('./src/exercises.js');
+      20 |     const {activities}=await import('./src/catalog.js');
+        at prepare (/Users/carlos.lozanosoto/personal/repositories/cole-aventura/tests/browser/app.spec.js:17:14)
+        at /Users/carlos.lozanosoto/personal/repositories/cole-aventura/tests/browser/app.spec.js:319:3
+
+    Error Context: test-results/app-cuentos-sílabas-palabr-61b96-io-consentido-y-comprensión-chromium/error-context.md
+
+  2 failed
+    [chromium] › tests/browser/app.spec.js:142:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales
+    [chromium] › tests/browser/app.spec.js:318:1 › cuentos sílabas palabras pulsables audio consentido y comprensión
+  10 passed (44.8s)
+WebServer] 127.0.0.1 - - [22/Nov/2026 22:16:48] "GET /public/icons/icon-512.png HTTP/1.1" 200 -
+
+Running 12 tests using 1 worker
+
+  ✓   1 [chromium] › tests/browser/app.spec.js:142:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (1.9s)
+  ✓   2 [chromium] › tests/browser/app.spec.js:318:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (1.3s)
+  ✓   3 [chromium] › tests/browser/app.spec.js:348:1 › fuentes locales y temas completos sin scroll en adultos (490ms)
+  ✓   4 [chromium] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta (753ms)
+  ✓   5 [chromium] › tests/browser/app.spec.js:420:1 › sílabas en todas las superficies sin alterar palabras ni nombres accesibles (1.0s)
+  ✓   6 [chromium] › tests/browser/app.spec.js:456:1 › sílabas discretas conservan letra ligada y palabra sin fragmentar (340ms)
+  ✓   7 [webkit] › tests/browser/app.spec.js:142:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (1.8s)
+  ✓   8 [webkit] › tests/browser/app.spec.js:318:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (1.5s)
+  ✓   9 [webkit] › tests/browser/app.spec.js:348:1 › fuentes locales y temas completos sin scroll en adultos (506ms)
+  ✓  10 [webkit] › tests/browser/app.spec.js:407:1 › misma letra ligada en todo, también con antigua preferencia imprenta (634ms)
+  ✓  11 [webkit] › tests/browser/app.spec.js:420:1 › sílabas en todas las superficies sin alterar palabras ni nombres accesibles (1.2s)
+  ✓  12 [webkit] › tests/browser/app.spec.js:456:1 › sílabas discretas conservan letra ligada y palabra sin fragmentar (312ms)
+
+  12 passed (13.6s)

@@ -78,3 +78,7 @@ button,input,select,option,strong,h2 { font-weight:400; }
 .game-tile strong { line-height:1.8; }
 .theme-switch { max-width:125px; font-size:12px; }
 #options .manual-actions button { line-height:1.8; }
+/* Discreet segmented underline only; one uninterrupted text node preserves cursive joins. */
+.syllabic-word { white-space:nowrap; background-size:100% 1px; background-position:left calc(100% - .12em); background-repeat:no-repeat; text-decoration:none; }
+.reading-word { color:var(--ink); }
+.theme-switch { width:48px; max-width:48px; padding:5px; font-size:21px; }

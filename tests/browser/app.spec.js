@@ -152,8 +152,8 @@ test('inicio desbloqueado, puntos por reto una vez y opciones manuales',async({p
   await page.reload();
   await expect(page.locator('#score strong')).toHaveText('1');
   await unlockParents(page);
-  page.once('dialog',d=>d.accept());
   await page.getByRole('button',{name:'Reiniciar puntos',exact:false}).click();
+  await page.getByRole('button',{name:'¿Confirmar reinicio?',exact:true}).click();
   await expect(page.locator('#score strong')).toHaveText('0');
   await page.getByRole('button',{name:'Cerrar',exact:true}).click();
   for(const viewport of [{width:320,height:568},{width:667,height:375},{width:768,height:1024}]){
@@ -319,7 +319,7 @@ test('cuentos sílabas palabras pulsables audio consentido y comprensión',async
   await prepare(page);await page.getByRole('button',{name:'Inicio',exact:true}).click();
   await page.locator('[data-game="stories"]').click();
   await expect(page.locator('[data-word]').first()).toBeVisible();
-  await expect(page.locator('.reading-syllable').first()).toBeVisible();
+  await expect(page.locator('[data-syllables]').first()).toBeVisible();
   await page.locator('[data-word]').first().click();
   expect(await page.evaluate(()=>window.audioCalls.speech)).toBe(0);
   await unlockParents(page);await page.getByRole('button',{name:'Voz',exact:true}).click();
@@ -415,4 +415,50 @@ test('misma letra ligada en todo, también con antigua preferencia imprenta',asy
   await unlockParents(page);await verify();await expect(page.locator('[data-font]')).toHaveCount(0);
   await page.getByRole('button',{name:'Cerrar',exact:true}).click();
   await page.locator('[data-game="stories"]').click();await verify();
+});
+
+test('sílabas en todas las superficies sin alterar palabras ni nombres accesibles',async({page})=>{
+  await prepare(page);
+  const missing=()=>page.evaluate(()=>{
+    const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const missing=[];
+    while(walker.nextNode()){
+      const n=walker.currentNode,p=n.parentElement;
+      if(!p||p.closest('[data-syllabified],.reading-syllable,.sr-only,script,style,textarea,option,svg,[aria-hidden="true"]'))continue;
+      if(p.getClientRects().length && /\p{L}/u.test(n.textContent)) missing.push(n.textContent.trim());
+    }
+    return missing;
+  });
+  await expect.poll(missing).toEqual([]);
+  await page.getByRole('button',{name:'Inicio',exact:true}).click();
+  await expect(page.locator('h1')).toHaveText('¡Elige tu aventura!');
+  await expect(page.locator('[data-game="shapes"] [data-syllables]')).toHaveCount(2);
+  await expect.poll(missing).toEqual([]);
+  for(const id of ['numbers','compare','addition','subtraction','problems','shapes']){
+    await page.locator(`[data-game="${id}"]`).click();
+    await expect.poll(missing).toEqual([]);
+    await page.getByRole('button',{name:'Inicio',exact:true}).click();
+  }
+  await unlockParents(page);await expect.poll(missing).toEqual([]);
+  await page.getByRole('button',{name:'Reiniciar puntos',exact:false}).click();
+  await expect.poll(missing).toEqual([]);
+  await page.getByRole('button',{name:'Cerrar',exact:true}).click();
+  await page.locator('[data-game="stories"]').click();
+  for(let i=0;i<3;i++){
+    await expect.poll(missing).toEqual([]);
+    await expect(page.locator('.reading-syllable .reading-syllable')).toHaveCount(0);
+    await page.getByRole('button',{name:'Siguiente página',exact:true}).click();
+  }
+  await expect.poll(missing).toEqual([]);
+  expect(await page.locator('.story-answers').textContent()).not.toContain('_');
+});
+
+
+test('sílabas discretas conservan letra ligada y palabra sin fragmentar',async({page})=>{
+  await prepare(page);await page.getByRole('button',{name:'Inicio',exact:true}).click();
+  const word=page.locator('[data-syllabified="aventura"]');
+  await expect(word).toHaveCount(1);
+  expect(await word.evaluate(n=>({text:n.textContent,children:n.children.length,animation:getComputedStyle(n).animationName,image:getComputedStyle(n).backgroundImage}))).toMatchObject({text:'aventura',children:0,animation:'none'});
+  await page.locator('[data-game="stories"]').click();
+  expect(await page.locator('[data-word]').first().evaluate(n=>n.children.length)).toBe(0);
+  await expect(page.locator('.reading-syllable')).toHaveCount(0);
 });

@@ -43,3 +43,9 @@
 - Paletas completas y tipografías escolares/lectoras, sin nuevas opciones infantiles.
 - Cuentos combinables con vocabulario silabeado, palabras tocables y voz consentida.
 - Validar generación, tema, fuentes, audio, comprensión, offline y no-scroll.
+
+## Sílabas en todas las superficies
+- Diccionario revisado del vocabulario actual y cobertura de contenido generado.
+- Decorador transversal seguro e idempotente, sin partir glifos ni alterar atributos/voz.
+- Sustituir marca cromática por línea fina discreta conservando palabra ligada.
+- Probar errores, confirmación, menús, ejercicios, cuentos, fuente, nombres accesibles y no-scroll.

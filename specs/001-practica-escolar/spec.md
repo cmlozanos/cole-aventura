@@ -18,3 +18,6 @@ Sin botón/texto Pausa. Sorpresa activa al cargar y alterna temas; Inicio permit
 
 ## Lectura y apariencia (vigente)
 Modo día/noche/sistema persistente con controles protegidos de adultos. Tipografía escolar española local y alternativa de imprenta alfabetizadora. Actividad Cuentos accesible en Inicio: tres páginas cortas combinadas aleatoriamente, palabras pulsables, sílabas revisadas por color y subrayado, pronunciación completa solo con Voz adulta activa. Pregunta de comprensión, punto único, no-scroll, offline contenido/fuentes, no grabación.
+
+## Sílabas discretas transversales (vigente)
+Apoyo silábico en todo el vocabulario visible. Palabras completas en una sola corrida de texto ligada, sin separación de letras/guiones/espacios añadidos ni colores alternos. Solo subrayado fino segmentado, mismo color de texto. Voz y accesibilidad leen palabras íntegras. Diccionario explícito y test de cobertura; iconos/cifras no se silabean.

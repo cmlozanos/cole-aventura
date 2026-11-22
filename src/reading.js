@@ -39,11 +39,13 @@ export function createStory(rng = Math.random) {
 // Caller owns styles: reading-word wraps reading-syllable spans; use
 // syllable-even / syllable-odd for alternating color and underline, not speech.
 export function renderWord(token, index) {
-  let offset = 0;
-  const content = token.syllables.map((syllable, i) => {
-    const text = token.text.slice(offset, offset + syllable.length);
-    offset += syllable.length;
-    return `<span class="reading-syllable syllable-${i % 2 ? 'odd' : 'even'}">${esc(text)}</span>`;
-  }).join('');
-  return `<button type="button" class="reading-word" data-word="${esc(index)}" aria-label="${esc(wordOnly(token.text))}">${content}${esc(token.text.slice(offset))}</button>`;
+  const total=token.syllables.join('').length;
+  let offset=0;
+  const stops=[];
+  token.syllables.forEach(part=>{
+    const start=offset/total*100; offset+=part.length;
+    const end=offset/total*100;
+    stops.push(`currentColor ${start}% ${Math.max(start,end-2)}%`,`transparent ${Math.max(start,end-2)}% ${end}%`);
+  });
+  return `<button type="button" class="reading-word syllabic-word" data-syllabified="story" data-syllables="${esc(token.syllables.join('|'))}" data-word="${esc(index)}" aria-label="${esc(wordOnly(token.text))}" style="background-image:linear-gradient(to right,${esc(stops.join(','))})">${esc(token.text)}</button>`;
 }

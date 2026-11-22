@@ -53,3 +53,13 @@ Día/Noche/Sistema deja de ser ajuste adulto. Se mueve a selector nativo compact
 ## Fuente ligada única (corrección expresa)
 
 Por petición y referencia visual del usuario se aplica Playwrite ES (la de «Elige tu aventura») transversalmente: títulos, botones, etiquetas, cifras, selector público, cuentos, sílabas, puerta/configuración, loaders y mensajes. Se retira selector Escolar/Imprenta y no se lee la preferencia histórica de imprenta (sin borrar datos). Una sola familia CSS heredada, sin negrita sintética y con precarga local. SVG de iconos conserva su geometría. No se alteran sílabas, audio, puntos ni tema público.
+
+## Sílabas en toda la aplicación (corrección expresa)
+
+Se generaliza el marcado silábico visual a todas las superficies textuales, no solo cuentos: Inicio, títulos, botones, consignas, etiquetas de cantidades, ajustes, errores y transición. Diccionario explícito y revisado de palabras actuales, sin silabeador universal improvisado. Un único decorador DOM no modifica atributos, values, puntuación ni texto leído por voz. Se conserva la fuente ligada y las tildes; sílabas alternas por color/subrayado sólido y punteado, no se inventan acentos ni sílaba tónica. Las palabras sin sílabas conocidas se detectan por test de cobertura.
+
+El selector nativo de aspecto muestra solo iconos (◐/☀/☾), con nombres accesibles Sistema/Día/Noche: los option nativos no admiten spans de estilo portables. La confirmación de reinicio se mueve del confirm nativo a segundo toque confirmado en el mismo botón, para poder aplicar sílabas; sigue requiriendo confirmación explícita y no resetea al primer toque. Se excluyen iconos/números y nombres no visibles de accesibilidad del marcado, conservando palabra completa.
+
+## Ayuda silábica discreta y letra continua (matización vigente)
+
+Se descarta color alterno por sílaba y división de glifos en spans: cada palabra conserva un único nodo de texto para mantener uniones/ligaduras reales de Playwrite ES. Solo una línea fina segmentada bajo las sílabas, mismo color de texto, sin espacios, guiones, animaciones de letras ni cambios de tamaño. Metadatos silábicos no se pronuncian. El decorador no reescribe nodos sin palabras conocidas, evitando bucles de MutationObserver. Pistas de color de temas no implican colorear letras por sílabas.

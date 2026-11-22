@@ -101,10 +101,10 @@ test('renderWord: botón nativo, sílabas alternas, mayúscula, tilde y puntuaci
   ]) {
     const token = Object.freeze({ text, syllables: Object.freeze(syllables) });
     const html = renderWord(token, 7);
-    assert.match(html, /^<button type="button" class="reading-word" data-word="7"/);
+    assert.match(html, /^<button type="button" class="reading-word syllabic-word" data-syllabified="story" data-syllables="[^"]+" data-word="7"/);
     assert.ok(html.includes(`aria-label="${text.replace('.', '')}"`));
-    assert.deepEqual([...html.matchAll(/<span class="reading-syllable syllable-(even|odd)">([^<]*)<\/span>/g)]
-      .map(match => [match[1], match[2]]), visible.map((part, i) => [i % 2 ? 'odd' : 'even', part]));
+    assert.ok(html.includes(`data-syllables="${syllables.join('|')}"`));
+    assert.doesNotMatch(html, /<span/);
     assert.equal(html.replace(/<[^>]+>/g, ''), text);
     assert.ok(html.endsWith(`${text.endsWith('.') ? '.' : ''}</button>`));
     assert.doesNotMatch(html.replace(/<[^>]+>/g, ''), /[-_]/);
