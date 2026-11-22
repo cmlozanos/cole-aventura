@@ -22,3 +22,13 @@ No probado en tablet física, instalación nativa Android/iOS, Chrome95 real, le
 ## Autoevaluación
 
 Exactitud 4/5 (modelo y flujos comprobados; límite WebKit declarado); completitud 4/5 (primer pack y base extensible, no currículo completo); claridad 4/5 (zona familiar y documentación de ampliación); accionabilidad 5/5 (PWA estática y tooling reproducible); concisión 4/5 (sin backend ni dependencias de ejecución). Siguientes mejoras con nueva actividad: ampliar variantes didácticas y revisión supervisada en tablet.
+
+## Entrega publicada
+
+Repositorio público independiente `cmlozanos/cole-aventura`, rama `main`. Primer commit funcional `b9eb331`. GitHub Pages respondió HTTP 200. La ejecución Actions `45009907791` terminó en **success**, con instalación limpia, tests de modelo, build y seis flujos Chromium antes de desplegar.
+
+El primer intento fue rechazado porque GitHub creó automáticamente el entorno `github-pages` restringido a `master` cuando el repositorio aún estaba vacío. Se consultaron entorno y reglas reales y se añadió únicamente `main` a las ramas permitidas para este nuevo repositorio; no se desactivó la protección ni se tocaron otros repositorios. La reejecución terminó correctamente.
+
+`APP_URL=https://cmlozanos.github.io/cole-aventura/ npm run test:e2e -- --project=chromium`: **6/6 en verde sobre la web pública**, incluido recarga offline, sesión completa, progreso y perfiles. Comparación binaria de los archivos publicados `index.html`, `src/app.js`, `src/styles.css`, `src/storage.js`, `sw.js` y `manifest.webmanifest` contra `dist/`: todos coinciden. Evidencia en `docs/evidence/browser-published.txt`. La última entrega documental no cambia los bytes de la aplicación.
+
+Temporales de pruebas descartados; se conservan únicamente código, dependencias locales necesarias, build utilizable y evidencia de entrega. No se modificaron los juegos existentes ni sus catálogos.
