@@ -1,0 +1,10 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --project=chromium -g todos los tipos
+
+
+Running 1 test using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:76:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (43.0s)
+
+  1 passed (45.7s)

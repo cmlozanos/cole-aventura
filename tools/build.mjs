@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile, cp } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 // Explicit owned files only; no cleanup of unrelated paths.
-const files = ['index.html','manifest.webmanifest','src/app.js','src/art.js','src/learning-visuals.js','src/catalog.js','src/exercises.js','src/storage.js','src/styles.css','src/child.css','public/icons/icon.svg','public/icons/icon-192.png','public/icons/icon-512.png'];
+const files = ['index.html','manifest.webmanifest','src/app.js','src/audio.js','src/art.js','src/learning-visuals.js','src/catalog.js','src/exercises.js','src/storage.js','src/child.css','public/icons/icon.svg','public/icons/icon-192.png','public/icons/icon-512.png'];
 const hash = createHash('sha256');
 hash.update(await readFile(new URL(import.meta.url)));
 for (const file of files) hash.update(await readFile(file));

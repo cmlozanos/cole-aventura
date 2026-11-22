@@ -1,194 +1,134 @@
 import { test, expect } from '@playwright/test';
 
-async function answer(page, wrong = false) {
-  const correct = await page.evaluate(async () => {
-    const { createSession } = await import('./src/exercises.js');
-    // UI RNG is seeded before navigation; independently reconstruct the session.
-    let seed = 77;
-    const rng = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-    const topic = document.querySelector('.practice-top .subject-badge').textContent;
-    const { activities } = await import('./src/catalog.js');
-    const id = activities[0].topics.find(t => t.title === topic).id;
-    const position = Number(document.querySelector('label[for="session-progress"]').textContent.match(/\d+/)[0]) - 1;
-    return createSession(id,5,rng)[position].answer;
+async function prepare(page) {
+  await page.addInitScript(() => {
+    let seed=77;
+    Math.random=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
+    window.audioCalls={speech:0,contexts:0};
+    Object.defineProperty(window,'speechSynthesis',{value:{cancel(){},speak(){window.audioCalls.speech++;}},configurable:true});
+    window.SpeechSynthesisUtterance=class {constructor(text){this.text=text;}};
+    window.AudioContext=class {
+      constructor(){window.audioCalls.contexts++;this.currentTime=0;this.state='running';this.destination={};}
+      createOscillator(){return {frequency:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){},start(){},stop(){},disconnect(){}};}
+      createGain(){return {gain:{setValueAtTime(){},exponentialRampToValueAtTime(){},linearRampToValueAtTime(){}},connect(){},disconnect(){}};}
+      close(){this.state='closed';return Promise.resolve();} resume(){return Promise.resolve();}
+    };
   });
-  const options = page.locator('[data-answer]');
-  if (wrong) {
-    const values = await options.evaluateAll(nodes => nodes.map(n => n.dataset.answer));
-    await page.getByRole('button',{name:values.find(v => v !== correct),exact:true}).click();
-  } else await page.getByRole('button',{name:correct,exact:true}).click();
-
+  await page.goto('./');
+  return page.evaluate(async()=>{
+    const {createSession}=await import('./src/exercises.js');
+    const {activities}=await import('./src/catalog.js');
+    const topics=activities[0].topics.map(t=>t.id);
+    let seed=77;const rng=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
+    let previous='';const questions=[];
+    for(let i=0;i<20;i++){
+      const pool=topics.filter(t=>t!==previous);const topic=pool[Math.floor(rng()*pool.length)];
+      questions.push(createSession(topic,1,rng)[0]);previous=topic;rng();rng();
+    }
+    return questions;
+  });
 }
 
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    let seed = 77;
-    Math.random = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-  });
+test('una pantalla aleatoria, tres controles e inicio completamente silencioso',async({page})=>{
+  const [q]=await prepare(page);
+  await expect(page.getByRole('heading',{level:1})).toHaveText(q.prompt);
+  await expect(page.locator('header button')).toHaveCount(3);
+  await expect(page.locator('[data-nav],dialog,[data-topic],.summary')).toHaveCount(0);
+  await expect(page.getByRole('button',{name:'Activar voz',exact:true})).toHaveAttribute('aria-pressed','false');
+  await expect(page.getByRole('button',{name:'Activar efectos de sonido',exact:true})).toHaveAttribute('aria-pressed','false');
+  expect(await page.evaluate(()=>window.audioCalls)).toEqual({speech:0,contexts:0});
+  await page.getByRole('button',{name:q.answer,exact:true}).click();
+  await expect(page.locator('.feedback')).toContainText('✓');
+  expect(await page.evaluate(()=>window.audioCalls)).toEqual({speech:0,contexts:0});
 });
 
-test('inicio infantil de primero, seis juegos y respuesta en un toque', async ({page}) => {
-  const errors=[]; page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('./');
-  await expect(page.getByText('1.º de Primaria · Matemáticas')).toBeVisible();
-  await expect(page.locator('[data-course]')).toHaveCount(0);
-  await expect(page.locator('[data-topic]')).toHaveCount(6);
-  for (const id of ['numbers','compare','addition','subtraction','problems','shapes']) {
-    await page.reload(); await page.locator(`[data-topic="${id}"]`).click();
-    await expect(page.getByRole('button',{name:'Comprobar',exact:true})).toHaveCount(0);
-    await answer(page);
-    await expect(page.getByText('¡Muy bien! ✦',{exact:true})).toBeVisible();
-    page.once('dialog', d=>d.accept()); await page.locator('[data-action="exit"]').click();
-  }
-  expect(errors).toEqual([]);
-});
-
-test('error, pista, resumen y persistencia aislada por explorador',async ({page}) => {
-  await page.goto('./'); await page.locator('[data-topic="addition"]').click();
-  await answer(page,true);
-  await expect(page.getByText('Prueba otra vez')).toBeVisible();
-  await answer(page);
-  await page.getByRole('button',{name:'Siguiente →',exact:true}).click();
-  for (let i=1;i<5;i++) { await answer(page); await page.getByRole('button',{name:i===4?'Terminar →':'Siguiente →',exact:true}).click(); }
-  await expect(page.getByText('¡Lo has conseguido!')).toBeVisible();
-  await expect(page.locator('.completed-stars')).toBeVisible();
-  await page.locator('[data-action="home"]').click();
+test('voz y efectos independientes, apagados de nuevo al recargar',async({page})=>{
+  const [q]=await prepare(page);
+  await page.getByRole('button',{name:'Activar voz',exact:true}).click();
+  expect(await page.evaluate(()=>window.audioCalls.speech)).toBe(1);
+  expect(await page.evaluate(()=>window.audioCalls.contexts)).toBe(0);
+  await page.getByRole('button',{name:'Desactivar voz',exact:true}).click();
+  await page.getByRole('button',{name:'Activar efectos de sonido',exact:true}).click();
+  await page.getByRole('button',{name:q.answer,exact:true}).click();
+  expect(await page.evaluate(()=>window.audioCalls.speech)).toBe(1);
+  expect(await page.evaluate(()=>window.audioCalls.contexts)).toBe(1);
+  await page.getByRole('button',{name:'Desactivar efectos de sonido',exact:true}).click();
   await page.reload();
-  await page.locator('[data-nav="family"]').click();
-  await expect(page.locator('.family-stats')).toContainText('4 aciertos iniciales de 5 preguntas');
-  await page.locator('[data-nav="home"]').click();
-  await page.getByRole('button',{name:'Cambiar explorador',exact:true}).first().click();
-  await page.getByRole('button',{name:'Añadir explorador',exact:true}).click();
-  await expect(page.getByRole('dialog')).toContainText('Explorador 2');
-  await page.getByRole('button',{name:'Cerrar',exact:true}).click();
-  await expect(page.locator('#profile-label')).toHaveText('Explorador 2');
-
-  await page.locator('[data-nav="family"]').click();
-  await expect(page.getByText('Aprender juntos.',{exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Activar voz',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Activar efectos de sonido',exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>window.audioCalls)).toEqual({speech:0,contexts:0});
 });
 
-test('repaso mixto cubre todos los temas y finaliza',async ({page}) => {
-  await page.goto('./'); await page.getByRole('button',{name:'¡Empezar!',exact:false}).click();
-  const questions = await page.evaluate(async () => {
-    const {createSession} = await import('./src/exercises.js');
-    let seed=77; const rng=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
-    return createSession('mixed',6,rng);
-  });
-  for (let i=0;i<6;i++) {
-    await page.getByRole('button',{name:questions[i].answer,exact:true}).click();
-
-    await expect(page.getByText('¡Muy bien! ✦')).toBeVisible();
-    await page.getByRole('button',{name:i===5?'Terminar →':'Siguiente →',exact:true}).click();
-  }
-  await expect(page.getByText('¡Lo has conseguido!')).toBeVisible();
-  await page.locator('[data-action="home"]').click();
-  await page.locator('[data-nav="family"]').click();
-  await expect(page.locator('.topic-progress')).not.toContainText('Por descubrir');
-});
-
-test('responsive, teclado, offline real y caché aislada', async ({page,context,browserName}) => {
-  await page.goto('./');
-  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
-  await expect.poll(()=>page.evaluate(()=>!!navigator.serviceWorker.controller)).toBe(true);
-  await page.evaluate(()=>caches.open('otro-juego-no-borrar'));
-  for (const width of [360,768,1280]) {
-    await page.setViewportSize({width,height:900});
-    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
-    await expect(page.locator('[data-topic="shapes"]')).toBeVisible();
-  }
-  await page.setViewportSize({width:360,height:800});
-  await page.locator('[data-topic="numbers"]').focus(); await page.keyboard.press('Enter');
-  await page.locator('[data-answer]').first().focus(); await page.keyboard.press('Enter');
-  await expect(page.locator('.feedback')).not.toBeEmpty();
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
-  if (browserName === 'chromium') {
-    await context.setOffline(true);
-    await page.reload();
-    await expect(page.locator('[data-topic]')).toHaveCount(6);
-    await page.locator('[data-topic="shapes"]').click();
-    await expect(page.locator('.answer svg')).toHaveCount(4);
-    await context.setOffline(false);
-  } else {
-    test.info().annotations.push({type:'limitation',description:'WebKit runtime offline navigation fails natively; cache inventory verified, real offline reload covered in Chromium only.'});
-    const cached = await page.evaluate(async()=> {const keys=await caches.keys();const cache=await caches.open(keys.find(k=>k.startsWith('cole-aventura-')));return (await cache.keys()).map(r=>new URL(r.url).pathname);});
-    expect(cached.some(p=>p.endsWith('/index.html'))).toBe(true);
-    expect(cached.some(p=>p.endsWith('/src/exercises.js'))).toBe(true);
-  }
-  expect(await page.evaluate(()=>caches.keys())).toContain('otro-juego-no-borrar');
-});
-
-test('almacenamiento bloqueado no rompe la práctica', async ({page}) => {
-  await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new DOMException('blocked','SecurityError');}}));
-  await page.goto('./');
-  await page.getByRole('button',{name:'Cambiar explorador',exact:true}).first().click();
-  await page.getByRole('button',{name:'Añadir explorador'}).click();
-  await page.getByRole('button',{name:'Cerrar',exact:true}).click();
-  await expect(page.getByText('El navegador no permite guardar.',{exact:false})).toBeVisible();
-  await page.locator('[data-topic="numbers"]').click();
-  await expect(page.locator('[data-answer]')).toHaveCount(4);
-});
-
-test('foco, alternativas accesibles y cambios entre pestañas',async ({page,context})=>{
-  await page.goto('./');
-  await page.locator('[data-topic="numbers"]').click();
-  const counter=page.locator('[data-counter]').first();
-  await expect(counter).toBeVisible(); await counter.click();
-  await expect(counter).toHaveAttribute('aria-pressed','true');
-  await page.getByRole('button',{name:'Ayúdame',exact:true}).click();
-  await expect(page.getByRole('button',{name:'Ayúdame',exact:true})).toBeFocused();
-  page.once('dialog',d=>d.accept()); await page.locator('[data-action="exit"]').click();
-  const other=await context.newPage(); await other.goto('./');
-  // Keep a stale dialog open in the second tab while the first creates a profile.
-  await other.locator('#profile-button').click();
-  await page.locator('#profile-button').click();
-  await page.getByRole('button',{name:'Añadir explorador'}).click();
-  await other.locator('[data-profile="explorer-1"]').click();
-  await page.reload();
-  await page.locator('#profile-button').click();
-  await expect(page.locator('[data-profile]')).toHaveCount(2);
-  await other.close();
-});
-
-
-test('avance automático, pausa y ausencia de avance tras error',async ({page})=>{
-  await page.goto('./'); await page.locator('[data-topic="addition"]').click();
-  await page.locator('[data-action="narration"]').click();
-  await answer(page,true);
-  await page.waitForTimeout(4700);
-  await expect(page.locator('label[for="session-progress"]')).toHaveText('Reto 1 de 5');
-  await answer(page);
+test('error no avanza; acierto avanza; pausa conserva reto',async({page})=>{
+  const questions=await prepare(page);const q=questions[0];
+  await page.getByRole('button',{name:q.choices.find(c=>c!==q.answer),exact:true}).click();
+  await expect(page.locator('.feedback')).toContainText('↻');
+  await page.waitForTimeout(3700);
+  await expect(page.locator('h1')).toHaveText(q.prompt);
+  await page.getByRole('button',{name:q.answer,exact:true}).click();
   await page.getByRole('button',{name:'Pausar',exact:true}).click();
-  await page.waitForTimeout(4700);
-  await expect(page.locator('label[for="session-progress"]')).toHaveText('Reto 1 de 5');
+  await page.waitForTimeout(3700);
+  await expect(page.locator('h1')).toHaveText(q.prompt);
   await page.getByRole('button',{name:'Continuar',exact:true}).click();
-  await expect(page.locator('label[for="session-progress"]')).toHaveText('Reto 2 de 5',{timeout:6500});
-  page.once('dialog',d=>d.accept()); await page.locator('[data-action="exit"]').click();
-  await page.waitForTimeout(4700);
-  await expect(page.getByRole('heading',{name:'¡Vamos a descubrir!'})).toBeVisible();
+  await expect(page.locator('h1')).toHaveText(questions[1].prompt,{timeout:5000});
 });
 
-test('voz automática tras empezar, silencio y alternativa sin voz',async ({page})=>{
-  await page.addInitScript(()=>{
-    window.spoken=[];
-    Object.defineProperty(window,'speechSynthesis',{value:{cancel(){},speak(u){window.spoken.push(u.text);}},configurable:true});
-  });
-  await page.goto('./');
-  expect(await page.evaluate(()=>window.spoken.length)).toBe(0);
-  await page.locator('[data-topic="addition"]').click();
-  expect(await page.evaluate(()=>window.spoken.length)).toBe(1);
-  await page.locator('[data-action="narration"]').click();
-  const before=await page.evaluate(()=>window.spoken.length);
-  await answer(page);
-  expect(await page.evaluate(()=>window.spoken.length)).toBe(before);
-  await page.locator('[data-action="speak"]').click();
-  expect(await page.evaluate(()=>window.spoken.length)).toBeGreaterThan(before);
+test('todos los tipos y ayudas caben sin scroll ni contenido cortado',async({page})=>{
+  test.setTimeout(120000);
+  const questions=await prepare(page);
+  const viewports=[{width:360,height:640},{width:320,height:568},{width:768,height:1024},{width:1024,height:768},{width:667,height:375}];
+  const checked=new Set();
+  // Advance real UI through seeded random questions, testing max-size aids too.
+  for(let i=0;i<20 && checked.size<6;i++){
+    const q=questions[i];
+    await expect(page.locator('h1')).toHaveText(q.prompt,{timeout:5000});
+    if(!checked.has(q.topicId)){
+      checked.add(q.topicId);
+      await page.getByRole('button',{name:q.choices.find(c=>c!==q.answer),exact:true}).click();
+      for(const viewport of viewports){
+        await page.setViewportSize(viewport);
+        const layout=await page.evaluate(()=>{
+          const boxes=[...document.querySelectorAll('h1,.lv-visual,.answer,.feedback,header button')].map(n=>n.getBoundingClientRect());
+          const picture=document.querySelector('.picture').getBoundingClientRect();
+          const visual=document.querySelector('.lv-visual')?.getBoundingClientRect();
+          return {scroll:document.documentElement.scrollHeight>innerHeight+1||document.documentElement.scrollWidth>innerWidth+1,clipped:boxes.some(b=>b.top<0||b.left<0||b.bottom>innerHeight+1||b.right>innerWidth+1)||Boolean(visual&&(visual.top<picture.top-1||visual.bottom>picture.bottom+1))};
+        });
+        expect(layout,`${q.topicId} ${viewport.width}x${viewport.height}`).toEqual({scroll:false,clipped:false});
+      }
+    }
+    await page.getByRole('button',{name:q.answer,exact:true}).click();
+    if(i<19) await expect(page.locator('h1')).toHaveText(questions[i+1].prompt,{timeout:5000});
+  }
+  expect(checked.size).toBe(6);
 });
 
-test('sin síntesis de voz y contadores conservados tras pedir ayuda',async ({page})=>{
-  await page.addInitScript(()=>{Object.defineProperty(window,'speechSynthesis',{value:undefined,configurable:true});});
-  await page.goto('./'); await page.locator('[data-topic="numbers"]').click();
-  await page.locator('[data-counter]').first().click();
-  await page.locator('[data-action="hint"]').click();
-  await expect(page.locator('[data-counter]').first()).toHaveAttribute('aria-pressed','true');
-  await expect(page.locator('[data-answer]')).toHaveCount(4);
+test('offline real Chromium y no borra progreso antiguo',async({page,context,browserName})=>{
+  await prepare(page);
+  await page.evaluate(()=>localStorage.setItem('cole-aventura-state','{"legacy":"keep"}'));
+  await page.evaluate(()=>navigator.serviceWorker.ready);
+  await expect.poll(()=>page.evaluate(()=>!!navigator.serviceWorker.controller)).toBe(true);
+  if(browserName==='chromium'){
+    await context.setOffline(true);await page.reload();await expect(page.locator('[data-answer]')).toHaveCount(4);await context.setOffline(false);
+  }else test.info().annotations.push({type:'limitation',description:'WebKit offline navigation unavailable in this runtime; Chromium tests real offline.'});
+  expect(await page.evaluate(()=>localStorage.getItem('cole-aventura-state'))).toBe('{"legacy":"keep"}');
+});
+
+test('límites visuales 10 objetos, ayudas y problemas largos sin scroll',async({page})=>{
+  await prepare(page);
+  await page.getByRole('button',{name:'Pausar',exact:true}).click();
+  for(const viewport of [{width:320,height:568},{width:360,height:640},{width:667,height:375}]){
+    await page.setViewportSize(viewport);
+    for(const v of [{kind:'operation',a:10,b:0,operator:'+'},{kind:'operation',a:10,b:10,operator:'−'},{kind:'compare',a:10,b:9},{kind:'count',count:10}]){
+      await page.evaluate(async visual=>{
+        const {renderLearningVisual}=await import('./src/learning-visuals.js');
+        document.querySelector('h1').textContent='Hugo tiene 10 pegatinas y regala 10. ¿Cuántas le quedan?';
+        document.querySelector('.picture').innerHTML=renderLearningVisual({visual},true,false);
+        document.querySelector('.feedback').textContent='↻ Empieza en 10 y cuenta 10 hacia atrás.';
+      },v);
+      expect(await page.evaluate(()=>{
+        const p=document.querySelector('.picture').getBoundingClientRect();const v=document.querySelector('.lv-visual').getBoundingClientRect();
+        return document.documentElement.scrollHeight<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1&&v.top>=p.top-1&&v.bottom<=p.bottom+1;
+      }),`${viewport.width} ${v.kind}`).toBe(true);
+    }
+  }
 });

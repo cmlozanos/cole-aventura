@@ -20,3 +20,7 @@ El primer pack usa problemas de una operación con enteros 0–10, sumas ≤10 y
 ## Presentación infantil vigente
 
 La portada ya no expone cursos sin actividades ni tablas de progreso: se centra en 1.º. `src/learning-visuals.js` convierte el contrato de pregunta en objetos SVG manipulables, grupos y recta numérica; `src/child.css` adapta las superficies infantiles sin cambiar la zona familiar. Las preguntas siguen siendo puras y los IDs de progreso permanecen estables. Cambiar de actividad o curso en una futura ampliación debe conservar esta separación y probar el nuevo recorrido infantil; no añadir menús vacíos por anticipado.
+
+## Pantalla única vigente (sustituye navegación descrita antes)
+
+`app.js` toma un tema aleatorio distinto del anterior y genera una pregunta nueva, sin sesión ni ficha fija. No hay navegación de cursos, modo familiar, perfiles ni resultados. `audio.js` mantiene canales independientes en memoria con ambos valores iniciales false. `child.css` usa grid de altura de viewport con distribución específica para horizontal corto. Nuevos tipos de contenido deben pasar las mediciones de scroll, rectángulos visibles y límites 0/10 antes de añadirse. Los módulos de catálogo y almacenamiento históricos siguen disponibles pero no implican controles en la interfaz.

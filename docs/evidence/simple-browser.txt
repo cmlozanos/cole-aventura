@@ -1,0 +1,21 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test
+
+
+Running 12 tests using 1 worker
+
+  ✓   1 [chromium] › tests/browser/app.spec.js:32:1 › una pantalla aleatoria, tres controles e inicio completamente silencioso (776ms)
+  ✓   2 [chromium] › tests/browser/app.spec.js:45:1 › voz y efectos independientes, apagados de nuevo al recargar (439ms)
+  ✓   3 [chromium] › tests/browser/app.spec.js:62:1 › error no avanza; acierto avanza; pausa conserva reto (11.6s)
+  ✓   4 [chromium] › tests/browser/app.spec.js:76:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (42.8s)
+  ✓   5 [chromium] › tests/browser/app.spec.js:105:1 › offline real Chromium y no borra progreso antiguo (437ms)
+  ✓   6 [chromium] › tests/browser/app.spec.js:116:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (382ms)
+  ✓   7 [webkit] › tests/browser/app.spec.js:32:1 › una pantalla aleatoria, tres controles e inicio completamente silencioso (1.1s)
+  ✓   8 [webkit] › tests/browser/app.spec.js:45:1 › voz y efectos independientes, apagados de nuevo al recargar (468ms)
+  ✓   9 [webkit] › tests/browser/app.spec.js:62:1 › error no avanza; acierto avanza; pausa conserva reto (11.6s)
+  ✓  10 [webkit] › tests/browser/app.spec.js:76:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (42.8s)
+  ✓  11 [webkit] › tests/browser/app.spec.js:105:1 › offline real Chromium y no borra progreso antiguo (263ms)
+  ✓  12 [webkit] › tests/browser/app.spec.js:116:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (283ms)
+
+  12 passed (2.0m)

@@ -10,3 +10,9 @@
 - Añadir objetos tocables, grupos de suma, tachado en resta, recta y figuras como respuesta.
 - Sustituir comprobación manual por toque directo; controlar avance, voz, pausa y salida.
 - Conservar progreso, pruebas negativas, teclado y PWA; verificar modelos/visuales y ambos motores.
+
+## Simplificación de pantalla única
+- Eliminar navegación y modos secundarios sin borrar datos preexistentes.
+- Retos aleatorios generados al vuelo, respuestas barajadas y sin mismo tema seguido.
+- Tres iconos accesibles: pausa y canales independientes inicialmente apagados.
+- Validar no-scroll con geometría, todas las familias y límites, ambas orientaciones.

@@ -1,169 +1,134 @@
-import { courses, activities } from './catalog.js';
+import { activities } from './catalog.js';
 import { createSession } from './exercises.js';
-import { loadState, saveState, recordSession, createProfile } from './storage.js';
 import { shapeSvg } from './art.js';
-import { renderLearningVisual, renderChoice } from './learning-visuals.js';
+import { renderLearningVisual } from './learning-visuals.js';
+import { createAudio } from './audio.js';
 
 const main = document.querySelector('#main');
-let state = loadState();
-let advanceTimer = null;
-let narration = true;
-let speechUnlocked = false;
-let speechGeneration = 0;
-let view = 'home';
-let session = null;
-let installPrompt = null;
-let storageWarning = false;
-let activity = activities[0];
+const controls = document.querySelector('.controls');
+const audio = createAudio(window);
+const topics = activities[0].topics.map(topic => topic.id);
+const shapes = { 'Círculo':'circle', 'Cuadrado':'square', 'Rectángulo':'rectangle', 'Triángulo':'triangle' };
+const icons = {
+  pause:'<path d="M9 5v14M15 5v14"/>',
+  play:'<path d="m9 5 11 7-11 7Z"/>',
+  voice:'<path d="M5 10v4h4l5 4V6l-5 4Z"/><path d="M18 8q5 4 0 8"/>',
+  effects:'<path d="M9 17V5l10-2v12M9 8l10-2"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="16" cy="16" rx="3" ry="2"/>'
+};
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const profile = () => state.profiles.find(p => p.id === state.activeProfileId) || state.profiles[0];
-const progress = () => state.progress[profile().id]?.[activity.id];
-function persist() { storageWarning = !saveState(state); }
-function button(text, action, kind = 'primary') { return `<button class="button ${kind}" data-action="${action}">${text}</button>`; }
-function render(focus = false) {
-  document.querySelector('#profile-label').textContent = profile().name;
-  document.querySelector('.avatar').textContent = `E${state.profiles.indexOf(profile()) + 1}`;
-  document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === view));
-  main.innerHTML = view === 'family' ? familyView() : session ? exerciseView() : homeView();
-  if (session?.counted) main.querySelectorAll('[data-counter]').forEach(counter => { const counted = session.counted.includes(counter.dataset.counter); counter.classList.toggle('counted',counted); counter.setAttribute('aria-pressed',String(counted)); });
-  if (storageWarning) main.insertAdjacentHTML('afterbegin','<p class="storage-warning" role="status">El navegador no permite guardar. Puedes practicar, pero el progreso no se conservará al cerrar.</p>');
-  if (focus) { main.focus(); window.scrollTo(0, 0); }
+let question;
+let previousSignature = '';
+let previousTopic = '';
+let solved = false;
+let assisted = false;
+let paused = false;
+let selected = null;
+let timer = null;
+let generation = 0;
+let feedback = '';
+let counted = [];
+let updatePending = false;
+
+function icon(name, muted = false) {
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[name]}${muted ? '<path class="mute-slash" d="M3 3l18 18"/>' : ''}</svg>`;
 }
-function homeView() {
-  return `<section class="child-home"><p class="course-label">1.º de Primaria · Matemáticas</p><div class="welcome-mascot" aria-hidden="true">✦</div><h1>¡Vamos a descubrir!</h1><p class="home-invitation">Toca y aprende jugando.</p>${button('<span aria-hidden="true">▶</span> ¡Empezar!', 'mixed')}<div class="section-heading"><h2>O elige un juego</h2></div><div class="topic-grid">${activity.topics.map(t => `<button class="topic-card" data-topic="${t.id}"><span class="topic-symbol" aria-hidden="true">${esc(t.symbol)}</span><strong>${esc(t.title)}</strong></button>`).join('')}</div><p class="home-note">Retos cortitos. Tú puedes parar cuando quieras.</p></section>`;
+function control(action, label, glyph, pressed, muted = false) {
+  return `<button data-action="${action}" aria-label="${label}" title="${label}" aria-pressed="${pressed}">${icon(glyph,muted)}</button>`;
 }
-function familyView() {
-  const stats = progress();
-  return `<section class="family-view"><p class="eyebrow">ACOMPAÑAR, NO COMPARAR</p><h1>Aprender juntos.</h1><p class="lead">Un espacio sencillo para practicar lo que llega del cole.</p><div class="family-grid"><article class="activity-card"><h2>${esc(profile().name)}</h2><p>El progreso solo se guarda en este navegador. No se sincroniza entre dispositivos.</p><div class="family-stats"><strong>${stats?.sessions || 0} aventuras</strong><span>${stats?.correct || 0} aciertos iniciales de ${stats?.answered || 0} preguntas</span><span>${stats?.helped || 0} preguntas con pista o reintento</span></div><h3>${esc(activity.subject)} · ${esc(courses.find(c => c.id === activity.courseId)?.label)}</h3><ul class="topic-progress">${activity.topics.map(t => { const p = stats?.topics?.[t.id]; return `<li><span>${esc(t.title)}</span><span>${p ? `${p.correct} / ${p.total} al primer intento` : 'Por descubrir'}</span></li>`; }).join('')}</ul><p class="small muted">Practicar no equivale a una evaluación escolar. El repaso se inspira en los temas indicados, no reproduce un examen.</p>${button('Elegir explorador','profiles','secondary')}</article><div class="family-side"><article class="note-card"><h2>Un ratito es suficiente</h2><p>Leed juntos si hace falta. Usad objetos, los dedos o la recta numérica. Celebrad el esfuerzo y parad cuando apetezca.</p><p>El botón «Escuchar» usa la voz del dispositivo. Puede necesitar conexión o no estar disponible.</p></article><article class="install-card"><h2>Llévalo a la pantalla de inicio</h2><p>En Android, abre el menú del navegador y elige «Instalar aplicación». En iPad o iPhone: Compartir → Añadir a pantalla de inicio.</p>${installPrompt ? button('Instalar aplicación','install') : ''}<p class="small muted">Para usarla sin conexión, ábrela primero con internet y espera a que aparezca «Lista sin conexión».</p></article></div></div></section>`;
+function renderControls() {
+  controls.innerHTML = control('pause',paused ? 'Continuar' : 'Pausar',paused ? 'play' : 'pause',paused)
+    + control('voice',audio.voice ? 'Desactivar voz' : 'Activar voz','voice',audio.voice,!audio.voice)
+    + control('effects',audio.effects ? 'Desactivar efectos de sonido' : 'Activar efectos de sonido','effects',audio.effects,!audio.effects);
 }
-function exerciseView() {
-  if (session.finished) return summaryView();
-  const q = session.questions[session.index];
-  const title = activity.topics.find(t => t.id === q.topicId)?.title || 'Repaso';
-  return `<section class="practice"><div class="practice-top"><button class="text-button" data-action="exit">← Mis juegos</button><span class="subject-badge">${esc(title)}</span><button class="text-button" data-action="narration" aria-pressed="${narration}">${narration ? 'Voz activada' : 'Voz desactivada'}</button></div><div class="practice-progress"><label for="session-progress">Reto ${session.index + 1} de ${session.questions.length}</label><progress id="session-progress" max="${session.questions.length}" value="${session.index + Number(session.solved)}"></progress></div><article class="question-card"><div class="question-toolbar"><button class="text-button" data-action="speak">Escuchar otra vez <span aria-hidden="true">◖))</span></button></div><h1>${esc(q.prompt)}</h1>${q.visual.kind !== 'shape' || session.showHint || session.solved ? renderLearningVisual(q,session.showHint,session.solved) : '<p class="shape-instruction">Escucha y busca la figura.</p>'}<div class="answers" role="group" aria-label="Toca tu respuesta">${q.choices.map(c => `<button class="answer ${session.selected === c ? (session.solved ? 'chosen' : 'try-again') : ''}" data-answer="${esc(c)}" aria-label="${esc(c)}" ${session.solved ? 'disabled' : ''}>${q.visual.kind === 'shape' ? shapeSvg(({'Círculo':'circle','Cuadrado':'square','Rectángulo':'rectangle','Triángulo':'triangle'})[c],true) : renderChoice(c,q)}</button>`).join('')}</div><div class="feedback ${session.feedback ? (session.solved ? 'success' : 'retry') : ''}" role="status" aria-live="polite">${session.feedback ? `<strong>${session.solved ? '¡Muy bien! ✦' : 'Prueba otra vez'}</strong><p>${esc(session.solved ? q.explanation : q.hint)}</p>` : `<p>${q.visual.kind === 'shape' ? 'Escucha el nombre y toca la figura.' : q.visual.kind === 'compare' ? 'Mira los dos grupos y elige.' : 'Toca las estrellas para contar. Después, elige.'}</p>`}</div>${session.showHint && !session.feedback ? `<p class="hint" role="status">${esc(q.hint)}</p>` : ''}<p id="speech-status" class="small muted" role="status"></p><div class="question-actions">${session.solved ? `<button class="text-button" data-action="pause" aria-pressed="${session.paused}">${session.paused ? 'Continuar' : 'Pausar'}</button>${button(session.index + 1 === session.questions.length ? 'Terminar →' : 'Siguiente →','next')}` : '<button class="button secondary" data-action="hint">Ayúdame</button>'}</div></article></section>`;
+function render() {
+  renderControls();
+  main.classList.toggle('paused',paused);
+  main.innerHTML = `<h1>${esc(question.prompt)}</h1><section class="picture" aria-label="Dibujos del reto">${question.visual.kind === 'shape' && !assisted && !solved ? '<div class="shape-cue" aria-hidden="true">?</div>' : renderLearningVisual(question,assisted,solved)}</section><div class="answers" role="group" aria-label="Elige una respuesta">${question.choices.map(choice => `<button data-answer="${esc(choice)}" aria-label="${esc(choice)}" class="answer ${selected === choice ? (solved ? 'correct' : 'retry') : ''}" ${solved || paused ? 'disabled' : ''}>${question.visual.kind === 'shape' ? `<span class="choice-shape" style="transform:rotate(${question.angle}deg)">${shapeSvg(shapes[choice],true)}</span>` : esc(choice)}</button>`).join('')}</div><p class="feedback ${solved ? 'success' : ''}" role="status" aria-live="polite">${paused ? 'Pausa' : esc(feedback)}</p><p class="sr-only" id="audio-status" role="status"></p>`;
+  main.querySelectorAll('[data-counter]').forEach(counter => {
+    const active = counted.includes(counter.dataset.counter);
+    counter.setAttribute('aria-pressed',String(active));
+    counter.classList.toggle('counted',active);
+    counter.disabled = paused;
+  });
 }
-function summaryView() {
-  return `<section class="summary"><div class="summary-star" aria-hidden="true">✦</div><h1>¡Lo has conseguido!</h1><p>Has descubierto ${session.questions.length} retos.</p><div class="completed-stars" aria-label="${session.questions.length} retos practicados">${'✦ '.repeat(session.questions.length)}</div><div class="summary-actions">${button('Jugar otra vez ▶','again')}${button('Mis juegos','home','secondary')}</div><p class="small muted">También puedes descansar.</p>${storageWarning ? '<p role="status">No se ha podido guardar el progreso.</p>' : ''}</section>`;
-}
-function start(topicId) {
-  clearAdvance(); stopSpeech();
-  view = 'home';
-  session = {profileId:profile().id,topicId,questions:createSession(topicId,topicId === 'mixed' ? 6 : 5),index:0,selected:null,solved:false,feedback:false,showHint:false,attempts:0,correct:0,helped:0,results:[],paused:false,counted:[]};
-  speechUnlocked = true;
-  render(true);
-  narrateQuestion();
-}
-function clearAdvance() { clearTimeout(advanceTimer); advanceTimer = null; }
-function speak(text) {
-  if (!narration || !speechUnlocked) return;
-  if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') { const status = document.querySelector('#speech-status'); if (status) status.textContent = 'Este navegador no tiene voz. Puedes jugar con los dibujos.'; return; }
-  stopSpeech();
-  const generation = speechGeneration;
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'es-ES'; utterance.rate = .8;
-  utterance.onerror = () => { if (generation !== speechGeneration) return; const status = document.querySelector('#speech-status'); if (status) status.textContent = 'La voz no está disponible. Mira los dibujos o pide ayuda.'; };
-  window.speechSynthesis.speak(utterance);
-}
-function narrateQuestion() { if (session && !session.finished) speak(session.questions[session.index].prompt); }
-function scheduleNext() {
-  clearAdvance();
-  if (!session?.solved || session.paused || document.hidden) return;
-  advanceTimer = setTimeout(() => {
-    if (narration && window.speechSynthesis?.speaking && Date.now() - session.feedbackAt < 20000) scheduleNext();
-    else advance();
-  }, 4500);
-}
-function advance() {
-  if (!session?.solved || session.finished) return;
-  clearAdvance(); stopSpeech();
-  if (++session.index === session.questions.length) {
-    session.finished = true;
-    if (!storageWarning) state = loadState();
-    state = recordSession(state,{profileId:session.profileId,activityId:activity.id,topicId:session.topicId,correct:session.correct,total:session.questions.length,helped:session.helped,results:session.results});
-    persist();
-    render(true); speak('¡Aventura completada! Muy buen trabajo.');
-  } else {
-    Object.assign(session,{selected:null,solved:false,feedback:false,showHint:false,attempts:0,paused:false,counted:[]});
-    render(true); narrateQuestion();
+function cancelAdvance() { clearTimeout(timer); timer = null; }
+function nextQuestion() {
+  cancelAdvance(); audio.stop(); generation++;
+  if (updatePending) { location.reload(); return; }
+  const pool = topics.filter(topic => topic !== previousTopic);
+  const topic = pool[Math.floor(Math.random() * pool.length)];
+  let candidate;
+  let signature;
+  for (let attempt=0; attempt<8; attempt++) {
+    candidate = createSession(topic,1)[0];
+    signature = JSON.stringify([candidate.prompt,candidate.visual]);
+    if (signature !== previousSignature) break;
   }
+  question = {...candidate, angle: Math.round(Math.random()*30)-15};
+  previousTopic = topic; previousSignature = signature;
+  solved = false; assisted = false; selected = null; feedback = ''; counted = [];
+  document.documentElement.style.setProperty('--accent',`hsl(${Math.floor(Math.random()*360)} 62% 42%)`);
+  render();
+  main.focus({preventScroll:true});
+  audio.speak(question.prompt);
 }
-function stopSpeech() { speechGeneration++; if (window.speechSynthesis) window.speechSynthesis.cancel(); }
-function openProfiles() {
-  if (session && !session.finished && !window.confirm('¿Salir de esta aventura? Las preguntas sin terminar no se guardarán.')) return;
-  clearAdvance(); stopSpeech();
-  if (session) { session = null; render(); }
-  const dialog = document.querySelector('#profile-dialog');
-  document.querySelector('#profile-list').innerHTML = state.profiles.map(p => `<button class="profile-choice ${p.id === profile().id ? 'selected' : ''}" data-profile="${esc(p.id)}">${esc(p.name)} <span>${p.id === profile().id ? 'Actual' : 'Elegir'}</span></button>`).join('');
-  document.querySelector('#add-profile').disabled = state.profiles.length >= 6;
-  document.querySelector('#profile-message').textContent = state.profiles.length >= 6 ? 'Ya hay seis exploradores en este navegador.' : 'Sin nombres, sin cuentas, sin datos personales.';
-  if (!dialog.open) dialog.showModal();
+function scheduleAdvance() {
+  cancelAdvance();
+  if (!solved || paused || document.hidden) return;
+  const token = generation;
+  timer = setTimeout(() => {
+    if (token === generation && !paused && !document.hidden) nextQuestion();
+  },3500);
 }
-document.addEventListener('click', async event => {
-  const target = event.target.closest('button, a.brand');
+document.addEventListener('click', event => {
+  const target = event.target.closest('button');
   if (!target) return;
-  if (target.matches('a.brand') || target.dataset.nav) {
-    event.preventDefault();
-    if (session && !session.finished && !window.confirm('¿Salir de esta aventura? Las preguntas sin terminar no se guardarán.')) return;
-    clearAdvance(); stopSpeech(); session = null; view = target.dataset.nav || 'home'; render(true); return;
+  const action = target.dataset.action;
+  if (action === 'pause') {
+    paused = !paused; cancelAdvance(); audio.stop(); render();
+    controls.querySelector('[data-action="pause"]').focus();
+    if (!paused) { if (solved) scheduleAdvance(); else audio.speak(question.prompt); }
+    return;
   }
-  if (target.dataset.topic) { start(target.dataset.topic); return; }
+  if (action === 'voice') {
+    audio.toggleVoice(); renderControls();
+    controls.querySelector('[data-action="voice"]').focus();
+    if (audio.voice && !paused) audio.speak(question.prompt);
+    return;
+  }
+  if (action === 'effects') {
+    audio.toggleEffects(); renderControls();
+    controls.querySelector('[data-action="effects"]').focus();
+    return;
+  }
+  if (paused || solved) return;
   if (target.hasAttribute('data-counter')) {
-    const counted = target.getAttribute('aria-pressed') !== 'true';
-    target.setAttribute('aria-pressed', String(counted));
-    target.classList.toggle('counted',counted);
-    session.counted = counted ? [...session.counted,target.dataset.counter] : session.counted.filter(id=>id!==target.dataset.counter);
+    const active = !counted.includes(target.dataset.counter);
+    counted = active ? [...counted,target.dataset.counter] : counted.filter(id=>id !== target.dataset.counter);
+    target.setAttribute('aria-pressed',String(active)); target.classList.toggle('counted',active);
     return;
   }
   if (target.hasAttribute('data-answer')) {
-    if (!session || session.solved) return;
-    session.selected = target.dataset.answer;
-    const q = session.questions[session.index];
-    session.attempts++; session.feedback = true;
-    if (session.selected === q.answer) {
-      session.solved = true;
-      const independent = session.attempts === 1 && !session.showHint;
-      session.correct += Number(independent); session.helped += Number(!independent);
-      session.results.push({topicId:q.topicId,correct:independent,helped:!independent});
-    } else session.showHint = true;
-    render();
-    speak(session.solved ? `¡Muy bien! ${q.explanation}` : `Prueba otra vez. ${q.hint}`);
-    main.querySelector(session.solved ? '[data-action="pause"]' : `[data-answer="${CSS.escape(session.selected)}"]`)?.focus();
-    if (session.solved) { session.feedbackAt = Date.now(); scheduleNext(); }
-    return;
+    selected = target.dataset.answer;
+    solved = selected === question.answer;
+    assisted = assisted || !solved;
+    feedback = solved ? `✓ ${question.explanation}` : `↻ ${question.hint}`;
+    render(); audio.effect(solved); audio.speak(solved ? question.explanation : question.hint);
+    if (solved) { controls.querySelector('[data-action="pause"]').focus(); scheduleAdvance(); }
+    else main.querySelector(`[data-answer="${CSS.escape(selected)}"]`)?.focus();
   }
-  if (target.dataset.profile) { if (!storageWarning) state = loadState(); state.activeProfileId = target.dataset.profile; persist(); document.querySelector('#profile-dialog').close(); render(); return; }
-  const action = target.dataset.action;
-  if (action === 'profiles' || target.id === 'profile-button') { openProfiles(); return; }
-  if (target.id === 'close-profiles') { document.querySelector('#profile-dialog').close(); return; }
-  if (target.id === 'add-profile') { if (!storageWarning) state = loadState(); state = createProfile(state); persist(); openProfiles(); render(); return; }
-  if (action === 'mixed') start('mixed');
-  if (action === 'hint') { session.showHint = true; render(); speak(session.questions[session.index].hint); main.querySelector('[data-action="hint"]')?.focus(); }
-  if (action === 'next') advance();
-  if (action === 'pause' && session?.solved) { session.paused = !session.paused; clearAdvance(); render(); main.querySelector('[data-action="pause"]')?.focus(); if (!session.paused) scheduleNext(); }
-  if (action === 'narration') { narration = !narration; stopSpeech(); render(); if (narration) narrateQuestion(); }
-  if (action === 'again') start(session.topicId);
-  if (action === 'exit' || action === 'home') {
-    if (!session?.finished && !window.confirm('¿Salir de esta aventura? Las preguntas sin terminar no se guardarán.')) return;
-    clearAdvance(); stopSpeech(); session = null; render(true);
-  }
-  if (action === 'speak') { speechUnlocked = true; narration = true; narrateQuestion(); }
-  if (action === 'install' && installPrompt) { await installPrompt.prompt(); installPrompt = null; render(); }
 });
-window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); installPrompt = event; if (view === 'family') render(); });
-window.addEventListener('storage', event => {
-  if (event.key === 'cole-aventura-state' && !session && !document.querySelector('#profile-dialog').open) { state = loadState(); render(); }
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { paused = true; cancelAdvance(); audio.stop(); render(); }
 });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { clearAdvance(); stopSpeech(); if (session?.solved && !session.finished) { session.paused = true; render(); } } });
-window.addEventListener('pagehide',() => { clearAdvance(); stopSpeech(); });
-render();
+window.addEventListener('pagehide', () => { cancelAdvance(); audio.stop(); });
+nextQuestion();
 if ('serviceWorker' in navigator) {
-  let wasControlled = Boolean(navigator.serviceWorker.controller);
-  let updatePending = false;
+  let controlled = Boolean(navigator.serviceWorker.controller);
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!wasControlled) { wasControlled = true; return; }
-    if (session && !session.finished) updatePending = true;
-    else window.location.reload();
+    if (!controlled) { controlled = true; return; }
+    // Finish the current question before replacing the app's cached version.
+    updatePending = true;
   });
-  document.addEventListener('click', event => { if (updatePending && event.target.closest('[data-action="home"], [data-nav], a.brand') && !session) window.location.reload(); });
-  navigator.serviceWorker.register('./sw.js').then(async () => { await navigator.serviceWorker.ready; document.querySelector('#connection-status').textContent = 'Lista sin conexión'; }).catch(() => { document.querySelector('#connection-status').textContent = 'Modo sin conexión no disponible'; });
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
 }

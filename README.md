@@ -1,44 +1,38 @@
 # Cole Aventura
 
-Una PWA de práctica escolar por cursos de Educación Primaria española. Sesiones cortas, explicaciones amables y progreso independiente para hasta seis exploradores, sin cuentas ni nombres reales.
+[**Abrir la aplicación**](https://cmlozanos.github.io/cole-aventura/)
 
-## Primer pack
+Matemáticas visuales para **1.º de Primaria**, en una pantalla y sin menús. Se abre directamente con un reto. Toca objetos para contar y elige la respuesta; al acertar llega otro reto aleatorio. Si fallas, se muestra ayuda visual y puedes intentarlo otra vez. Sin cronómetro de respuesta, anuncios, cuentas ni modo familia.
 
-**1.º de Primaria · Matemáticas · Unidades 1 y 2**
+## Tres controles
 
-- Contar cantidades del 1 al 10.
-- Distinguir el mayor y el menor.
-- Sumar hasta 10 y restar sin resultados negativos, incluido el cero.
-- Resolver problemas breves de una operación.
-- Reconocer círculo, cuadrado, rectángulo y triángulo escuchando el nombre y tocando su dibujo.
+- **Pausa / continuar**: detiene el juego y los audios.
+- **Voz**: activar o desactivar lectura de consignas.
+- **Nota musical**: activar o desactivar efectos de respuesta.
 
-Cada juego ofrece cinco preguntas. «¡Empezar!» elige seis, una por tema. Tocar una respuesta la comprueba automáticamente; los errores dan apoyo visual sin avanzar. Tras acertar, aparece la explicación y el siguiente reto llega automáticamente, con opción de pausa o siguiente manual. La voz lee la pregunta al empezar y puede silenciarse. Los objetos se pueden tocar para marcar lo contado; las restas tachan los objetos que se quitan y las pistas muestran la recta numérica. El final celebra los retos practicados; los detalles de aciertos y ayuda quedan en Zona familiar. No hay cronómetro, notas oficiales ni rankings. La pantalla infantil se centra exclusivamente en 1.º de Primaria; el modelo conserva la capacidad de incorporar nuevos cursos sin mostrarlos vacíos a los niños.
+**Los dos audios están apagados cada vez que se carga la app**, incluso si se activaron anteriormente. No se crea un motor de sonido hasta que el usuario habilita efectos y responde. La voz depende del navegador y del dispositivo; no se garantiza offline.
 
-## Usar e instalar
+## Contenido aleatorio
 
-[Abrir Cole Aventura](https://cmlozanos.github.io/cole-aventura/)
+Cantidades 1–10, mayor/menor, sumas hasta 10, restas sin negativos, problemas de una operación y cuatro figuras. Los ejercicios se calculan al vuelo; no hay fichas predefinidas ni orden fijo. Se barajan temas y respuestas, evitando el mismo tema consecutivo. Las figuras cambian inclinación y los objetos cambian de color. La aleatoriedad respeta los límites del contenido escolar, no implica una generación ilimitada por IA.
 
-Funciona en el navegador sin instalación. En Android: menú → Instalar aplicación. En iPhone/iPad: Compartir → Añadir a pantalla de inicio. Tras abrirla con conexión, esperar a «Lista sin conexión» antes de desconectarse. La lectura opcional usa la voz del dispositivo y no está garantizada sin conexión.
+Diseño sin scroll, comprobado desde 320×568 y 667×375 hasta tablet/escritorio. No se oculta contenido con `overflow:hidden`. Los objetivos táctiles principales conservan al menos 44 píxeles. Zoom extremo, traducciones del navegador y dispositivos no probados pueden necesitar ajustes.
 
-Los perfiles son genéricos: «Explorador 1», «Explorador 2», etc. Se eligen en la cabecera. El avance se guarda únicamente en este navegador; no se sincroniza y se pierde al borrar los datos del sitio. Si el almacenamiento está bloqueado, se puede practicar y aparece un aviso al intentar guardar. La zona familiar muestra el progreso, sugerencias e instalación; no es un control parental protegido.
+## Instalar y sin conexión
+
+Android: menú del navegador → Instalar aplicación. iPhone/iPad: Compartir → Añadir a pantalla de inicio. Abrir primero con conexión para completar el caché. El contenido funciona offline después de esa carga. La PWA solo elimina sus propias versiones de caché. No borra progreso antiguo, aunque esta versión ya no muestra perfiles ni resultados guardados.
 
 ## Desarrollo
 
-Node.js 20+, npm y Python 3 para el servidor estático. Sin dependencias de ejecución ni CDN. Makefile propio; `make` muestra ayuda.
+Node 20+, npm y Python 3 para servidor local. Sin dependencias de ejecución.
 
 ```sh
-make install           # npm ci --ignore-scripts; solo herramientas de prueba
-make check             # tests puros + build estático
-make run               # http://127.0.0.1:4173
-make test-browser      # Chromium y WebKit, si están instalados
+make install       # dependencias de pruebas desde lockfile
+make check         # modelo, renderizadores y audio + build PWA
+make run           # http://127.0.0.1:4173
+make test-browser  # Chromium y WebKit instalados
 ```
 
-Si faltan navegadores de Playwright, instalarlos explícitamente con `npx playwright install chromium webkit`. No se descargan como efecto de `make install`. `APP_URL=https://… npm run test:e2e -- --project=chromium` permite validar un despliegue. El build copia un inventario explícito de archivos a `dist/`, calcula la versión del caché desde sus bytes y genera el service worker. No borra otras rutas ni cachés de otros juegos.
+`npx playwright install chromium webkit` instala navegadores explícitamente si faltan. `APP_URL=https://… npm run test:e2e -- --project=chromium` valida una publicación.
 
-## Añadir actividades
-
-Consultar [la guía de contenido](docs/CONTENT.md), [las decisiones](docs/DECISIONS.md) y [la evidencia](docs/VALIDATION.md). Catálogo y preguntas están separados de la UI; no se almacena ni publica la comunicación privada del colegio. La primera versión incorpora un único pack: añadir otro requiere datos, generador y pruebas; el selector de actividad aparece si hay varios packs (no hay un editor automático de mensajes).
-
-## Privacidad y límites
-
-Sin analítica, publicidad, backend ni subida de progreso. El alojamiento puede registrar solicitudes HTTP conforme a su política. No se publican datos de menores. No es un currículo completo, evaluación oficial ni reproducción del examen del colegio. Falta validación docente del banco y prueba en la tablet física. Offline y responsive se comprueban en navegadores de escritorio, no acreditan instalación nativa en todos los dispositivos.
+`src/exercises.js` contiene reglas matemáticas; `src/learning-visuals.js` los objetos; `src/audio.js` los canales independientes; `src/app.js` el recorrido mínimo; `src/child.css` el layout ajustado al viewport. Guías y evidencia en `docs/`. Las decisiones históricas anteriores quedan sustituidas por el último apartado de `docs/DECISIONS.md`.

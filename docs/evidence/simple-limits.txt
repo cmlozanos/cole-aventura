@@ -1,0 +1,10 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --project=chromium -g límites
+
+
+Running 1 test using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:116:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (689ms)
+
+  1 passed (1.5s)
