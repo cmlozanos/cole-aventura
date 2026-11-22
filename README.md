@@ -2,37 +2,39 @@
 
 [**Abrir la aplicación**](https://cmlozanos.github.io/cole-aventura/)
 
-Matemáticas visuales para **1.º de Primaria**, en una pantalla y sin menús. Se abre directamente con un reto. Toca objetos para contar y elige la respuesta; al acertar llega otro reto aleatorio. Si fallas, se muestra ayuda visual y puedes intentarlo otra vez. Sin cronómetro de respuesta, anuncios, cuentas ni modo familia.
+Matemáticas visuales para **1.º de Primaria**, sin anuncios ni cuentas. En Inicio están todos los juegos disponibles, sin bloqueos: números1–10, mayor/menor, sumas hasta10, restas sin negativos, problemas de una operación y figuras. «¡Sorpresa!» mezcla temas. Las preguntas se generan al vuelo y las respuestas se barajan; no hay fichas fijas.
 
-## Tres controles
+## Jugar y puntos
 
-- **Pausa / continuar**: detiene el juego y los audios.
-- **Voz**: activar o desactivar lectura de consignas.
-- **Nota musical**: activar o desactivar efectos de respuesta.
+Toca objetos para contar y elige una respuesta. Los errores muestran ayuda sin penalizar; resolver cada reto suma **1 punto**, una sola vez, incluso tras reintentos. El total se ve siempre en la cabecera, también al cambiar de juego o volver a Inicio.
 
-**Los dos audios están apagados cada vez que se carga la app**, incluso si se activaron anteriormente. No se crea un motor de sonido hasta que el usuario habilita efectos y responde. La voz depende del navegador y del dispositivo; no se garantiza offline.
+La sesión conserva puntos al recargar/cerrar y volver a abrir. Si pasan **más de 60 minutos sin interacción de juego**, empieza una sesión a cero al regresar. Exactamente60 minutos no reinicia. Se mide actividad real (iniciar, responder, contar o continuar), no conexión a internet ni temporizadores de fondo. Estar offline no quita puntos si se sigue jugando. No se necesita cuenta ni se manda información a un servidor.
 
-## Contenido aleatorio
+Persistencia: localStorage; si está bloqueado, cookie funcional limitada a la ruta de la app (`SameSite=Lax`, `Secure` en HTTPS); si ambos fallan, memoria temporal. El almacenamiento del navegador puede borrar datos y no hay sincronización entre dispositivos. Las pestañas se reconcilian secuencialmente, sin garantía transaccional si se responde simultáneamente en dos pestañas.
 
-Cantidades 1–10, mayor/menor, sumas hasta 10, restas sin negativos, problemas de una operación y cuatro figuras. Los ejercicios se calculan al vuelo; no hay fichas predefinidas ni orden fijo. Se barajan temas y respuestas, evitando el mismo tema consecutivo. Las figuras cambian inclinación y los objetos cambian de color. La aleatoriedad respeta los límites del contenido escolar, no implica una generación ilimitada por IA.
+## Controles
 
-Diseño sin scroll, comprobado desde 320×568 y 667×375 hasta tablet/escritorio. No se oculta contenido con `overflow:hidden`. Los objetivos táctiles principales conservan al menos 44 píxeles. Zoom extremo, traducciones del navegador y dispositivos no probados pueden necesitar ajustes.
+Iconos de **Inicio**, **pausa**, **voz**, **efectos** y **opciones**. Los dos audios siempre empiezan apagados al cargar y se controlan independientemente. La voz depende del dispositivo y no se garantiza offline.
 
-## Instalar y sin conexión
+En Opciones se puede continuar, pedir otro reto manualmente, reiniciar puntos con confirmación y apagar animaciones. Pausar, ocultar o salir detiene sonidos y movimiento. Cambiar juego no borra puntos. No se borran datos históricos de versiones anteriores.
 
-Android: menú del navegador → Instalar aplicación. iPhone/iPad: Compartir → Añadir a pantalla de inicio. Abrir primero con conexión para completar el caché. El contenido funciona offline después de esa carga. La PWA solo elimina sus propias versiones de caché. No borra progreso antiguo, aunque esta versión ya no muestra perfiles ni resultados guardados.
+## Animaciones y carga
 
-## Desarrollo
+Carga real al importar el módulo, entradas escalonadas y celebración corta al acertar. No se simulan descargas ni se retrasan artificialmente preguntas locales. Se respeta `prefers-reduced-motion` y se puede desactivar movimiento manualmente. Los patrones se han comparado con Phaser, PixiJS, Motion y GSAP; decisión y fuentes oficiales en [docs/MOTION-RESEARCH.md](docs/MOTION-RESEARCH.md). Web Animations nativas, sin dependencias gráficas ni CDN.
 
-Node 20+, npm y Python 3 para servidor local. Sin dependencias de ejecución.
+Diseño sin scroll probado desde320×568 y667×375 hasta tablet/escritorio, incluidas ayudas y opciones. No se ocultan desbordamientos. No certificación WCAG, revisión docente ni prueba física de tablet.
+
+## Instalar y desarrollo
+
+Android: menú → Instalar aplicación. iOS: Compartir → Añadir a pantalla de inicio. Abrir primero con conexión para completar caché; después los ejercicios funcionan offline. Solo se limpian cachés de esta app.
+
+Node20+, npm y Python3 para servidor local. Sin dependencias de ejecución.
 
 ```sh
-make install       # dependencias de pruebas desde lockfile
-make check         # modelo, renderizadores y audio + build PWA
+make install       # dependencias de pruebas
+make check         # modelo, visuales, audio, sesión y movimiento + build
 make run           # http://127.0.0.1:4173
 make test-browser  # Chromium y WebKit instalados
 ```
 
-`npx playwright install chromium webkit` instala navegadores explícitamente si faltan. `APP_URL=https://… npm run test:e2e -- --project=chromium` valida una publicación.
-
-`src/exercises.js` contiene reglas matemáticas; `src/learning-visuals.js` los objetos; `src/audio.js` los canales independientes; `src/app.js` el recorrido mínimo; `src/child.css` el layout ajustado al viewport. Guías y evidencia en `docs/`. Las decisiones históricas anteriores quedan sustituidas por el último apartado de `docs/DECISIONS.md`.
+`npx playwright install chromium webkit` instala navegadores explícitamente si faltan. `APP_URL=https://… npm run test:e2e -- --project=chromium` comprueba una publicación. Documentación y evidencia en `docs/`; las decisiones recientes sustituyen descripciones históricas.

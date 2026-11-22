@@ -50,3 +50,15 @@ El test de recorrido completo se amplió a 120s porque avanza por temporizadores
 Autoevaluación de esta revisión: exactitud4/5 (modelo/audio y layout medidos; no dispositivo físico), completitud4/5 (flujo mínimo requerido sin contenido ilimitado), claridad4/5 (iconos con etiquetas accesibles), accionabilidad5/5 (PWA autónoma), concisión5/5 (solo pregunta y controles indispensables).
 
 Resultado final de esta revisión: `npm run check` **50/50** y build; `npm run test:e2e` **12/12** (seis recorridos por motor) en verde. Duración del recorrido de layout explicada por esperas reales, no espera arbitraria ocultando carga. No se ejecutaron suites de otros juegos.
+
+## Inicio, puntos y animaciones (revisión posterior)
+
+Investigación oficial y decisión en `MOTION-RESEARCH.md`: Phaser/PixiJS como motores, Motion/GSAP como animación DOM. Se adoptan patrones con Web Animations nativas y se mantiene el DOM accesible sin nuevas dependencias. Loader real mediante import dinámico, manejo de fallo y reintento; transiciones/estrellas acotadas, canceladas al navegar/pausar/ocultar y anuladas por reduced-motion o interruptor manual.
+
+77 tests puros: límites matemáticos, visuales, audio previos +25 de sesión y2 de movimiento. Reloj inyectado verifica exactamente1h, >1h, recarga, lectura sin actividad, interacción real, corrupción, rollback de reloj, fallback cookie/memoria, reset manual, deduplicación y reconciliación secuencial entre dos instancias. No se afirma atomicidad entre dos pestañas simultáneas.
+
+Browser conserva guardas audio/silencio, error/reintento, avance/pausa, offline Chromium y datos históricos. Nuevos casos: Inicio y siete juegos habilitados, punto único, persistencia y reinicio manual con confirmación, reset >1h, reduced-motion, cookie real con localStorage bloqueado, loader mientras descarga módulo y reintento al fallar. Viewports320×568,360×640,667×375,768×1024 y1024×768, incluidos casos extremos y Opciones. Se corrigió un desplazamiento de8px en animación de raíz que generaba scroll temporal: raíz ahora anima solo opacidad y opciones escalan hacia dentro. Dos regresiones focales volvieron a verde tras corregirlo.
+
+Capturas `session-home-mobile.png`, `session-game-mobile.png`, `session-options-mobile.png`, `session-options-landscape.png` revisadas. No descargas externas durante juego; caché incluye nuevos módulos. No validación de altavoz físico, lector humano, instalación nativa o GPU de tablet. Autoevaluación4/5 exactitud/completitud/claridad;5/5 accionabilidad;4/5 concisión (acciones manuales agrupadas en Opciones).
+
+Resultado final: `npm run check`77/77 y build en verde; `npm run test:e2e`22/22 (11 por motor) en verde. Sin suites de otros proyectos. La comparación de capacidad con frameworks no sustituye una medición física de tablet.

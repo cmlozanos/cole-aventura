@@ -6,3 +6,6 @@ La interfaz del niño se limita a 1.º. Iniciar en un toque, reconocer cantidade
 
 ## Simplificación posterior vigente
 Una sola pantalla sin scroll ni modo familia, sin portada y con tres controles de icono (pausa, voz, efectos). Ambos audios siempre desactivados al cargar. Retos calculados al vuelo con tema y respuestas aleatorios; sin secuencia prefijada. Mantener lectura accesible, cantidades y ayudas visibles, sin esconder desbordamientos.
+
+## Petición posterior: inicio, puntos y movimiento
+Botón Inicio siempre accesible, todos los juegos disponibles. Contador general visible en todas las escenas. Un punto por reto resuelto sin penalizar ayuda; conservar sesión entre juegos y recargas. Tras más de una hora sin interacción de juego, volver a cero al regresar. Persistencia navegador con fallback cookie, sin backend. Acciones manuales de continuar, cambiar reto, reiniciar puntos confirmado y desactivar movimiento. Loader real, transición y feedback breve, respetando reduced-motion. Mantener silencio inicial y no-scroll.

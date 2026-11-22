@@ -1,0 +1,404 @@
+
+> cole-aventura@1.0.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: audio: comienza apagado, sin APIs ni almacenamiento al cargar
+ok 1 - audio: comienza apagado, sin APIs ni almacenamiento al cargar
+  ---
+  duration_ms: 0.689709
+  ...
+# Subtest: audio: toggles independientes; silenciar voz cancela sin tocar efectos
+ok 2 - audio: toggles independientes; silenciar voz cancela sin tocar efectos
+  ---
+  duration_ms: 0.195167
+  ...
+# Subtest: audio: contexto lazy, tonos breves distintos y rampas positivas conectadas
+ok 3 - audio: contexto lazy, tonos breves distintos y rampas positivas conectadas
+  ---
+  duration_ms: 0.618708
+  ...
+# Subtest: audio: mute efectos detiene sonidos y cierra sin cancelar voz
+ok 4 - audio: mute efectos detiene sonidos y cierra sin cancelar voz
+  ---
+  duration_ms: 0.082083
+  ...
+# Subtest: audio: resume suspended antes del tono
+ok 5 - audio: resume suspended antes del tono
+  ---
+  duration_ms: 0.085917
+  ...
+# Subtest: audio: mute invalida tonos pendientes incluso tras reactivar
+ok 6 - audio: mute invalida tonos pendientes incluso tras reactivar
+  ---
+  duration_ms: 0.081
+  ...
+# Subtest: audio: stop invalida tonos pendientes incluso tras reactivar
+ok 7 - audio: stop invalida tonos pendientes incluso tras reactivar
+  ---
+  duration_ms: 0.119042
+  ...
+# Subtest: audio: stop conserva preferencias, es repetible y permite nuevo contexto
+ok 8 - audio: stop conserva preferencias, es repetible y permite nuevo contexto
+  ---
+  duration_ms: 0.145875
+  ...
+# Subtest: audio: APIs ausentes o que lanzan no rompen el contrato
+ok 9 - audio: APIs ausentes o que lanzan no rompen el contrato
+  ---
+  duration_ms: 0.348625
+  ...
+# Subtest: audio: rechazos de resume/close se capturan sin promesas no manejadas
+ok 10 - audio: rechazos de resume/close se capturan sin promesas no manejadas
+  ---
+  duration_ms: 3.845416
+  ...
+# Subtest: audio: un resume antiguo rechazado no cierra el nuevo contexto
+ok 11 - audio: un resume antiguo rechazado no cierra el nuevo contexto
+  ---
+  duration_ms: 0.1525
+  ...
+# Subtest: catálogo: seis cursos españoles y un pack declarativo con seis temas
+ok 12 - catálogo: seis cursos españoles y un pack declarativo con seis temas
+  ---
+  duration_ms: 0.957416
+  ...
+# Subtest: sesión por defecto, determinismo, mezcla equilibrada e identificadores únicos
+ok 13 - sesión por defecto, determinismo, mezcla equilibrada e identificadores únicos
+  ---
+  duration_ms: 1.783625
+  ...
+# Subtest: generador numbers: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 14 - generador numbers: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 8.39375
+  ...
+# Subtest: generador compare: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 15 - generador compare: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 8.029542
+  ...
+# Subtest: generador addition: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 16 - generador addition: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 6.787667
+  ...
+# Subtest: generador subtraction: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 17 - generador subtraction: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 8.247583
+  ...
+# Subtest: generador problems: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 18 - generador problems: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 5.893708
+  ...
+# Subtest: generador shapes: respuestas y visuales válidos en 100 semillas y RNG extremos
+ok 19 - generador shapes: respuestas y visuales válidos en 100 semillas y RNG extremos
+  ---
+  duration_ms: 4.601417
+  ...
+# Subtest: entradas inválidas del generador no producen sesiones
+ok 20 - entradas inválidas del generador no producen sesiones
+  ---
+  duration_ms: 0.724417
+  ...
+# Subtest: estado inicial independiente, guardado booleano y lectura de la misma clave
+ok 21 - estado inicial independiente, guardado booleano y lectura de la misma clave
+  ---
+  duration_ms: 0.788208
+  ...
+# Subtest: corrupción, versión desconocida y almacenamiento bloqueado recuperan estado
+ok 22 - corrupción, versión desconocida y almacenamiento bloqueado recuperan estado
+  ---
+  duration_ms: 0.453417
+  ...
+# Subtest: recordSession acumula sin mutar y aísla actividad, tema y perfil
+ok 23 - recordSession acumula sin mutar y aísla actividad, tema y perfil
+  ---
+  duration_ms: 0.664833
+  ...
+# Subtest: sesiones inválidas no modifican ni sustituyen el estado
+ok 24 - sesiones inválidas no modifican ni sustituyen el estado
+  ---
+  duration_ms: 0.60175
+  ...
+# Subtest: createProfile devuelve estado nuevo activo, genérico y con máximo seis perfiles
+ok 25 - createProfile devuelve estado nuevo activo, genérico y con máximo seis perfiles
+  ---
+  duration_ms: 0.391958
+  ...
+# Subtest: lectura sanea perfiles duplicados, referencias y progreso corrupto sin perder datos válidos
+ok 26 - lectura sanea perfiles duplicados, referencias y progreso corrupto sin perder datos válidos
+  ---
+  duration_ms: 0.773333
+  ...
+# Subtest: lectura limita perfiles, repara temas rotos y rechaza acumulaciones inseguras
+ok 27 - lectura limita perfiles, repara temas rotos y rechaza acumulaciones inseguras
+  ---
+  duration_ms: 0.457416
+  ...
+# Subtest: mixto con results reparte temas una vez por sesión y conserva el reparto al persistir
+ok 28 - mixto con results reparte temas una vez por sesión y conserva el reparto al persistir
+  ---
+  duration_ms: 0.614458
+  ...
+# Subtest: results en tema individual no duplica contadores y mixto parcial solo añade temas presentes
+ok 29 - results en tema individual no duplica contadores y mixto parcial solo añade temas presentes
+  ---
+  duration_ms: 0.385291
+  ...
+# Subtest: results inválidos rechazan toda la sesión sin modificar datos
+ok 30 - results inválidos rechazan toda la sesión sin modificar datos
+  ---
+  duration_ms: 0.475541
+  ...
+# Subtest: saneamiento mantiene el límite de sesiones por tema
+ok 31 - saneamiento mantiene el límite de sesiones por tema
+  ---
+  duration_ms: 0.2165
+  ...
+# Subtest: persistencia funciona sin Object.hasOwn como en Chrome 95
+ok 32 - persistencia funciona sin Object.hasOwn como en Chrome 95
+  ---
+  duration_ms: 0.177583
+  ...
+# Subtest: movimiento reducido no crea animaciones y toggle permite desactivar
+ok 33 - movimiento reducido no crea animaciones y toggle permite desactivar
+  ---
+  duration_ms: 0.663334
+  ...
+# Subtest: animaciones se cancelan al cambiar escena o parar
+ok 34 - animaciones se cancelan al cambiar escena o parar
+  ---
+  duration_ms: 0.100208
+  ...
+# Subtest: score: snapshot aislado, persistencia y continuación tras recarga sin borrar datos antiguos
+ok 35 - score: snapshot aislado, persistencia y continuación tras recarga sin borrar datos antiguos
+  ---
+  duration_ms: 1.08325
+  ...
+# Subtest: score: read no extiende actividad; exactamente una hora conserva y +1 ms reinicia
+ok 36 - score: read no extiende actividad; exactamente una hora conserva y +1 ms reinicia
+  ---
+  duration_ms: 0.169792
+  ...
+# Subtest: score: touch reevalúa un hueco oculto sin intervalos
+ok 37 - score: touch reevalúa un hueco oculto sin intervalos
+  ---
+  duration_ms: 0.090666
+  ...
+# Subtest: score: award reevalúa un hueco oculto sin intervalos
+ok 38 - score: award reevalúa un hueco oculto sin intervalos
+  ---
+  duration_ms: 0.120084
+  ...
+# Subtest: score: touch y reintento actualizan actividad, award suma una sola vez por pregunta
+ok 39 - score: touch y reintento actualizan actividad, award suma una sola vez por pregunta
+  ---
+  duration_ms: 0.094666
+  ...
+# Subtest: score: deduplicación persistida limitada a las últimas 128 preguntas
+ok 40 - score: deduplicación persistida limitada a las últimas 128 preguntas
+  ---
+  duration_ms: 1.548833
+  ...
+# Subtest: score: reset manual cambia id, limpia puntos y deduplicación y se observa entre instancias
+ok 41 - score: reset manual cambia id, limpia puntos y deduplicación y se observa entre instancias
+  ---
+  duration_ms: 0.172542
+  ...
+# Subtest: score: dos instancias reconcilian antes de leer, tocar y premiar sin sobreescritura obsoleta
+ok 42 - score: dos instancias reconcilian antes de leer, tocar y premiar sin sobreescritura obsoleta
+  ---
+  duration_ms: 0.268791
+  ...
+# Subtest: score: cookie fallback con storage getter y continuación
+ok 43 - score: cookie fallback con storage getter y continuación
+  ---
+  duration_ms: 0.323584
+  ...
+# Subtest: score: cookie fallback con storage read y continuación
+ok 44 - score: cookie fallback con storage read y continuación
+  ---
+  duration_ms: 0.163333
+  ...
+# Subtest: score: cookie fallback con storage write y continuación
+ok 45 - score: cookie fallback con storage write y continuación
+  ---
+  duration_ms: 0.07975
+  ...
+# Subtest: score: cookie fallback con storage ignore y continuación
+ok 46 - score: cookie fallback con storage ignore y continuación
+  ---
+  duration_ms: 0.078
+  ...
+# Subtest: score: cookie Path de directorio en /cole-aventura/, sin Secure en HTTP
+ok 47 - score: cookie Path de directorio en /cole-aventura/, sin Secure en HTTP
+  ---
+  duration_ms: 0.092166
+  ...
+# Subtest: score: cookie Path de directorio en /cole-aventura/index.html, sin Secure en HTTP
+ok 48 - score: cookie Path de directorio en /cole-aventura/index.html, sin Secure en HTTP
+  ---
+  duration_ms: 0.148875
+  ...
+# Subtest: score: cookie Path de directorio en /index.html, sin Secure en HTTP
+ok 49 - score: cookie Path de directorio en /index.html, sin Secure en HTTP
+  ---
+  duration_ms: 0.053916
+  ...
+# Subtest: score: cookie Path de directorio en /, sin Secure en HTTP
+ok 50 - score: cookie Path de directorio en /, sin Secure en HTTP
+  ---
+  duration_ms: 0.1175
+  ...
+# Subtest: score: memoria si storage y cookie throw están bloqueados
+ok 51 - score: memoria si storage y cookie throw están bloqueados
+  ---
+  duration_ms: 0.110708
+  ...
+# Subtest: score: memoria si storage y cookie ignore están bloqueados
+ok 52 - score: memoria si storage y cookie ignore están bloqueados
+  ---
+  duration_ms: 0.255458
+  ...
+# Subtest: score: host vacío y crypto bloqueado usan ids distintos sin Math.random global
+ok 53 - score: host vacío y crypto bloqueado usan ids distintos sin Math.random global
+  ---
+  duration_ms: 0.266167
+  ...
+# Subtest: score: utiliza randomUUID del host cuando está disponible
+ok 54 - score: utiliza randomUUID del host cuando está disponible
+  ---
+  duration_ms: 0.119792
+  ...
+# Subtest: score: cookie válida recupera localStorage corrupto y cookie corrupta no lanza
+ok 55 - score: cookie válida recupera localStorage corrupto y cookie corrupta no lanza
+  ---
+  duration_ms: 0.135375
+  ...
+# Subtest: score: esquema corrupto, contadores inseguros y timestamps futuros crean sesión nueva
+ok 56 - score: esquema corrupto, contadores inseguros y timestamps futuros crean sesión nueva
+  ---
+  duration_ms: 0.16775
+  ...
+# Subtest: score: no desborda puntos seguros ni premia ids inválidos
+ok 57 - score: no desborda puntos seguros ni premia ids inválidos
+  ---
+  duration_ms: 0.071667
+  ...
+# Subtest: score: una recarga tras más de una hora no recupera puntos caducados
+ok 58 - score: una recarga tras más de una hora no recupera puntos caducados
+  ---
+  duration_ms: 0.043916
+  ...
+# Subtest: score: memoria mantiene exactamente una hora y caduca después sin actividad
+ok 59 - score: memoria mantiene exactamente una hora y caduca después sin actividad
+  ---
+  duration_ms: 0.07025
+  ...
+# Subtest: conteo 0: objetos SVG tocables, nombres y filas de cinco
+ok 60 - conteo 0: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.857458
+  ...
+# Subtest: conteo 1: objetos SVG tocables, nombres y filas de cinco
+ok 61 - conteo 1: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.1405
+  ...
+# Subtest: conteo 2: objetos SVG tocables, nombres y filas de cinco
+ok 62 - conteo 2: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.059834
+  ...
+# Subtest: conteo 3: objetos SVG tocables, nombres y filas de cinco
+ok 63 - conteo 3: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.048208
+  ...
+# Subtest: conteo 4: objetos SVG tocables, nombres y filas de cinco
+ok 64 - conteo 4: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.06
+  ...
+# Subtest: conteo 5: objetos SVG tocables, nombres y filas de cinco
+ok 65 - conteo 5: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.050709
+  ...
+# Subtest: conteo 6: objetos SVG tocables, nombres y filas de cinco
+ok 66 - conteo 6: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.198625
+  ...
+# Subtest: conteo 7: objetos SVG tocables, nombres y filas de cinco
+ok 67 - conteo 7: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.07825
+  ...
+# Subtest: conteo 8: objetos SVG tocables, nombres y filas de cinco
+ok 68 - conteo 8: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.168416
+  ...
+# Subtest: conteo 9: objetos SVG tocables, nombres y filas de cinco
+ok 69 - conteo 9: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.67625
+  ...
+# Subtest: conteo 10: objetos SVG tocables, nombres y filas de cinco
+ok 70 - conteo 10: objetos SVG tocables, nombres y filas de cinco
+  ---
+  duration_ms: 0.08125
+  ...
+# Subtest: sumas y restas: todas las combinaciones válidas 0–10, sin etiquetas que den la respuesta
+ok 71 - sumas y restas: todas las combinaciones válidas 0–10, sin etiquetas que den la respuesta
+  ---
+  duration_ms: 3.0315
+  ...
+# Subtest: comparación: dos paneles con cifras y sus cantidades
+ok 72 - comparación: dos paneles con cifras y sus cantidades
+  ---
+  duration_ms: 0.130791
+  ...
+# Subtest: pista: recta 0–10 y saltos en posiciones coherentes; resultado solo al resolver
+ok 73 - pista: recta 0–10 y saltos en posiciones coherentes; resultado solo al resolver
+  ---
+  duration_ms: 1.031708
+  ...
+# Subtest: figuras: pregunta reutiliza art.js y respuestas solo texto, sin pistas visuales triviales
+ok 74 - figuras: pregunta reutiliza art.js y respuestas solo texto, sin pistas visuales triviales
+  ---
+  duration_ms: 0.163458
+  ...
+# Subtest: respuestas numéricas: cifra accesible, cantidades decorativas y sin botones anidados
+ok 75 - respuestas numéricas: cifra accesible, cantidades decorativas y sin botones anidados
+  ---
+  duration_ms: 0.236375
+  ...
+# Subtest: escaping y visuales desconocidos: ningún contenido interpolado se convierte en HTML
+ok 76 - escaping y visuales desconocidos: ningún contenido interpolado se convierte en HTML
+  ---
+  duration_ms: 0.102042
+  ...
+# Subtest: contrato real: todos los temas renderizan sin mutar las preguntas
+ok 77 - contrato real: todos los temas renderizan sin mutar las preguntas
+  ---
+  duration_ms: 2.061209
+  ...
+1..77
+# tests 77
+# suites 0
+# pass 77
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 305.317666
+
+> cole-aventura@1.0.0 build
+> node tools/build.mjs
+
+Built 16 assets; offline cache cole-aventura-cbbc2a00f9ce998f

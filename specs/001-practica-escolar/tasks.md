@@ -16,3 +16,10 @@
 - Retos aleatorios generados al vuelo, respuestas barajadas y sin mismo tema seguido.
 - Tres iconos accesibles: pausa y canales independientes inicialmente apagados.
 - Validar no-scroll con geometría, todas las familias y límites, ambas orientaciones.
+
+## Inicio y sesión de puntos
+- Comparar fuentes oficiales Phaser/PixiJS/Motion/GSAP; adoptar patrones mínimos sin CDN.
+- Loader real, transición de escena, feedback y cancelación/reduced-motion.
+- Inicio con todo disponible, contador persistente y opciones manuales agrupadas.
+- Caducidad >1h con reloj inyectado, fallback cookie y prueba browser.
+- Revalidar layout, audio inicialmente apagado, offline y publicación de mismos bytes.

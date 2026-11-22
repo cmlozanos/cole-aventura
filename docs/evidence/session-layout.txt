@@ -1,0 +1,11 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --project=chromium -g límites|inicio desbloqueado
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:117:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (977ms)
+  ✓  2 [chromium] › tests/browser/app.spec.js:138:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (1.0s)
+
+  2 passed (2.8s)

@@ -1,0 +1,31 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test
+
+
+Running 22 tests using 1 worker
+
+  ✓   1 [chromium] › tests/browser/app.spec.js:33:1 › juego aleatorio, inicio accesible y audio silencioso (1.2s)
+  ✓   2 [chromium] › tests/browser/app.spec.js:46:1 › voz y efectos independientes, apagados de nuevo al recargar (884ms)
+  ✓   3 [chromium] › tests/browser/app.spec.js:63:1 › error no avanza; acierto avanza; pausa conserva reto (11.9s)
+  ✓   4 [chromium] › tests/browser/app.spec.js:77:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (42.7s)
+  ✓   5 [chromium] › tests/browser/app.spec.js:106:1 › offline real Chromium y no borra progreso antiguo (923ms)
+  ✓   6 [chromium] › tests/browser/app.spec.js:117:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (640ms)
+  ✓   7 [chromium] › tests/browser/app.spec.js:138:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (736ms)
+  ✓   8 [chromium] › tests/browser/app.spec.js:161:1 › loader real, reduced motion y expiración tras más de una hora (350ms)
+  ✓   9 [chromium] › tests/browser/app.spec.js:173:1 › cookie de respaldo real y juego sin almacenamiento (1.0s)
+  ✓  10 [chromium] › tests/browser/app.spec.js:184:1 › loader solo durante carga real (326ms)
+  ✓  11 [chromium] › tests/browser/app.spec.js:196:1 › fallo de módulo muestra reintento sin loader eterno (265ms)
+  ✓  12 [webkit] › tests/browser/app.spec.js:33:1 › juego aleatorio, inicio accesible y audio silencioso (1.2s)
+  ✓  13 [webkit] › tests/browser/app.spec.js:46:1 › voz y efectos independientes, apagados de nuevo al recargar (970ms)
+  ✓  14 [webkit] › tests/browser/app.spec.js:63:1 › error no avanza; acierto avanza; pausa conserva reto (11.9s)
+  ✓  15 [webkit] › tests/browser/app.spec.js:77:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (43.4s)
+  ✓  16 [webkit] › tests/browser/app.spec.js:106:1 › offline real Chromium y no borra progreso antiguo (520ms)
+  ✓  17 [webkit] › tests/browser/app.spec.js:117:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (593ms)
+  ✓  18 [webkit] › tests/browser/app.spec.js:138:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (931ms)
+  ✓  19 [webkit] › tests/browser/app.spec.js:161:1 › loader real, reduced motion y expiración tras más de una hora (383ms)
+  ✓  20 [webkit] › tests/browser/app.spec.js:173:1 › cookie de respaldo real y juego sin almacenamiento (931ms)
+  ✓  21 [webkit] › tests/browser/app.spec.js:184:1 › loader solo durante carga real (307ms)
+  ✓  22 [webkit] › tests/browser/app.spec.js:196:1 › fallo de módulo muestra reintento sin loader eterno (227ms)
+
+  22 passed (2.1m)

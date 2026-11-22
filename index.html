@@ -7,8 +7,10 @@
   <link rel="stylesheet" href="./src/child.css"><title>Cole Aventura · Primero de Primaria</title>
 </head>
 <body>
-  <header><span class="brand" aria-label="Cole Aventura, primero de Primaria">ca<span aria-hidden="true">✦</span></span><div class="controls" role="group" aria-label="Controles del juego"></div></header>
+  <div id="boot-loader" role="status" aria-live="polite"><span class="loading-star" aria-hidden="true">✦</span><p>Preparando la aventura…</p></div>
+  <header><div id="score" class="score" role="status" aria-live="polite" aria-label="0 puntos"><span aria-hidden="true">★</span><strong>0</strong></div><div class="controls" role="group" aria-label="Controles del juego"></div></header>
   <main id="main" tabindex="-1"></main>
-  <script type="module" src="./src/app.js"></script>
+  <dialog id="options" aria-labelledby="options-title"></dialog>
+  <script type="module" src="./src/bootstrap.js"></script>
 </body>
 </html>

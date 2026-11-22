@@ -15,6 +15,7 @@ async function prepare(page) {
     };
   });
   await page.goto('./');
+  await page.locator('[data-game="mixed"]').click();
   return page.evaluate(async()=>{
     const {createSession}=await import('./src/exercises.js');
     const {activities}=await import('./src/catalog.js');
@@ -29,11 +30,11 @@ async function prepare(page) {
   });
 }
 
-test('una pantalla aleatoria, tres controles e inicio completamente silencioso',async({page})=>{
+test('juego aleatorio, inicio accesible y audio silencioso',async({page})=>{
   const [q]=await prepare(page);
   await expect(page.getByRole('heading',{level:1})).toHaveText(q.prompt);
-  await expect(page.locator('header button')).toHaveCount(3);
-  await expect(page.locator('[data-nav],dialog,[data-topic],.summary')).toHaveCount(0);
+  await expect(page.locator('header button')).toHaveCount(5);
+  await expect(page.locator('[data-nav],[data-topic],.summary')).toHaveCount(0);
   await expect(page.getByRole('button',{name:'Activar voz',exact:true})).toHaveAttribute('aria-pressed','false');
   await expect(page.getByRole('button',{name:'Activar efectos de sonido',exact:true})).toHaveAttribute('aria-pressed','false');
   expect(await page.evaluate(()=>window.audioCalls)).toEqual({speech:0,contexts:0});
@@ -108,7 +109,7 @@ test('offline real Chromium y no borra progreso antiguo',async({page,context,bro
   await page.evaluate(()=>navigator.serviceWorker.ready);
   await expect.poll(()=>page.evaluate(()=>!!navigator.serviceWorker.controller)).toBe(true);
   if(browserName==='chromium'){
-    await context.setOffline(true);await page.reload();await expect(page.locator('[data-answer]')).toHaveCount(4);await context.setOffline(false);
+    await context.setOffline(true);await page.reload();await page.locator('[data-game="mixed"]').click();await expect(page.locator('[data-answer]')).toHaveCount(4);await context.setOffline(false);
   }else test.info().annotations.push({type:'limitation',description:'WebKit offline navigation unavailable in this runtime; Chromium tests real offline.'});
   expect(await page.evaluate(()=>localStorage.getItem('cole-aventura-state'))).toBe('{"legacy":"keep"}');
 });
@@ -131,4 +132,70 @@ test('límites visuales 10 objetos, ayudas y problemas largos sin scroll',async(
       }),`${viewport.width} ${v.kind}`).toBe(true);
     }
   }
+});
+
+
+test('inicio desbloqueado, puntos por reto una vez y opciones manuales',async({page})=>{
+  const [q]=await prepare(page);
+  await expect(page.locator('#score strong')).toHaveText('0');
+  await page.getByRole('button',{name:q.answer,exact:true}).click();
+  await expect(page.locator('#score strong')).toHaveText('1');
+  await page.getByRole('button',{name:'Inicio',exact:true}).click();
+  await expect(page.locator('[data-game]')).toHaveCount(7);
+  await expect(page.locator('[data-game]:disabled')).toHaveCount(0);
+  await expect(page.locator('#score strong')).toHaveText('1');
+  await page.reload();
+  await expect(page.locator('#score strong')).toHaveText('1');
+  await page.getByRole('button',{name:'Opciones',exact:true}).click();
+  page.once('dialog',d=>d.accept());
+  await page.getByRole('button',{name:'Reiniciar puntos',exact:false}).click();
+  await expect(page.locator('#score strong')).toHaveText('0');
+  await page.getByRole('button',{name:'Cerrar',exact:true}).click();
+  for(const viewport of [{width:320,height:568},{width:667,height:375},{width:768,height:1024}]){
+    await page.setViewportSize(viewport);
+    const layout=await page.evaluate(()=>({scroll:document.documentElement.scrollHeight>innerHeight+1||document.documentElement.scrollWidth>innerWidth+1,outside:[...document.querySelectorAll('[data-game],header button,#score')].some(n=>{const b=n.getBoundingClientRect();return b.left<0||b.right>innerWidth+1||b.top<0||b.bottom>innerHeight+1;})}));
+    expect(layout).toEqual({scroll:false,outside:false});
+  }
+});
+
+test('loader real, reduced motion y expiración tras más de una hora',async({page})=>{
+  await page.emulateMedia({reducedMotion:'reduce'});
+  const [q]=await prepare(page);
+  await expect(page.locator('#boot-loader')).toHaveCount(0);
+  await page.getByRole('button',{name:q.answer,exact:true}).click();
+  await expect(page.locator('#score strong')).toHaveText('1');
+  await page.evaluate(()=>{const key='cole-aventura-session-v1';const data=JSON.parse(localStorage.getItem(key));data.lastActive=Date.now()-3600001;localStorage.setItem(key,JSON.stringify(data));document.cookie=key+'=; Max-Age=0; Path='+location.pathname;});
+  await page.getByRole('button',{name:'Inicio',exact:true}).click();
+  await expect(page.locator('#score strong')).toHaveText('0');
+  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running').length)).toBe(0);
+});
+
+test('cookie de respaldo real y juego sin almacenamiento',async({page,context})=>{
+  await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new DOMException('blocked','SecurityError');}}));
+  const [q]=await prepare(page);
+  await page.getByRole('button',{name:q.answer,exact:true}).click();
+  await expect(page.locator('#score strong')).toHaveText('1');
+  const cookies=await context.cookies();
+  expect(cookies.find(c=>c.name==='cole-aventura-session-v1')?.sameSite).toBe('Lax');
+  await page.reload();
+  await expect(page.locator('#score strong')).toHaveText('1');
+});
+
+test('loader solo durante carga real',async({page})=>{
+  let release;
+  const gate=new Promise(resolve=>{release=resolve;});
+  await page.route('**/src/app.js',async route=>{await gate;await route.continue();});
+  const navigation=page.goto('./',{waitUntil:'domcontentloaded'});
+  await expect(page.getByText('Preparando la aventura…',{exact:true})).toBeVisible();
+  release();await navigation;
+  await expect(page.locator('#boot-loader')).toHaveCount(0);
+  await page.unroute('**/src/app.js');
+});
+
+
+test('fallo de módulo muestra reintento sin loader eterno',async({page})=>{
+  await page.route('**/src/app.js',route=>route.abort());
+  await page.goto('./');
+  await expect(page.getByText('No se ha podido abrir el juego.',{exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Reintentar',exact:true})).toBeVisible();
 });

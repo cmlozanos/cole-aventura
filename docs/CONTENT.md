@@ -24,3 +24,7 @@ La portada ya no expone cursos sin actividades ni tablas de progreso: se centra 
 ## Pantalla única vigente (sustituye navegación descrita antes)
 
 `app.js` toma un tema aleatorio distinto del anterior y genera una pregunta nueva, sin sesión ni ficha fija. No hay navegación de cursos, modo familiar, perfiles ni resultados. `audio.js` mantiene canales independientes en memoria con ambos valores iniciales false. `child.css` usa grid de altura de viewport con distribución específica para horizontal corto. Nuevos tipos de contenido deben pasar las mediciones de scroll, rectángulos visibles y límites 0/10 antes de añadirse. Los módulos de catálogo y almacenamiento históricos siguen disponibles pero no implican controles en la interfaz.
+
+## Inicio, sesiones y movimiento (vigente)
+
+Inicio expone los seis temas y sorpresa sin desbloqueos. `score-session.js` aísla la sesión de puntos: reloj inyectable, caducidad estricta tras60min sin interacción, IDs deduplicados y persistencia local con cookie de respaldo. Solo interacciones reales renuevan actividad; leer contador o esperar no la renueva. No modificar el modelo al añadir animaciones. `motion.js` agrupa/cancela animaciones por escena, sin frame-loop. `bootstrap.js` muestra carga durante importación real y permite reintento si falla. El menú de Opciones agrupa acciones manuales para no duplicar botones en el juego.
