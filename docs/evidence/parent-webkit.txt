@@ -1,0 +1,23 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --project=webkit
+
+
+Running 14 tests using 1 worker
+
+  ✓   1 [webkit] › tests/browser/app.spec.js:41:1 › juego aleatorio, inicio accesible y audio silencioso (1.5s)
+  ✓   2 [webkit] › tests/browser/app.spec.js:53:1 › audio solo tras multiplicación y apagado de nuevo al recargar (1.1s)
+  ✓   3 [webkit] › tests/browser/app.spec.js:66:1 › error no avanza y acierto cubre toda la ventana sin interacción (8.1s)
+  ✓   4 [webkit] › tests/browser/app.spec.js:84:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (43.2s)
+  ✓   5 [webkit] › tests/browser/app.spec.js:113:1 › offline real Chromium y no borra progreso antiguo (521ms)
+  ✓   6 [webkit] › tests/browser/app.spec.js:124:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (572ms)
+  ✓   7 [webkit] › tests/browser/app.spec.js:145:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (4.8s)
+  ✓   8 [webkit] › tests/browser/app.spec.js:169:1 › loader real, reduced motion y expiración tras más de una hora (4.2s)
+  ✓   9 [webkit] › tests/browser/app.spec.js:182:1 › cookie de respaldo real y juego sin almacenamiento (947ms)
+  ✓  10 [webkit] › tests/browser/app.spec.js:193:1 › loader solo durante carga real (303ms)
+  ✓  11 [webkit] › tests/browser/app.spec.js:205:1 › fallo de módulo muestra reintento sin loader eterno (188ms)
+  ✓  12 [webkit] › tests/browser/app.spec.js:213:1 › puerta de adultos bloquea configuración y se renueva tras cerrar (709ms)
+  ✓  13 [webkit] › tests/browser/app.spec.js:237:1 › puerta y controles adultos caben en móvil y horizontal; escapar no desbloquea (660ms)
+  ✓  14 [webkit] › tests/browser/app.spec.js:253:1 › transición respeta movimiento reducido y no puede dar puntos duplicados (4.1s)
+
+  14 passed (1.2m)

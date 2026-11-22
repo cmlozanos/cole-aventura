@@ -28,3 +28,7 @@ La portada ya no expone cursos sin actividades ni tablas de progreso: se centra 
 ## Inicio, sesiones y movimiento (vigente)
 
 Inicio expone los seis temas y sorpresa sin desbloqueos. `score-session.js` aísla la sesión de puntos: reloj inyectable, caducidad estricta tras60min sin interacción, IDs deduplicados y persistencia local con cookie de respaldo. Solo interacciones reales renuevan actividad; leer contador o esperar no la renueva. No modificar el modelo al añadir animaciones. `motion.js` agrupa/cancela animaciones por escena, sin frame-loop. `bootstrap.js` muestra carga durante importación real y permite reintento si falla. El menú de Opciones agrupa acciones manuales para no duplicar botones en el juego.
+
+## Configuración adulta vigente
+
+Los únicos controles infantiles son Inicio, pausa y acceso Adultos. `parent-gate.js` genera/valida multiplicación sin almacenar solución; el controlador destruye acceso al cerrar el diálogo. No se añaden opciones directamente a cabecera. La transición postacierto es `#transition` modal full-window sin controles, independiente de `#options` y del loader real de bootstrap. Los nuevos flujos deben probar fondo inoperable, teclado, autoreanudación, viewport y reduced-motion.

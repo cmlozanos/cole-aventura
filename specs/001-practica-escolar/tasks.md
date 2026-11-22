@@ -23,3 +23,10 @@
 - Inicio con todo disponible, contador persistente y opciones manuales agrupadas.
 - Caducidad >1h con reloj inyectado, fallback cookie y prueba browser.
 - Revalidar layout, audio inicialmente apagado, offline y publicación de mismos bytes.
+
+## Puerta de adultos y espera no interactiva
+- Fuentes oficiales YouTube Kids/W3C/Material contrastadas.
+- Multiplicación aleatoria, error y re-bloqueo al cerrar.
+- Configuración oculta a niño, quitar explicaciones redundantes.
+- Full-window postacierto no interactivo, puntos y siguiente automático.
+- Regresiones teclado/modal/no-scroll, audio y sesión de puntos.

@@ -174,3 +174,26 @@ dialog p { font-size:14px; line-height:1.4; margin:0 0 14px; }
   .options-note { margin-top:8px; }
 }
 @media(prefers-reduced-motion:reduce) { .loading-star { animation:none; } }
+.dialog-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:15px; }
+.dialog-heading h2 { margin:0; }
+.close-dialog { width:44px; height:44px; border-radius:50%; background:#e1e9ff; font-size:28px; }
+.manual-actions button { display:flex; align-items:center; justify-content:center; gap:9px; }
+.manual-actions svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.manual-actions button[aria-pressed=true] { background:#d4e4d4; }
+.manual-actions .mute-slash { stroke:#9a4451; }
+#parent-form { display:grid; grid-template-columns:minmax(0,1fr) 52px; gap:12px; }
+.parent-challenge { grid-column:1 / -1; font-size:32px; font-weight:800; text-align:center; padding:12px; }
+#parent-answer { min-width:0; width:100%; min-height:52px; font:inherit; font-weight:700; font-size:28px; border:2px solid #8295c5; border-radius:12px; background:white; text-align:center; color:#233e61; }
+.gate-submit { min-height:52px; border-radius:12px; background:#355aca; color:white; font-size:28px; }
+#parent-error { grid-column:1 / -1; min-height:20px; text-align:center; font-size:14px; color:#91433a; }
+#transition { position:fixed; inset:0; width:100vw; max-width:none; height:100vh; height:100dvh; max-height:none; margin:0; padding:0; border:0; border-radius:0; background:#eef3ff; color:#233e61; }
+#transition[open] { display:grid; place-items:center; }
+#transition::backdrop { background:#eef3ff; }
+.transition-card { display:flex; flex-direction:column; align-items:center; gap:20px; padding:20px; outline:0; }
+.transition-card h2 { margin:0; font-size:38px; }
+.transition-star { color:#aa7408; font-size:100px; line-height:1; animation:loader-pulse .7s ease-in-out infinite alternate; }
+.transition-score { position:absolute; top:max(10px,env(safe-area-inset-top)); left:max(12px,env(safe-area-inset-left)); border-radius:18px; background:#ffeeb2; color:#7a5105; padding:10px 14px; font-size:23px; font-weight:800; }
+.transition-spinner { width:38px; height:38px; border:4px solid #d6e0fb; border-top-color:#355aca; border-radius:50%; animation:transition-spin .8s linear infinite; }
+@keyframes transition-spin { to { transform:rotate(360deg); } }
+.no-motion .transition-spinner,.no-motion .transition-star { animation:none; }
+@media(prefers-reduced-motion:reduce) { .transition-spinner,.transition-star { animation:none; } }

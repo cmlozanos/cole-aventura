@@ -14,9 +14,9 @@ Persistencia: localStorage; si está bloqueado, cookie funcional limitada a la r
 
 ## Controles
 
-Iconos de **Inicio**, **pausa**, **voz**, **efectos** y **opciones**. Los dos audios siempre empiezan apagados al cargar y se controlan independientemente. La voz depende del dispositivo y no se garantiza offline.
+Iconos infantiles de **Inicio**, **pausa** y **Adultos**. La voz y los efectos están dentro de la configuración protegida. Los dos audios siempre empiezan apagados al cargar y se controlan independientemente. La voz depende del dispositivo y no se garantiza offline.
 
-En Opciones se puede continuar, pedir otro reto manualmente, reiniciar puntos con confirmación y apagar animaciones. Pausar, ocultar o salir detiene sonidos y movimiento. Cambiar juego no borra puntos. No se borran datos históricos de versiones anteriores.
+Tras resolver la multiplicación de Adultos se puede cambiar de reto, reiniciar puntos con confirmación y controlar audio/animaciones. Pausar, ocultar o salir detiene sonidos y movimiento. Cambiar juego no borra puntos. No se borran datos históricos de versiones anteriores.
 
 ## Animaciones y carga
 
@@ -38,3 +38,9 @@ make test-browser  # Chromium y WebKit instalados
 ```
 
 `npx playwright install chromium webkit` instala navegadores explícitamente si faltan. `APP_URL=https://… npm run test:e2e -- --project=chromium` comprueba una publicación. Documentación y evidencia en `docs/`; las decisiones recientes sustituyen descripciones históricas.
+
+## Simplificación infantil vigente
+
+La cabecera infantil muestra solo Inicio, pausa y acceso Adultos. **Voz, efectos y configuración ya no se exponen al niño**: cada apertura exige una multiplicación aleatoria. Al cerrar se bloquea de nuevo; no se guarda un acceso desbloqueado. Es una barrera local de uso, no una verificación de edad ni autenticación fuerte.
+
+Se retiran textos explicativos y acciones redundantes del diálogo. Tras acertar, el intervalo hasta siguiente reto ocupa toda la ventana con una celebración/indicador sin botones, sin interacción ni cierre por Escape; los puntos siguen visibles. No es una descarga simulada ni muestra porcentajes. Se cierra automáticamente al llegar el siguiente reto. Las consignas y pistas didácticas se conservan.

@@ -5,6 +5,7 @@ import { renderLearningVisual } from './learning-visuals.js';
 import { createAudio } from './audio.js';
 import { createMotion } from './motion.js';
 import { createScoreSession } from './score-session.js';
+import { createParentChallenge, verifyParentAnswer } from './parent-gate.js';
 
 const main = document.querySelector('#main');
 const controls = document.querySelector('.controls');
@@ -12,6 +13,9 @@ const audio = createAudio(window);
 const motion = createMotion(window);
 const scores = createScoreSession(window);
 const options = document.querySelector('#options');
+const transition = document.querySelector('#transition');
+let parentChallenge = null;
+let parentUnlocked = false;
 let scene = 'home';
 let topicMode = 'mixed';
 let questionId = '';
@@ -52,9 +56,7 @@ function renderControls() {
   document.querySelector('#score strong').textContent = snapshot.points;
   document.querySelector('#score').setAttribute('aria-label',`${snapshot.points} puntos de esta sesión`);
   controls.innerHTML = control('home','Inicio','home',scene === 'home') + control('pause',paused ? 'Continuar' : 'Pausar',paused ? 'play' : 'pause',paused)
-    + control('voice',audio.voice ? 'Desactivar voz' : 'Activar voz','voice',audio.voice,!audio.voice)
-    + control('effects',audio.effects ? 'Desactivar efectos de sonido' : 'Activar efectos de sonido','effects',audio.effects,!audio.effects)
-    + control('options','Opciones','settings',options.open);
+    + control('options','Para adultos','settings',options.open);
   controls.querySelector('[data-action="pause"]').disabled = scene === 'home';
 }
 function render() {
@@ -62,7 +64,7 @@ function render() {
   main.classList.toggle('paused',paused && scene === 'game');
   main.classList.toggle('home-screen',scene === 'home');
   if (scene === 'home') {
-    main.innerHTML = `<div class="home-heading"><span class="home-mascot" aria-hidden="true">✦</span><h1>¡Elige tu aventura!</h1><p>1.º de Primaria · Todo disponible</p></div><div class="game-grid"><button class="game-tile random-tile" data-game="mixed"><span aria-hidden="true">⤨</span><strong>¡Sorpresa!</strong></button>${activities[0].topics.map(topic=>`<button class="game-tile" data-game="${topic.id}"><span aria-hidden="true">${esc(topic.symbol)}</span><strong>${esc(topic.title)}</strong></button>`).join('')}</div>`;
+    main.innerHTML = `<div class="home-heading"><span class="home-mascot" aria-hidden="true">✦</span><h1>¡Elige tu aventura!</h1></div><div class="game-grid"><button class="game-tile random-tile" data-game="mixed"><span aria-hidden="true">⤨</span><strong>¡Sorpresa!</strong></button>${activities[0].topics.map(topic=>`<button class="game-tile" data-game="${topic.id}"><span aria-hidden="true">${esc(topic.symbol)}</span><strong>${esc(topic.title)}</strong></button>`).join('')}</div>`;
     return;
   }
   main.innerHTML = `<h1>${esc(question.prompt)}</h1><section class="picture" aria-label="Dibujos del reto">${question.visual.kind === 'shape' && !assisted && !solved ? '<div class="shape-cue" aria-hidden="true">?</div>' : renderLearningVisual(question,assisted,solved)}</section><div class="answers" role="group" aria-label="Elige una respuesta">${question.choices.map(choice => `<button data-answer="${esc(choice)}" aria-label="${esc(choice)}" class="answer ${selected === choice ? (solved ? 'correct' : 'retry') : ''}" ${solved || paused ? 'disabled' : ''}>${question.visual.kind === 'shape' ? `<span class="choice-shape" style="transform:rotate(${question.angle}deg)">${shapeSvg(shapes[choice],true)}</span>` : esc(choice)}</button>`).join('')}</div><div class="celebration" aria-hidden="true">${solved ? '<i>★</i>'.repeat(7) : ''}</div><p class="feedback ${solved ? 'success' : ''}" role="status" aria-live="polite">${paused ? 'Pausa' : esc(feedback)}</p><p class="sr-only" id="audio-status" role="status"></p>`;
@@ -75,6 +77,7 @@ function render() {
 }
 function cancelAdvance() { clearTimeout(timer); timer = null; }
 function nextQuestion() {
+  closeTransition();
   cancelAdvance(); audio.stop(); generation++;
   if (updatePending) { location.reload(); return; }
   const pool = topics.filter(topic => topic !== previousTopic);
@@ -104,7 +107,7 @@ function scheduleAdvance() {
   },3500);
 }
 function showHome() {
-  cancelAdvance(); audio.stop(); motion.stop(); generation++;
+  closeTransition(); cancelAdvance(); audio.stop(); motion.stop(); generation++;
   scene = 'home'; paused = false;
   if (updatePending) { location.reload(); return; }
   render(); motion.enter(main); main.focus({preventScroll:true});
@@ -113,23 +116,56 @@ function startGame(mode) {
   topicMode = mode; scene = 'game'; paused = false;
   scores.touch(); nextQuestion();
 }
+function closeTransition() {
+  if (transition.open) transition.close();
+  main.removeAttribute('aria-busy');
+}
+function showTransition() {
+  motion.stop();
+  const points = scores.read().points;
+  transition.querySelector('.transition-score').textContent = `★ ${points}`;
+  transition.querySelector('.transition-score').setAttribute('aria-label',`${points} puntos de esta sesión`);
+  transition.classList.toggle('no-motion',!motion.enabled);
+  main.setAttribute('aria-busy','true');
+  if (!transition.open) transition.showModal();
+  transition.querySelector('.transition-card').focus({preventScroll:true});
+}
+function renderParentOptions() {
+  options.innerHTML = `<div class="dialog-heading"><h2 id="options-title">Adultos</h2><button class="close-dialog" data-action="close-options" aria-label="Cerrar">×</button></div><div class="manual-actions"><button data-action="voice" aria-pressed="${audio.voice}">${icon('voice',!audio.voice)} Voz</button><button data-action="effects" aria-pressed="${audio.effects}">${icon('effects',!audio.effects)} Sonidos</button><button data-action="motion" aria-pressed="${motion.enabled}">✦ Animaciones</button><button data-action="new-question" ${scene === 'home' ? 'disabled' : ''}>↻ Otro reto</button><button data-action="reset-score">☆ Reiniciar puntos</button></div>`;
+}
 function openOptions() {
+  if (transition.open) return;
   if (scene === 'game') { paused = true; cancelAdvance(); audio.stop(); motion.stop(); render(); }
-  options.innerHTML = `<h2 id="options-title">Opciones</h2><p>1 punto por reto resuelto. Sin perder puntos por pedir ayuda.</p><div class="manual-actions"><button data-action="continue">▶ Continuar</button><button data-action="new-question" ${scene === 'home' ? 'disabled' : ''}>↻ Otro reto</button><button data-action="reset-score">☆ Reiniciar puntos</button><button data-action="motion" aria-pressed="${motion.enabled}">${motion.enabled ? 'Desactivar' : 'Activar'} animaciones</button><button data-action="close-options">Cerrar</button></div><p class="options-note">Tras más de una hora sin jugar, los puntos vuelven a cero al regresar.</p>`;
+  parentUnlocked = false;
+  parentChallenge = createParentChallenge(Math.random,parentChallenge);
+  options.innerHTML = `<div class="dialog-heading"><h2 id="options-title">Adultos</h2><button class="close-dialog" data-action="close-options" aria-label="Cerrar">×</button></div><form id="parent-form" autocomplete="off"><label for="parent-answer" class="parent-challenge">${parentChallenge.a} × ${parentChallenge.b} = ?</label><input id="parent-answer" name="answer" inputmode="numeric" pattern="[0-9]+" aria-label="Resultado de la multiplicación" required><button class="gate-submit" type="submit" aria-label="Entrar">→</button><span id="parent-error" role="status"></span></form>`;
   options.showModal(); renderControls();
 }
+options.addEventListener('submit',event=>{
+  event.preventDefault();
+  if (event.target.id !== 'parent-form') return;
+  if (!verifyParentAnswer(parentChallenge,options.querySelector('input').value)) {
+    options.querySelector('#parent-error').textContent='Inténtalo de nuevo';
+    options.querySelector('input').value=''; options.querySelector('input').focus(); return;
+  }
+  parentUnlocked = true; renderParentOptions();
+  options.querySelector('[data-action="voice"]').focus();
+});
+transition.addEventListener('cancel',event=>event.preventDefault());
+transition.addEventListener('keydown',event=>{ if (['Escape','Tab','Enter',' '].includes(event.key)) event.preventDefault(); });
 document.addEventListener('click', event => {
   const target = event.target.closest('button');
   if (!target) return;
+  if (transition.open) return;
   const action = target.dataset.action;
+  if (['voice','effects','motion','reset-score','new-question'].includes(action) && (!parentUnlocked || !options.open)) return;
   if (target.dataset.game) { startGame(target.dataset.game); return; }
   if (action === 'home') { showHome(); return; }
   if (action === 'options') { openOptions(); return; }
   if (action === 'close-options') { options.close(); renderControls(); return; }
-  if (action === 'motion') { motion.toggle(); target.textContent = `${motion.enabled ? 'Desactivar' : 'Activar'} animaciones`; target.setAttribute('aria-pressed',String(motion.enabled)); return; }
+  if (action === 'motion') { motion.toggle(); target.setAttribute('aria-pressed',String(motion.enabled)); return; }
   if (action === 'reset-score') { if (window.confirm('¿Reiniciar a cero los puntos de esta sesión?')) { scores.reset(); renderControls(); } return; }
   if (action === 'new-question') { options.close(); paused = false; scores.touch(); nextQuestion(); return; }
-  if (action === 'continue') { options.close(); if (scene === 'home') startGame('mixed'); else { paused = false; scores.touch(); render(); if (solved) scheduleAdvance(); else audio.speak(question.prompt); } return; }
   if (action === 'pause') {
     paused = !paused; cancelAdvance(); audio.stop(); motion.stop(); render();
     controls.querySelector('[data-action="pause"]').focus();
@@ -137,14 +173,12 @@ document.addEventListener('click', event => {
     return;
   }
   if (action === 'voice') {
-    audio.toggleVoice(); renderControls();
-    controls.querySelector('[data-action="voice"]').focus();
+    audio.toggleVoice(); target.setAttribute('aria-pressed',String(audio.voice)); target.innerHTML = `${icon('voice',!audio.voice)} Voz`;
     if (audio.voice && !paused && scene === 'game') audio.speak(question.prompt);
     return;
   }
   if (action === 'effects') {
-    audio.toggleEffects(); renderControls();
-    controls.querySelector('[data-action="effects"]').focus();
+    audio.toggleEffects(); target.setAttribute('aria-pressed',String(audio.effects)); target.innerHTML = `${icon('effects',!audio.effects)} Sonidos`;
     return;
   }
   if (scene !== 'game' || paused || solved) return;
@@ -162,13 +196,13 @@ document.addEventListener('click', event => {
     feedback = solved ? `✓ ${question.explanation}` : `↻ ${question.hint}`;
     if (solved) scores.award(questionId); else scores.touch();
     render(); motion.feedback(main,solved); audio.effect(solved); audio.speak(solved ? question.explanation : question.hint);
-    if (solved) { controls.querySelector('[data-action="pause"]').focus(); scheduleAdvance(); }
+    if (solved) { showTransition(); scheduleAdvance(); }
     else main.querySelector(`[data-answer="${CSS.escape(selected)}"]`)?.focus();
   }
 });
-options.addEventListener('close',renderControls);
+options.addEventListener('close',()=>{ parentUnlocked = false; options.innerHTML=''; renderControls(); controls.querySelector('[data-action="options"]').focus(); });
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { if (scene === 'game') paused = true; cancelAdvance(); audio.stop(); motion.stop(); render(); } else { renderControls(); }
+  if (document.hidden) { if (scene === 'game' && !transition.open) paused = true; cancelAdvance(); audio.stop(); motion.stop(); if (!transition.open) render(); } else { renderControls(); if (transition.open && solved) scheduleAdvance(); }
 });
 window.addEventListener('pagehide', () => { cancelAdvance(); audio.stop(); motion.stop(); });
 window.addEventListener('storage', event => { if (event.key === 'cole-aventura-session-v1') renderControls(); });

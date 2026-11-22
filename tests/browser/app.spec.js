@@ -30,48 +30,55 @@ async function prepare(page) {
   });
 }
 
+async function unlockParents(page) {
+  await page.getByRole('button',{name:'Para adultos',exact:true}).click();
+  const expression=await page.locator('.parent-challenge').textContent();
+  const [a,b]=expression.match(/\d+/g).map(Number);
+  await page.getByRole('textbox',{name:'Resultado de la multiplicación'}).fill(String(a*b));
+  await page.getByRole('button',{name:'Entrar',exact:true}).click();
+}
+
 test('juego aleatorio, inicio accesible y audio silencioso',async({page})=>{
   const [q]=await prepare(page);
   await expect(page.getByRole('heading',{level:1})).toHaveText(q.prompt);
-  await expect(page.locator('header button')).toHaveCount(5);
+  await expect(page.locator('header button')).toHaveCount(3);
   await expect(page.locator('[data-nav],[data-topic],.summary')).toHaveCount(0);
-  await expect(page.getByRole('button',{name:'Activar voz',exact:true})).toHaveAttribute('aria-pressed','false');
-  await expect(page.getByRole('button',{name:'Activar efectos de sonido',exact:true})).toHaveAttribute('aria-pressed','false');
+  await expect(page.locator('[data-action="voice"],[data-action="effects"]')).toHaveCount(0);
   expect(await page.evaluate(()=>window.audioCalls)).toEqual({speech:0,contexts:0});
   await page.getByRole('button',{name:q.answer,exact:true}).click();
   await expect(page.locator('.feedback')).toContainText('✓');
   expect(await page.evaluate(()=>window.audioCalls)).toEqual({speech:0,contexts:0});
 });
 
-test('voz y efectos independientes, apagados de nuevo al recargar',async({page})=>{
-  const [q]=await prepare(page);
-  await page.getByRole('button',{name:'Activar voz',exact:true}).click();
-  expect(await page.evaluate(()=>window.audioCalls.speech)).toBe(1);
+test('audio solo tras multiplicación y apagado de nuevo al recargar',async({page})=>{
+  await prepare(page); await unlockParents(page);
+  await expect(page.getByRole('button',{name:'Voz',exact:true})).toHaveAttribute('aria-pressed','false');
+  await expect(page.getByRole('button',{name:'Sonidos',exact:true})).toHaveAttribute('aria-pressed','false');
+  await page.getByRole('button',{name:'Voz',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Voz',exact:true})).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>window.audioCalls.contexts)).toBe(0);
-  await page.getByRole('button',{name:'Desactivar voz',exact:true}).click();
-  await page.getByRole('button',{name:'Activar efectos de sonido',exact:true}).click();
-  await page.getByRole('button',{name:q.answer,exact:true}).click();
-  expect(await page.evaluate(()=>window.audioCalls.speech)).toBe(1);
-  expect(await page.evaluate(()=>window.audioCalls.contexts)).toBe(1);
-  await page.getByRole('button',{name:'Desactivar efectos de sonido',exact:true}).click();
-  await page.reload();
-  await expect(page.getByRole('button',{name:'Activar voz',exact:true})).toBeVisible();
-  await expect(page.getByRole('button',{name:'Activar efectos de sonido',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Cerrar',exact:true}).click();
+  await page.reload(); await unlockParents(page);
+  await expect(page.getByRole('button',{name:'Voz',exact:true})).toHaveAttribute('aria-pressed','false');
   expect(await page.evaluate(()=>window.audioCalls)).toEqual({speech:0,contexts:0});
 });
 
-test('error no avanza; acierto avanza; pausa conserva reto',async({page})=>{
+test('error no avanza y acierto cubre toda la ventana sin interacción',async({page})=>{
   const questions=await prepare(page);const q=questions[0];
   await page.getByRole('button',{name:q.choices.find(c=>c!==q.answer),exact:true}).click();
-  await expect(page.locator('.feedback')).toContainText('↻');
+  await expect(page.locator('#transition')).not.toBeVisible();
   await page.waitForTimeout(3700);
   await expect(page.locator('h1')).toHaveText(q.prompt);
   await page.getByRole('button',{name:q.answer,exact:true}).click();
-  await page.getByRole('button',{name:'Pausar',exact:true}).click();
-  await page.waitForTimeout(3700);
-  await expect(page.locator('h1')).toHaveText(q.prompt);
-  await page.getByRole('button',{name:'Continuar',exact:true}).click();
-  await expect(page.locator('h1')).toHaveText(questions[1].prompt,{timeout:5000});
+  await expect(page.locator('#transition')).toBeVisible();
+  await expect(page.locator('#transition button,#transition input')).toHaveCount(0);
+  expect(await page.locator('#transition').evaluate(n=>{const r=n.getBoundingClientRect();return r.top===0&&r.left===0&&r.width===innerWidth&&r.height===innerHeight;})).toBe(true);
+  await expect(page.locator('.transition-score')).toContainText('1');
+  await page.keyboard.press('Escape');await page.keyboard.press('Tab');await page.keyboard.press('Enter');
+  await expect(page.locator('#transition')).toBeVisible();
+  await expect(page.locator('#transition')).not.toBeVisible({timeout:5000});
+  await expect(page.locator('h1')).toHaveText(questions[1].prompt);
+  await expect(page.locator('#main')).not.toHaveAttribute('aria-busy','true');
 });
 
 test('todos los tipos y ayudas caben sin scroll ni contenido cortado',async({page})=>{
@@ -140,13 +147,14 @@ test('inicio desbloqueado, puntos por reto una vez y opciones manuales',async({p
   await expect(page.locator('#score strong')).toHaveText('0');
   await page.getByRole('button',{name:q.answer,exact:true}).click();
   await expect(page.locator('#score strong')).toHaveText('1');
+  await expect(page.locator('#transition')).not.toBeVisible({timeout:5000});
   await page.getByRole('button',{name:'Inicio',exact:true}).click();
   await expect(page.locator('[data-game]')).toHaveCount(7);
   await expect(page.locator('[data-game]:disabled')).toHaveCount(0);
   await expect(page.locator('#score strong')).toHaveText('1');
   await page.reload();
   await expect(page.locator('#score strong')).toHaveText('1');
-  await page.getByRole('button',{name:'Opciones',exact:true}).click();
+  await unlockParents(page);
   page.once('dialog',d=>d.accept());
   await page.getByRole('button',{name:'Reiniciar puntos',exact:false}).click();
   await expect(page.locator('#score strong')).toHaveText('0');
@@ -165,6 +173,7 @@ test('loader real, reduced motion y expiración tras más de una hora',async({pa
   await page.getByRole('button',{name:q.answer,exact:true}).click();
   await expect(page.locator('#score strong')).toHaveText('1');
   await page.evaluate(()=>{const key='cole-aventura-session-v1';const data=JSON.parse(localStorage.getItem(key));data.lastActive=Date.now()-3600001;localStorage.setItem(key,JSON.stringify(data));document.cookie=key+'=; Max-Age=0; Path='+location.pathname;});
+  await expect(page.locator('#transition')).not.toBeVisible({timeout:5000});
   await page.getByRole('button',{name:'Inicio',exact:true}).click();
   await expect(page.locator('#score strong')).toHaveText('0');
   expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running').length)).toBe(0);
@@ -198,4 +207,56 @@ test('fallo de módulo muestra reintento sin loader eterno',async({page})=>{
   await page.goto('./');
   await expect(page.getByText('No se ha podido abrir el juego.',{exact:true})).toBeVisible();
   await expect(page.getByRole('button',{name:'Reintentar',exact:true})).toBeVisible();
+});
+
+
+test('puerta de adultos bloquea configuración y se renueva tras cerrar',async({page})=>{
+  await prepare(page);
+  await page.getByRole('button',{name:'Para adultos',exact:true}).click();
+  const previous=await page.locator('.parent-challenge').textContent();
+  await expect(page.locator('[data-action="reset-score"],[data-action="voice"],[data-action="effects"]')).toHaveCount(0);
+  await page.getByRole('textbox',{name:'Resultado de la multiplicación'}).fill('1');
+  await page.getByRole('button',{name:'Entrar',exact:true}).click();
+  await expect(page.locator('#parent-error')).toHaveText('Inténtalo de nuevo');
+  await expect(page.locator('[data-action="reset-score"]')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await page.getByRole('button',{name:'Para adultos',exact:true}).click();
+  expect(await page.locator('.parent-challenge').textContent()).not.toBe(previous);
+  const [a,b]=(await page.locator('.parent-challenge').textContent()).match(/\d+/g).map(Number);
+  await page.getByRole('textbox',{name:'Resultado de la multiplicación'}).fill(String(a*b));
+  await page.getByRole('button',{name:'Entrar',exact:true}).click();
+  await expect(page.locator('[data-action="reset-score"]')).toBeVisible();
+  await expect(page.locator('#options')).not.toContainText('1 punto');
+  await expect(page.locator('#options')).not.toContainText('Tras más de');
+  await expect(page.locator('#options')).not.toContainText('Continuar');
+  await page.getByRole('button',{name:'Cerrar',exact:true}).click();
+  await page.getByRole('button',{name:'Para adultos',exact:true}).click();
+  await expect(page.locator('#parent-form')).toBeVisible();
+});
+
+test('puerta y controles adultos caben en móvil y horizontal; escapar no desbloquea',async({page})=>{
+  await prepare(page);
+  await page.getByRole('button',{name:'Para adultos',exact:true}).click();
+  for(const viewport of [{width:320,height:568},{width:667,height:375}]){
+    await page.setViewportSize(viewport);
+    expect(await page.locator('#options').evaluate(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1&&n.scrollHeight<=n.clientHeight+1;})).toBe(true);
+  }
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#options')).not.toBeVisible();
+  await unlockParents(page);
+  for(const viewport of [{width:320,height:568},{width:667,height:375}]){
+    await page.setViewportSize(viewport);
+    expect(await page.locator('#options').evaluate(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1&&n.scrollHeight<=n.clientHeight+1;})).toBe(true);
+  }
+});
+
+test('transición respeta movimiento reducido y no puede dar puntos duplicados',async({page})=>{
+  await page.emulateMedia({reducedMotion:'reduce'});
+  const [q]=await prepare(page);
+  await page.getByRole('button',{name:q.answer,exact:true}).click();
+  await expect(page.locator('#transition')).toBeVisible();
+  await page.evaluate(()=>document.querySelector('[data-answer]').click());
+  await expect(page.locator('.transition-score')).toHaveText('★ 1');
+  expect(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running').length)).toBe(0);
+  await expect(page.locator('#transition')).not.toBeVisible({timeout:5000});
 });

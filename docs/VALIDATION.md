@@ -62,3 +62,11 @@ Browser conserva guardas audio/silencio, error/reintento, avance/pausa, offline 
 Capturas `session-home-mobile.png`, `session-game-mobile.png`, `session-options-mobile.png`, `session-options-landscape.png` revisadas. No descargas externas durante juego; caché incluye nuevos módulos. No validación de altavoz físico, lector humano, instalación nativa o GPU de tablet. Autoevaluación4/5 exactitud/completitud/claridad;5/5 accionabilidad;4/5 concisión (acciones manuales agrupadas en Opciones).
 
 Resultado final: `npm run check`77/77 y build en verde; `npm run test:e2e`22/22 (11 por motor) en verde. Sin suites de otros proyectos. La comparación de capacidad con frameworks no sustituye una medición física de tablet.
+
+## Puerta de adultos y transición modal (revisión posterior)
+
+Fuentes oficiales YouTube Kids/W3C/Material revisadas y enlazadas en MOTION-RESEARCH.md. La configuración queda detrás de multiplicación2–9; cada apertura cambia el reto, error no accede, cierre/Escape vuelven a bloquear. No se guarda respuesta ni desbloqueo en cookies. Tres controles infantiles en cabecera; audio apagado por defecto permanece. Textos sobre puntos/expiración/continuar y subcabecera de relleno retirados. Se conservan consignas/pistas, errores necesarios y nombres accesibles.
+
+Transición postacierto: dialog nativo full-window de3,5s, sin botones/input, fondo inoperable y Escape/Tab/Enter sin efecto; puntos replicados en overlay, no segundo cómputo. Error nunca abre modal; transición no renueva actividad ni puntúa otra vez. Al ocultar se suspende el avance y al volver se reanuda automáticamente. Se preservan reduced-motion y apagado de animación manual. El tiempo es transición pedagógica ya existente, no se presenta como descarga.
+
+Resultado de esta revisión:84/84 tests puros y build;14 casos Chromium (12+2 focales) y14 WebKit en verde. Se comprueban multiplicación errónea/correcta, re-bloqueo al cerrar/Escape, renovación del reto, ausencia de párrafos retirados, configuración y entrada en320×568/667×375, transición modal full-viewport sin controles, teclado sin cierre, puntos únicos, salida automática y reduced-motion. Mantiene límites históricos de tablet física/voz/WebKit offline. Autoevaluación4/5 exactitud/completitud/claridad,5/5 accionabilidad,5/5 concisión infantil.

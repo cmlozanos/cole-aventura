@@ -9,3 +9,6 @@ Una sola pantalla sin scroll ni modo familia, sin portada y con tres controles d
 
 ## Petición posterior: inicio, puntos y movimiento
 Botón Inicio siempre accesible, todos los juegos disponibles. Contador general visible en todas las escenas. Un punto por reto resuelto sin penalizar ayuda; conservar sesión entre juegos y recargas. Tras más de una hora sin interacción de juego, volver a cero al regresar. Persistencia navegador con fallback cookie, sin backend. Acciones manuales de continuar, cambiar reto, reiniciar puntos confirmado y desactivar movimiento. Loader real, transición y feedback breve, respetando reduced-motion. Mantener silencio inicial y no-scroll.
+
+## Simplificación adulta y transición (vigente)
+Configurar exige multiplicación aleatoria en cada apertura. Eliminar párrafos explicativos de puntos/expiración y botones redundantes. Cabecera infantil Inicio/pausa/Adultos. Tras acertar, intervalo completo hasta siguiente pregunta cubierto por loader/dialog de ventana completa, sin interacción ni cierre por teclado; puntos visibles y cierre automático. Los errores permanecen en reto con ayuda. Conservar defaults de audio y no-scroll.

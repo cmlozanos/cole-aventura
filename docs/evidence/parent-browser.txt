@@ -1,0 +1,21 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --project=chromium
+
+
+Running 12 tests using 1 worker
+
+  ✓   1 [chromium] › tests/browser/app.spec.js:41:1 › juego aleatorio, inicio accesible y audio silencioso (1.4s)
+  ✓   2 [chromium] › tests/browser/app.spec.js:53:1 › audio solo tras multiplicación y apagado de nuevo al recargar (784ms)
+  ✓   3 [chromium] › tests/browser/app.spec.js:66:1 › error no avanza y acierto cubre toda la ventana sin interacción (8.2s)
+  ✓   4 [chromium] › tests/browser/app.spec.js:84:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (43.0s)
+  ✓   5 [chromium] › tests/browser/app.spec.js:113:1 › offline real Chromium y no borra progreso antiguo (982ms)
+  ✓   6 [chromium] › tests/browser/app.spec.js:124:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (674ms)
+  ✓   7 [chromium] › tests/browser/app.spec.js:145:1 › inicio desbloqueado, puntos por reto una vez y opciones manuales (4.9s)
+  ✓   8 [chromium] › tests/browser/app.spec.js:169:1 › loader real, reduced motion y expiración tras más de una hora (4.2s)
+  ✓   9 [chromium] › tests/browser/app.spec.js:182:1 › cookie de respaldo real y juego sin almacenamiento (954ms)
+  ✓  10 [chromium] › tests/browser/app.spec.js:193:1 › loader solo durante carga real (272ms)
+  ✓  11 [chromium] › tests/browser/app.spec.js:205:1 › fallo de módulo muestra reintento sin loader eterno (232ms)
+  ✓  12 [chromium] › tests/browser/app.spec.js:213:1 › puerta de adultos bloquea configuración y se renueva tras cerrar (773ms)
+
+  12 passed (1.1m)

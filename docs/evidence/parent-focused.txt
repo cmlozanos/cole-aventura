@@ -1,0 +1,11 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --project=chromium -g puerta y controles|puntos duplicados
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:237:1 › puerta y controles adultos caben en móvil y horizontal; escapar no desbloquea (1.0s)
+  ✓  2 [chromium] › tests/browser/app.spec.js:253:1 › transición respeta movimiento reducido y no puede dar puntos duplicados (4.1s)
+
+  2 passed (6.4s)
