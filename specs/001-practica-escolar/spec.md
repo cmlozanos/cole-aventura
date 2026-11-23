@@ -24,3 +24,6 @@ Apoyo silábico en todo el vocabulario visible. Palabras completas en una sola c
 
 ## Galaxy Tab4 e iconos (vigente)
 Altura de área visible adaptada a navegador antiguo/standalone/barras/teclado; no scroll por layout ni recorte. Mantener botones tocables y fuente ligada. Títulos de todas las actividades con SVG semántico además de texto accesible. Compatibilidad motor95 comprobada con límites de emulación declarados.
+
+## Corrección de iconografía · 23 noviembre
+Consignas sin iconos decorativos que parezcan operadores, cantidades, ejemplos o respuesta. Retirar en todos los títulos; conservar navegación separada y dibujos pedagógicos funcionales. En figuras solo consigna+opciones antes de ayuda, no figuras decorativas ni signo adicional en panel.

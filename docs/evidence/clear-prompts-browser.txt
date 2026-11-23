@@ -1,0 +1,17 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --grep consignas sin iconos|Tab4 tablet|todos los tipos|cuentos sílabas
+
+
+Running 8 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:82:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (13.4s)
+  ✓  2 [chromium] › tests/browser/app.spec.js:324:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (1.7s)
+  ✓  3 [chromium] › tests/browser/app.spec.js:475:1 › consignas sin iconos que parezcan operadores cantidades o respuestas (545ms)
+  ✓  4 [chromium] › tests/browser/tab4.spec.js:13:1 › Tab4 tablet viewport orientations home all topics stories and unambiguous titles (20.0s)
+  ✓  5 [webkit] › tests/browser/app.spec.js:82:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (13.4s)
+  ✓  6 [webkit] › tests/browser/app.spec.js:324:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (2.9s)
+  ✓  7 [webkit] › tests/browser/app.spec.js:475:1 › consignas sin iconos que parezcan operadores cantidades o respuestas (717ms)
+  ✓  8 [webkit] › tests/browser/tab4.spec.js:13:1 › Tab4 tablet viewport orientations home all topics stories and unambiguous titles (21.1s)
+
+  8 passed (1.3m)

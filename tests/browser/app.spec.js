@@ -471,3 +471,19 @@ test('sílabas discretas conservan letra ligada y palabra sin fragmentar',async(
   expect(await page.locator('[data-word]').first().evaluate(n=>n.children.length)).toBe(0);
   await expect(page.locator('.reading-syllable')).toHaveCount(0);
 });
+
+test('consignas sin iconos que parezcan operadores cantidades o respuestas',async({page})=>{
+  await prepare(page);
+  const cases=[['numbers',/^¿Cuántos\?$/],['compare',/^¿Cuál es (mayor|menor)\?$/],['addition',/^\d+ \+ \d+ = \?$/],['subtraction',/^\d+ − \d+ = \?$/],['problems',/^(Ana|Leo|Eva|Hugo) tiene/],['shapes',/^Toca: (círculo|cuadrado|rectángulo|triángulo)\.$/]];
+  for(const[id,pattern]of cases){
+    await page.getByRole('button',{name:'Inicio',exact:true}).click();await page.locator(`[data-game="${id}"]`).click();
+    await expect(page.locator('h1')).toHaveText(pattern);
+    await expect(page.locator('h1 svg,h1 img,h1 [aria-hidden="true"]')).toHaveCount(0);
+    if(id==='shapes'){
+      await expect(page.locator('.picture svg,.picture .shape-cue:not(:empty)')).toHaveCount(0);
+      await expect(page.locator('.answer svg')).toHaveCount(4);
+    }
+  }
+  await page.getByRole('button',{name:'Inicio',exact:true}).click();await page.locator('[data-game="stories"]').click();
+  await expect(page.locator('h1 svg,h1 img')).toHaveCount(0);
+});

@@ -52,3 +52,7 @@ No hay selector de familia ni preferencia print activa. Todos los consumidores d
 ## Viewport e iconos de títulos
 
 `viewport.js` fija --app-height desde área visible real; no reintroducir alturas100dvh sin fallback. Las pruebas de rotación esperan el evento resize del navegador antes de medir el layout estabilizado, en lugar de asumir sincronía con setViewportSize. `topic-icons.js` centraliza iconos SVG semánticos para todos los títulos de ejercicios/cuentos; no inferirlos desde la traducción. Mantener aria-hidden y texto original silabeado.
+
+## Consignas sin símbolos decorativos (vigente)
+
+No añadir operadores, cifras, cantidades o figuras decorativas al título de un ejercicio: se confunden con datos o respuesta. Iconografía solo en navegación separada o representaciones funcionales del problema. Los títulos incluyen exclusivamente su consigna textual, fuente ligada y subrayado discreto. Esta corrección sustituye el requisito anterior de iconos de título.

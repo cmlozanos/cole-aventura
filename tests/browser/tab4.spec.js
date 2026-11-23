@@ -10,7 +10,7 @@ async function fit(page){
   return {outside,scroll:document.documentElement.scrollHeight>innerHeight+1||document.documentElement.scrollWidth>innerWidth+1,headerOverlap:document.querySelector('header').getBoundingClientRect().bottom>document.querySelector('main').getBoundingClientRect().top+1};
  });
 }
-test('Tab4 tablet viewport orientations home all topics stories and title icons',async({page})=>{
+test('Tab4 tablet viewport orientations home all topics stories and unambiguous titles',async({page})=>{
  test.setTimeout(120000);
  await page.context().setExtraHTTPHeaders({});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -20,12 +20,12 @@ test('Tab4 tablet viewport orientations home all topics stories and title icons'
   expect(await fit(page),JSON.stringify(viewport)+' home').toEqual({outside:[],scroll:false,headerOverlap:false});
   for(const id of ['numbers','compare','addition','subtraction','problems','shapes']){
    await page.locator(`[data-game="${id}"]`).click();
-   await expect(page.locator('h1 svg')).toHaveAttribute('data-topic-icon',id);
+   await expect(page.locator('h1 svg,h1 [data-topic-icon]')).toHaveCount(0);
    expect(await fit(page),JSON.stringify(viewport)+' '+id).toEqual({outside:[],scroll:false,headerOverlap:false});
    await page.getByRole('button',{name:'Inicio',exact:true}).click();
   }
   await page.locator('[data-game="stories"]').click();
-  await expect(page.locator('h1 svg')).toHaveAttribute('data-topic-icon','stories');
+  await expect(page.locator('h1 svg,h1 [data-topic-icon]')).toHaveCount(0);
   expect(await fit(page),JSON.stringify(viewport)+' story').toEqual({outside:[],scroll:false,headerOverlap:false});
   await page.getByRole('button',{name:'Inicio',exact:true}).click();
  }

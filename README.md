@@ -71,3 +71,7 @@ Las palabras no se fragmentan: mantienen un único texto y su letra ligada conti
 ### Tablets antiguas (Galaxy Tab4)
 
 Ajuste de altura visible para Chrome95, barras y teclado, sin depender de100dvh. Inicio y cabecera adaptados a orientación/anchura efectiva; no se esconden controles con overflow. Títulos con iconos SVG por actividad. `make test-tab4 CHROME95_PATH=/ruta/a/Chromium95` ejecuta regresión específica sin descargar navegador. Investigación y alcance en `docs/GALAXY-TAB4.md`: motor95 real comprobado en escritorio; instalación/GPU/barras de la tablet física requieren confirmación en el dispositivo.
+
+### Consignas sin ambigüedad
+
+Los títulos ya no llevan iconos decorativos: una resta muestra únicamente su operación, sin un signo adicional delante. Las formas solo aparecen como respuestas o ayuda del ejercicio, no como figuras añadidas junto a la pregunta. Se conservan los dibujos que representan cantidades y acciones.
