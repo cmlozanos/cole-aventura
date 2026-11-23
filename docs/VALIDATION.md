@@ -124,3 +124,9 @@ Inventario revisado: seis temas de matemáticas, título de cuento, pregunta de 
 Checks mínimos por alcance: tests puros/build (módulo de iconos retirado), browser de expresiones exactas sin prefijos/sufijos icónicos en todos los temas, todas las familias en matriz no-scroll, cuentos y matriz de viewports Tab4. No cambio de modelo numérico ni viewport; se reutiliza evidencia95 previa para ese motor (no descargado de nuevo). Revisión física/pedagógica sigue pendiente. Evidencia clear-prompts-*.txt.
 
 Resultado107/107 tests puros+build y8/8 pruebas focales browser en ambos motores (todos los temas, casos extremos/layout, cuento y matriz tablet). Capturas clear-subtraction/shapes revisadas: ningún operador extra ni figuras añadidas en título. No cambio de fuente/sílabas/puntos/temporizador. Sin suites de otros proyectos.
+
+## Insignia neutra
+
+Se compara texto exacto de consigna, SVG sin operadores/números/figuras-respuesta, caja con fondo/contorno/radio y separación medida>=10px respecto a texto. Cobertura de seis temas, cuento/comprensión y layout móvil/tablet en ambos motores. No se añade dependencia ni descarga; SVG en art.js existente. Se reutiliza motor95 previo para APIs sin cambio; no se vuelve a descargar snapshot por este ajuste de composición.
+
+Resultado108/108 puros+build y10/10 browser focales ambos motores. Capturas badge-subtraction/shapes revisadas; operación sin signos decorativos y figura sin respuesta sugerida. No alterado contenido pedagógico ni acceso público de tema.

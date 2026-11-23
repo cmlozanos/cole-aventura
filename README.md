@@ -75,3 +75,5 @@ Ajuste de altura visible para Chrome95, barras y teclado, sin depender de100dvh.
 ### Consignas sin ambigüedad
 
 Los títulos ya no llevan iconos decorativos: una resta muestra únicamente su operación, sin un signo adicional delante. Las formas solo aparecen como respuestas o ayuda del ejercicio, no como figuras añadidas junto a la pregunta. Se conservan los dibujos que representan cantidades y acciones.
+
+Los títulos llevan una insignia SVG de cuaderno (o libro en lectura), dentro de una caja separada de la consigna. Nunca se antepone un operador, número o figura que pueda leerse como parte del ejercicio.

@@ -20,12 +20,12 @@ test('Tab4 tablet viewport orientations home all topics stories and unambiguous 
   expect(await fit(page),JSON.stringify(viewport)+' home').toEqual({outside:[],scroll:false,headerOverlap:false});
   for(const id of ['numbers','compare','addition','subtraction','problems','shapes']){
    await page.locator(`[data-game="${id}"]`).click();
-   await expect(page.locator('h1 svg,h1 [data-topic-icon]')).toHaveCount(0);
+   await expect(page.locator('h1 .activity-badge svg')).toHaveCount(1);
    expect(await fit(page),JSON.stringify(viewport)+' '+id).toEqual({outside:[],scroll:false,headerOverlap:false});
    await page.getByRole('button',{name:'Inicio',exact:true}).click();
   }
   await page.locator('[data-game="stories"]').click();
-  await expect(page.locator('h1 svg,h1 [data-topic-icon]')).toHaveCount(0);
+  await expect(page.locator('h1 .activity-badge svg')).toHaveCount(1);
   expect(await fit(page),JSON.stringify(viewport)+' story').toEqual({outside:[],scroll:false,headerOverlap:false});
   await page.getByRole('button',{name:'Inicio',exact:true}).click();
  }

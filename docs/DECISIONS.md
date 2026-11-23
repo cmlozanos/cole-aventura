@@ -73,3 +73,7 @@ Todos los títulos de matemáticas/cuento/comprensión llevan SVG semántico dec
 ## Consignas sin iconografía ambigua · 23 noviembre
 
 Corrección expresa del usuario: los iconos añadidos al lado del título se leen como parte de la tarea (− junto a5−3 puede parecer número negativo; formas junto a consigna parecen ejemplos/respuestas). Se retiran de todos los títulos de matemáticas y cuentos/comprensión, no se sustituye un símbolo ambiguo por otro. Se elimina módulo de iconos y precaché correspondiente. En figuras, antes de ayuda no se muestra ni figura decorativa ni signo de interrogación añadido; solo consigna y cuatro respuestas. Se conservan dibujos funcionales de contar/juntar/quitar/comparar, iconos separados en Inicio y controles y ayuda tras error. Fuente/sílabas, títulos textuales, viewport95, audio y puntos no cambian.
+
+## Insignia SVG aislada · 23 noviembre
+
+Usuario pide recuperar iconos dentro de caja distinguible. Se usa cuaderno neutro para TODOS los ejercicios matemáticos y libro para lectura, nunca signo de operación, cantidad ni figuras que coincidan con respuestas. SVG propio dentro de caja coloreada con contorno y separación12–16px del texto; aria-hidden, sin texto interno ni botón. Así la consigna sigue exactamente igual, sin prefijo de resta ni pista de figuras. Mantener viewport/sílabas/fuente y dibujos funcionales.

@@ -478,12 +478,21 @@ test('consignas sin iconos que parezcan operadores cantidades o respuestas',asyn
   for(const[id,pattern]of cases){
     await page.getByRole('button',{name:'Inicio',exact:true}).click();await page.locator(`[data-game="${id}"]`).click();
     await expect(page.locator('h1')).toHaveText(pattern);
-    await expect(page.locator('h1 svg,h1 img,h1 [aria-hidden="true"]')).toHaveCount(0);
+    await expect(page.locator('h1 .activity-badge[aria-hidden="true"] svg')).toHaveCount(1);
+    await expect(page.locator('h1>span:not(.activity-badge) svg,h1 img')).toHaveCount(0);
     if(id==='shapes'){
       await expect(page.locator('.picture svg,.picture .shape-cue:not(:empty)')).toHaveCount(0);
       await expect(page.locator('.answer svg')).toHaveCount(4);
     }
   }
   await page.getByRole('button',{name:'Inicio',exact:true}).click();await page.locator('[data-game="stories"]').click();
-  await expect(page.locator('h1 svg,h1 img')).toHaveCount(0);
+  await expect(page.locator('h1 .activity-badge svg')).toHaveCount(1);
+});
+
+
+test('insignia neutra encajada y separada de la operación',async({page})=>{
+  await prepare(page);await page.getByRole('button',{name:'Inicio',exact:true}).click();
+  await page.locator('[data-game="subtraction"]').click();
+  await expect(page.locator('h1')).toHaveText(/^\d+ − \d+ = \?$/);
+  expect(await page.locator('h1').evaluate(n=>{const badge=n.querySelector('.activity-badge'),text=n.querySelector(':scope>span:not(.activity-badge)');const a=badge.getBoundingClientRect(),b=text.getBoundingClientRect();const s=getComputedStyle(badge);return a.right+10<=b.left&&parseFloat(s.borderRadius)>0&&s.backgroundColor!=='rgba(0, 0, 0, 0)';})).toBe(true);
 });

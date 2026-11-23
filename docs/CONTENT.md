@@ -56,3 +56,7 @@ No hay selector de familia ni preferencia print activa. Todos los consumidores d
 ## Consignas sin símbolos decorativos (vigente)
 
 No añadir operadores, cifras, cantidades o figuras decorativas al título de un ejercicio: se confunden con datos o respuesta. Iconografía solo en navegación separada o representaciones funcionales del problema. Los títulos incluyen exclusivamente su consigna textual, fuente ligada y subrayado discreto. Esta corrección sustituye el requisito anterior de iconos de título.
+
+## Iconos de consigna dentro de insignia
+
+`activityBadge()` en art.js usa solo cuaderno/libro neutros. Siempre en caja separada12–16px, no operador ni cantidad ni figura de respuesta. No traducir tipo de actividad a signos matemáticos decorativos. Conservar consigna textual exacta y aria-hidden del SVG.

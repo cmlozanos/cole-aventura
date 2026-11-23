@@ -13,3 +13,11 @@ export function shapeSvg(shape, decorative = false) {
   const descriptions = {circle:'Una línea curva cerrada, sin lados rectos ni esquinas.',square:'Cuatro lados iguales y cuatro esquinas rectas.',rectangle:'Cuatro esquinas rectas, dos lados largos y dos cortos.',triangle:'Tres lados rectos y tres esquinas.'};
   return `<svg viewBox="0 0 120 120" ${decorative ? 'aria-hidden="true"' : `role="img" aria-label="${descriptions[shape]}"`} fill="#e7b46b" stroke="#9e662a" stroke-width="3">${paths[shape] || paths.circle}</svg>`;
 }
+
+// Neutral stationery only: no operator, number or answer-shape in the badge.
+export function activityBadge(reading = false) {
+  const drawing = reading
+    ? '<path d="M16 7Q9 3 3 6v20q6-3 13 1 7-4 13-1V6q-6-3-13 1Zm0 0v20"/>'
+    : '<path d="M9 4h17v24H9a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4Zm0 0v24M5 23q0-3 4-3h17"/>';
+  return `<span class="activity-badge" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">${drawing}</svg></span>`;
+}

@@ -1,0 +1,19 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test --grep consignas sin iconos|insignia neutra|todos los tipos|Tab4 tablet|cuentos sílabas
+
+
+Running 10 tests using 1 worker
+
+  ✓   1 [chromium] › tests/browser/app.spec.js:82:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (13.8s)
+  ✓   2 [chromium] › tests/browser/app.spec.js:324:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (2.2s)
+  ✓   3 [chromium] › tests/browser/app.spec.js:475:1 › consignas sin iconos que parezcan operadores cantidades o respuestas (583ms)
+  ✓   4 [chromium] › tests/browser/app.spec.js:493:1 › insignia neutra encajada y separada de la operación (356ms)
+  ✓   5 [chromium] › tests/browser/tab4.spec.js:13:1 › Tab4 tablet viewport orientations home all topics stories and unambiguous titles (20.2s)
+  ✓   6 [webkit] › tests/browser/app.spec.js:82:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (13.2s)
+  ✓   7 [webkit] › tests/browser/app.spec.js:324:1 › cuentos sílabas palabras pulsables audio consentido y comprensión (2.7s)
+  ✓   8 [webkit] › tests/browser/app.spec.js:475:1 › consignas sin iconos que parezcan operadores cantidades o respuestas (731ms)
+  ✓   9 [webkit] › tests/browser/app.spec.js:493:1 › insignia neutra encajada y separada de la operación (333ms)
+  ✓  10 [webkit] › tests/browser/tab4.spec.js:13:1 › Tab4 tablet viewport orientations home all topics stories and unambiguous titles (20.8s)
+
+  10 passed (1.3m)
