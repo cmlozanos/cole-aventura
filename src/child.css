@@ -35,7 +35,8 @@ h1 { font-size:clamp(20px,3.3vw,34px); line-height:1.2; text-align:center; margi
 .lv-shape { max-width:150px; }
 .lv-shape>svg { display:block; width:100%; max-height:150px; }
 .shape-cue { display:grid; place-items:center; color:var(--accent); font-size:clamp(70px,15vh,140px); font-weight:850; }
-.answers { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+.answers { display:flex; justify-content:center; gap:14px; --answer-gap:14px; }
+.answers>.answer { flex:0 1 calc((100% - 3 * var(--answer-gap))/4); min-width:0; }
 .answer { min-height:70px; border-radius:22px; background:#e5ecff; color:#284781; font-size:clamp(28px,5vw,44px); font-weight:800; padding:8px; }
 .answer:disabled { cursor:default; opacity:.6; }
 .answer.correct { opacity:1; background:#d4edcf; box-shadow:inset 0 0 0 3px #347641; }
@@ -52,7 +53,7 @@ h1 { font-size:clamp(20px,3.3vw,34px); line-height:1.2; text-align:center; margi
   main { padding:8px 12px 10px; gap:8px; }
   .controls { gap:8px; }
   .controls button { width:46px; height:46px; }
-  .answers { gap:8px; }
+  .answers { gap:8px; --answer-gap:8px; }
   .answer { min-height:64px; border-radius:17px; }
   .answer svg { height:52px; }
   .lv-operation { flex-direction:column; gap:4px; }
@@ -71,7 +72,8 @@ h1 { font-size:clamp(20px,3.3vw,34px); line-height:1.2; text-align:center; margi
   main { grid-template-columns:minmax(0,1fr) 155px; grid-template-rows:auto minmax(0,1fr) 42px; gap:6px 12px; padding:4px 16px 8px; }
   h1 { grid-column:1 / -1; font-size:22px; }
   .picture { grid-column:1; grid-row:2; padding:6px; }
-  .answers { grid-column:2; grid-row:2; grid-template-columns:1fr 1fr; gap:8px; }
+  .answers { grid-column:2; grid-row:2; flex-wrap:wrap; align-content:center; gap:8px; }
+  .answers>.answer { flex-basis:calc((100% - 8px)/2); }
   .answer { min-height:48px; padding:4px; font-size:30px; }
   .answer svg { height:46px; }
   .feedback { grid-column:1 / -1; font-size:14px; }

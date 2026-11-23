@@ -1,0 +1,13 @@
+
+> cole-aventura@1.0.0 test:e2e
+> playwright test tests/browser/app.spec.js --grep todos los tipos|límites visuales
+
+
+Running 4 tests using 1 worker
+
+  ✓  1 [chromium] › tests/browser/app.spec.js:82:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (13.3s)
+  ✓  2 [chromium] › tests/browser/app.spec.js:123:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (752ms)
+  ✓  3 [webkit] › tests/browser/app.spec.js:82:1 › todos los tipos y ayudas caben sin scroll ni contenido cortado (12.9s)
+  ✓  4 [webkit] › tests/browser/app.spec.js:123:1 › límites visuales 10 objetos, ayudas y problemas largos sin scroll (843ms)
+
+  4 passed (29.4s)

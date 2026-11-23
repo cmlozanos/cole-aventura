@@ -77,3 +77,7 @@ Corrección expresa del usuario: los iconos añadidos al lado del título se lee
 ## Insignia SVG aislada · 23 noviembre
 
 Usuario pide recuperar iconos dentro de caja distinguible. Se usa cuaderno neutro para TODOS los ejercicios matemáticos y libro para lectura, nunca signo de operación, cantidad ni figuras que coincidan con respuestas. SVG propio dentro de caja coloreada con contorno y separación12–16px del texto; aria-hidden, sin texto interno ni botón. Así la consigna sigue exactamente igual, sin prefijo de resta ni pista de figuras. Mantener viewport/sílabas/fuente y dibujos funcionales.
+
+## Respuestas centradas · 23 noviembre
+
+Contenedor de respuestas matemáticas usa flex centrado con ancho equivalente a cuatro columnas;1/2/3opciones no quedan pegadas al borde ni crecen a todo el ancho. Horizontal corto conserva dos columnas con wrap y centra también última fila incompleta. No cambia orden/datos/selección ni la cuadrícula independiente de comprensión lectora.

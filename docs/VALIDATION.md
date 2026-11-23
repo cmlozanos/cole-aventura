@@ -130,3 +130,7 @@ Resultado107/107 tests puros+build y8/8 pruebas focales browser en ambos motores
 Se compara texto exacto de consigna, SVG sin operadores/números/figuras-respuesta, caja con fondo/contorno/radio y separación medida>=10px respecto a texto. Cobertura de seis temas, cuento/comprensión y layout móvil/tablet en ambos motores. No se añade dependencia ni descarga; SVG en art.js existente. Se reutiliza motor95 previo para APIs sin cambio; no se vuelve a descargar snapshot por este ajuste de composición.
 
 Resultado108/108 puros+build y10/10 browser focales ambos motores. Capturas badge-subtraction/shapes revisadas; operación sin signos decorativos y figura sin respuesta sugerida. No alterado contenido pedagógico ni acceso público de tema.
+
+## Alineación de respuestas
+
+Regresión focal1/2/3/4opciones a360×640,1280×800 y667×375, Chromium/WebKit: centro geométrico de cada fila coincide con contenedor (<1px), ancho táctil>44px y sin scroll. Build correcto. Se amplía solo con layout de todos los tipos/ayudas y límites, no suite global de modelos sin cambios. Evidencia answer-centering-browser.txt.
