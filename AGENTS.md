@@ -1,6 +1,8 @@
-# AGENTS.md
+<!-- BEGIN CMLSCODE GLOBAL INSTRUCTIONS -->
 
-Este archivo persiste la configuracion operativa para agentes que trabajen en este proyecto.
+<!-- Managed by `cmlscode setup --global` for project AGENTS.md; preserve this block marker when editing manually. -->
+
+# cmlscode global agent ecosystem
 
 ## Antes de actuar: fuentes del proyecto
 
@@ -22,12 +24,22 @@ el plan con `--dry-run`. No inicializar automaticamente proyectos ajenos.
    y pregunta solo cuando no puedas resolver la contradiccion. No sustituyas la
    decision del usuario por preferencias del agente ni inventes permisos.
 
-## Las cuatro reglas principales
+Este equipo tiene cmlscode instalado como suite estandar de IA y ecosistema global de agentes.
+Su objetivo es preconfigurar el uso de IA para equipos y clientes sin depender de configuracion manual por usuario.
 
-1. **Alcance explicito y minimo.** Ningun agente hara de mas ni ampliara requisitos sin evidencia y autorizacion trazable al encargo.
-2. **Evidencia antes que accion.** Toda decision debe apoyarse en codigo leido, comandos ejecutados, tests, documentacion oficial o datos verificables.
-3. **Cero especulacion operativa.** Las hipotesis se declaran como hipotesis y se validan antes de actuar o presentarse como hechos.
-4. **Consulta humana ante incertidumbre.** Cuando falte conocimiento, permiso o decision humana, el agente debe preguntar antes de continuar.
+Fuentes locales:
+
+- `~/AGENTS.md`
+- `~/.cmlscode/AGENTS.md`
+- `~/.cmlscode/cmlscode.registry.json`
+- `~/.cmlscode/agent-context.md`
+
+Reglas obligatorias:
+
+1. Alcance explicito y minimo.
+2. Evidencia empirica antes de actuar.
+3. Cero especulacion operativa.
+4. Consulta humana cuando falte conocimiento, permiso o decision.
 
 ## Reglas principales del equipo (siempre)
 
@@ -37,14 +49,19 @@ el plan con `--dry-run`. No inicializar automaticamente proyectos ajenos.
 4. **Cuentas y destinos según repositorio y entorno.** Antes de sincronizar con Git o desplegar, identificar remoto, cuenta activa y destino/entorno efectivo. No inferir identidades personales o laborales ni destinos Azure, AWS o GCP por la carpeta. Seguir la instruccion del usuario para el repositorio y entorno concreto; preguntar solo si falta una decision necesaria.
 5. **Pruebas minimas determinadas por el alcance.** Seleccionar siempre los checks minimos suficientes segun componentes modificados, dependencias afectadas y riesgo; sin suites globales por defecto. Reutilizar evidencia vigente solo si cubre el mismo codigo, entradas y entorno relevantes, sin cambios que la invaliden; registrar comando, resultado y alcance cubierto. Ampliar pruebas solo ante impacto transversal, fallos o cobertura insuficiente demostrados, o por requisitos explicitos. No retirar guardas ni checks obligatorios del proyecto; informar lo no cubierto y consultar si ampliar requiere permiso.
 6. **Puertas de evidencia para integraciones entre entornos.** En integraciones entre entornos, verificar identidad y cliente efectivos, callback, scopes y consentimiento, y configuracion de cada entorno antes de afirmar que la integracion funciona. Seguir el alcance solicitado para implementar, probar y promover; comprobar los requisitos y checks aplicables, comunicar los pendientes y solicitar solo el acceso o decision que realmente falte. No presentar una fase no ejecutada como completada.
-7. **Trazabilidad de ramas y release al llegar a producción.** Cuando una petición incluye producción, verificar commit e imagen realmente desplegados y completar la alineación de ramas y la release según la política del repositorio. Comparar divergencias en ambas direcciones y preservar commits exclusivos; un deploy no equivale a merge ni release. Acreditar checks y aceptación requeridos antes de declarar el ciclo completo. No imponer nombres de ramas ni versionado universales; registrar los gates pendientes sin afirmar una fase no ejecutada.
-8. **UI/UX transversal y componentes semánticos.** En cambios de UI, inventariar consumidores directos e indirectos, variantes, subcomponentes, hooks, modelo y estilos antes de cerrar. La misma acción usa componente e identidad visual compartidos aunque cambie el controlador; no inferir iconos del texto traducido ni crear divergencias entre vistas del mismo módulo. Conservar diferencias funcionales y defaults acordados. Si falta una decisión de iconografía, mostrar opciones visuales y confirmar antes de aplicarla. Aplicar la skill ui-consistency cuando corresponda.
-9. **Espacio útil y accesibilidad.** Retirar ayudas obvias, títulos duplicados, etiquetas repetidas y relleno sin dejar huecos; conservar nombres accesibles, datos, procedencia, errores, estados vacíos útiles, avisos de negocio y confirmaciones destructivas. Alinear filas, columnas y controles con centrado vertical y simetría. Adaptar paneles y popups al contenido real, un solo scroll efectivo y tooltips dentro del viewport al hover/foco, sin recortar información ni reducir indiscriminadamente fuentes o superficies táctiles. Botones sin borde según el criterio visual acordado, disabled real grisáceo y foco visible; respetar el sistema de diseño del proyecto.
-10. **Listados ordenables y carga eficiente.** Tablas y listados operativos: columnas de datos ordenables ascendente/descendente/sin orden con control e indicador compartidos; excluir acciones y selección. Ordenar antes de paginar o limitar, sin mutar datos, selección, cálculos ni prioridades de negocio. Mantener defaults y ámbitos de estado acordados, sin añadir persistencia por iniciativa propia. Consultas acotadas/paginadas y agregados en servidor cuando exista backend, sin descargar históricos completos para resumirlos; progreso determinado solo con medición real, no usar loaders para encubrir problemas de rendimiento. Limitar la respuesta HTTP no acredita consultas acotadas al almacenamiento; verificar paginación y coste de extremo a extremo.
-11. **Responsabilidades y tooling reproducible.** Reutilizar framework y componentes nativos ya adoptados, sin imponer una biblioteca concreta a otros proyectos. Separar composición, presentación/interacción, modelo/persistencia y estilos por responsabilidad. Respetar límites de tamaño del proyecto sin comprimir código, fragmentar artificialmente ni añadir abstracciones especulativas. Makefile por proyecto, help por defecto y comandos install/run coherentes que preparan dependencias reales de forma repetible sin borrar datos; revisar efectos indirectos antes de ejecutarlos.
-12. **Evidencia y generalización anónima.** Distinguir tests de modelo, render, build, DOM, inspección visual e interacción real; registrar consumidores, variantes, anchos y estados comprobados y pendientes. No afirmar revisión completa, instalación o portabilidad sin evidencia de esa fase. Al reutilizar aprendizajes entre proyectos, exportar principios anónimos sin personas, organizaciones, productos, rutas de usuario, IDs de chats, URLs privadas, cifras reales, capturas ni fuentes de negocio; no convertir reglas de dominio o decisiones locales en estándares globales.
+7. **Cierre de entregas Git y vuelta a la rama de desarrollo.** En todos los proyectos versionados, antes de dar por cerrada una entrega, validar y publicar los cambios de la tarea en el remoto correcto, completar y verificar su integración remota conforme al flujo del repositorio y después volver en local a develop si es la rama de desarrollo del proyecto, o a su equivalente, y sincronizar con su referencia remota. En un repositorio de rama única, verificar la publicación en esa rama; no inventar PR ni ramas. Comprobar rama activa, checkout limpio y cero divergencia con la rama remota. Preservar cambios ajenos, sin forzar ni descartar trabajo. Si falta un permiso, check, merge o retorno seguro, indicar qué queda pendiente sin dar la entrega por cerrada. Respetar la autorización y las protecciones aplicables; esta regla no autoriza producción ni borrados.
+8. **Trazabilidad de ramas y release al llegar a producción.** Cuando una petición incluye producción, verificar commit e imagen realmente desplegados y completar la alineación de ramas y la release según la política del repositorio. Comparar divergencias en ambas direcciones y preservar commits exclusivos; un deploy no equivale a merge ni release. Aplicar verifiable-promotion: fijar artefacto y ejecución, reconciliar antes de reintentar y acreditar checks y aceptación por entorno antes de declarar el ciclo completo. No imponer nombres de ramas ni versionado universales; registrar los gates pendientes sin afirmar una fase no ejecutada.
+9. **UI/UX transversal y componentes semánticos.** En cambios de UI, inventariar consumidores directos e indirectos, variantes, subcomponentes, hooks, modelo y estilos antes de cerrar. La misma acción usa componente e identidad visual compartidos aunque cambie el controlador; no inferir iconos del texto traducido ni crear divergencias entre vistas del mismo módulo. Conservar diferencias funcionales y defaults acordados. Si falta una decisión de iconografía, mostrar opciones visuales y confirmar antes de aplicarla. Aplicar la skill ui-consistency cuando corresponda.
+10. **Espacio útil y accesibilidad.** Retirar ayudas obvias, títulos duplicados, etiquetas repetidas y relleno sin dejar huecos; conservar nombres accesibles, datos, procedencia, errores, estados vacíos útiles, avisos de negocio y confirmaciones destructivas. Alinear filas, columnas y controles con centrado vertical y simetría. Adaptar paneles y popups al contenido real, un solo scroll efectivo y tooltips dentro del viewport al hover/foco, sin recortar información ni reducir indiscriminadamente fuentes o superficies táctiles. Integrar el plegado en la propia barra persistente, mantener reapertura visible y abordar el scroll sin desplazar el fondo. Botones sin borde según el criterio visual acordado, disabled real grisáceo y foco visible; respetar el sistema de diseño del proyecto.
+11. **Listados ordenables y carga eficiente.** Tablas y listados operativos: columnas de datos ordenables ascendente/descendente/sin orden con control e indicador compartidos; excluir acciones y selección. Ordenar antes de paginar o limitar, sin mutar datos, selección, cálculos ni prioridades de negocio. Mantener defaults y ámbitos de estado acordados, sin añadir persistencia por iniciativa propia. Consultas acotadas/paginadas y agregados en servidor cuando exista backend, sin descargar históricos completos para resumirlos; progreso determinado solo con medición real, no usar loaders para encubrir problemas de rendimiento. Limitar la respuesta HTTP no acredita consultas acotadas al almacenamiento; verificar paginación y coste de extremo a extremo.
+12. **Responsabilidades y tooling reproducible.** Reutilizar framework y componentes nativos ya adoptados, sin imponer una biblioteca concreta a otros proyectos. Separar composición, presentación/interacción, modelo/persistencia y estilos por responsabilidad. Respetar límites de tamaño del proyecto sin comprimir código, fragmentar artificialmente ni añadir abstracciones especulativas. Makefile por proyecto, help por defecto y comandos install/run coherentes que preparan dependencias reales de forma repetible sin borrar datos; revisar efectos indirectos antes de ejecutarlos.
+13. **Evidencia y generalización anónima.** Distinguir tests de modelo, render, build, DOM, inspección visual e interacción real; registrar consumidores, variantes, anchos y estados comprobados y pendientes. No afirmar revisión completa, instalación o portabilidad sin evidencia de esa fase. Al reutilizar aprendizajes entre proyectos, exportar principios anónimos sin personas, organizaciones, productos, rutas de usuario, IDs de chats, URLs privadas, cifras reales, capturas ni fuentes de negocio; no convertir reglas de dominio o decisiones locales en estándares globales.
+14. **LOCAL/PRE validan; PRO promueve artefactos con evidencia.** Concentrar construccion, pruebas funcionales, negativos y regresiones en LOCAL/PRE sobre el artefacto final, incluidas sus dependencias y cualquier overlay; probar el checkout no sustituye probar el paquete entregable. Promover a PRO los mismos bytes ya validados, sin reconstruir ni repetir por defecto pruebas cubiertas por evidencia vigente. Vincular un manifiesto de componentes, dependencias, hashes, origen y configuracion por entorno con comandos, resultados, alcance y limites de esa evidencia. PRO debe ser una promocion sencilla y delicada: preflight de identidad, destino, permisos, herramientas, configuracion y compatibilidad antes de reservar o ejecutar acciones con efectos; comprobar hashes y gates de PRE, drift y rollback previsto. Ejecutar checks especificos de PRO y aceptacion funcional acotada de los flujos afectados; una alarma OK o un deploy exitoso no sustituyen esa aceptacion. Si cambian bytes, entradas, dependencias o configuracion relevante, invalidar solo la evidencia afectada y revalidar en LOCAL/PRE antes de promover. No retirar checks obligatorios ni guardas de integridad, seguridad o publicacion; detener la promocion ante discrepancias. Una prueba opt-in no es un gate automatico: acreditar su integracion real antes de afirmarlo.
+15. **Matriz de tareas, responsables y criterio de hecho.** Mantener para trabajos de varias fases una matriz durable y actualizada con tarea, estado, dueno, dependencias, criterio de hecho verificable y evidencia enlazada. Diferenciar pendiente, en curso, bloqueada y verificada; registrar el bloqueo concreto y la decision o acceso que falta. No marcar una tarea como hecha mientras sus dependencias o su criterio de hecho sigan pendientes; actualizar la matriz al ejecutar, verificar o transferir responsabilidad, sin confundir implementacion, validacion y promocion.
+16. **Resolver limites tecnicos sin recortar el producto.** No inventar limitaciones funcionales para acomodar limites de infraestructura. Conservar el contrato de producto y resolver integridad y completitud de extremo a extremo mediante las capacidades existentes, como paginacion, consultas acotadas o procesamiento por lotes, con evidencia y dentro del alcance autorizado. No truncar silenciosamente resultados ni presentar un subconjunto como completo. Si hace falta una decision de producto, arquitectura, coste o permisos aun no autorizada, exponer alternativas y pedir esa decision; no imponer una restriccion funcional como solucion tecnica.
+17. **Datos de prueba seguros y separados por entorno.** Usar datos sinteticos o anonimizados para probar, con procedencia y cobertura documentadas y comprobacion de anonimización efectiva antes de transferirlos. NUNCA clonar datos reales entre entornos ni copiar secretos ciegamente para reproducir un caso. Mantener credenciales propias por entorno y permisos minimos; no transportar sesiones, tokens ni configuracion sensible como fixtures. Validar integridad, relaciones, volumen y casos limite con datos de prueba seguros; si no bastan, declarar el limite de evidencia y solicitar la decision necesaria sin copiar datos reales ni presumir equivalencia con produccion.
 
-## Definiciones operativas
+Definiciones operativas:
 
 - `agent`: Unidad operativa con id y proposito. Es el termino generico para cualquier participante activable del ecosistema.
   Responsabilidad: Actuar dentro de las cuatro reglas: alcance minimo, evidencia, cero especulacion y consulta humana ante incertidumbre.
@@ -61,13 +78,17 @@ el plan con `--dry-run`. No inicializar automaticamente proyectos ajenos.
 - `harness`: Arnes operativo que equipa un runtime/CLI: fija que reglas se aplican, que agentes/skills/mcps se montan, los guardrails y los checkpoints humanos.
   Responsabilidad: Garantizar comportamiento identico entre equipos: enlaza reglas, agentes, skills y mcps a cada runtime con guardrails y evidencia obligatoria.
 
-## Protocolo obligatorio
+## Convenciones de estructura
 
-1. Leer este archivo antes de actuar.
-2. Reunir evidencia empirica antes de modificar nada.
-3. Usar `cmlscode route <tecnologia-o-ruta>` para elegir el microagente responsable.
-4. Validar con checks existentes o documentar bloqueo verificable.
-5. Preguntar al humano cuando falte conocimiento, permiso o decision.
+- **Makefile y tools por proyecto.** Cada proyecto declara sus comandos en su propio Makefile y aloja sus scripts en su propia carpeta tools/. Ningun proyecto depende del Makefile ni de las tools de otro. Help es el objetivo por defecto; install/run preparan dependencias reales de forma repetible sin borrar datos, con revisión previa de sus efectos indirectos.
+- **Cuanto mas generica es la carpeta, mas generico es el Makefile.** La raiz del workspace solo orquesta tareas genericas y herramientas compartidas; la logica especifica de un producto vive en el Makefile de ese producto. La raiz nunca hardcodea un unico proyecto y parametriza el tooling compartido.
+
+## Enforcement obligatorio
+
+En Claude Code estas comprobaciones se ejecutan como hooks nativos. En CLIs sin hooks de shell
+(GitHub Copilot, Codex, Gemini) DEBES aplicarlas tu mismo en cada accion:
+
+- [Stop / *] verification-on-stop: Recordar antes de cerrar que los checks minimos suficientes del alcance deben estar en verde con evidencia vigente, sin suites globales por defecto ni retirar guardas o checks obligatorios (no bloqueante a proposito: bloquear el Stop atraparia el bucle).
 
 ## Bucle de trabajo (loop engineering)
 
@@ -85,7 +106,6 @@ Trabaja en bucle: reune contexto -> actua -> verifica contra ground truth -> rep
 10. Checkpoint humano antes de acciones irreversibles (push a main, borrados, despliegues, envios externos).
 
 Procedimiento completo en la skill `agentic-loop`.
-
 
 ## Como orquestar cada peticion (routing obligatorio)
 
@@ -128,48 +148,33 @@ Flujo completo (trabajos de varias fases), fase -> agente dueno:
 - operate -> `platform-sre`
 - handoff -> `documentation-keeper`
 
-## Skills
+Comandos utiles:
 
-- `empirical-validation`: Producir evidencia ejecutable (comandos, tests, salidas) antes de aceptar cualquier cambio.
-- `secure-context-packet`: Construir un paquete de contexto de alcance configurable.
-- `official-source-check`: Verificar el comportamiento esperado contra documentacion oficial antes de asumir.
-- `research-first`: Buscar soluciones existentes antes de construir a medida y decidir adoptar, extender, componer o construir con evidencia.
-- `self-evaluation`: Autoevaluar la salida en 5 ejes con evidencia y un scorecard 1-5 antes de entregar.
-- `verification-loop`: Iterar cambio, validacion y correccion hasta que la evidencia confirme el objetivo, sin declarar exito con checks en rojo.
-- `tdd-workflow`: Desarrollo dirigido por tests con ciclo RED-GREEN-REFACTOR.
-- `code-review`: Revisar un cambio por correccion, alcance, seguridad, tests y claridad con evidencia.
-- `security-review`: Buscar secretos, validacion de inputs, dependencias inseguras y debilitamiento de configuracion.
-- `deep-research`: Investigar con varias fuentes, verificar de forma adversarial y sintetizar con citas trazables.
-- `codebase-onboarding`: Mapear un repo desconocido con evidencia antes de proponer cambios.
-- `spec-driven-development`: Desarrollo dirigido por especificacion (SDD, GitHub Spec Kit): constitution, spec, plan y tasks antes de implementar.
-- `agentic-loop`: Conducir el bucle agentico (contexto -> accion -> verificacion -> repetir) con definicion de hecho objetiva, condiciones de parada y presupuesto.
-- `ui-consistency`: Aplicar y verificar coherencia transversal, semántica de acciones, contenido compacto, listados y responsive en cambios de UI.
+- `cmlscode agents`
+- `cmlscode agents microagents --format json`
+- `cmlscode route <tecnologia-o-ruta>`
+- `cmlscode show <agent-id>`
 
-## MCPs
+Registro instalado: cmlscode 0.28.2.
 
-- `filesystem` (stdio): Acceso de lectura al arbol del proyecto para que los runtimes razonen con contexto real.
-- `git` (stdio): Inspeccion de historial, diffs y estado del repositorio en modo lectura.
-- `fetch-docs` (http): Recuperar documentacion oficial desde sourceUrls verificados para contrastar comportamiento.
+## Antes de actuar: fuentes del proyecto
 
-## Harnesses
+Al iniciar un proyecto nuevo, ejecutar `cmlscode init` para ese proyecto antes
+de implementar cambios. Revisar su analisis y confirmar la seleccion; si no
+hay terminal interactiva, usar `--target`, `--project` y `--yes` tras verificar
+el plan con `--dry-run`. No inicializar automaticamente proyectos ajenos.
 
-- `delivery-harness`: Arnes por defecto de entrega: equipa cualquier runtime con el flujo completo de negocio a validacion.
-  appliesTo: cmlscode, claude, copilot, codex, cursor, gemini
-  enforces: bounded-scope, evidence-first, no-speculation, human-escalation
-- `review-harness`: Arnes de revision en solo lectura para auditar codigo y seguridad sin modificar el repositorio.
-  appliesTo: claude, copilot, codex
-  enforces: bounded-scope, evidence-first, no-speculation
-- `discovery-harness`: Arnes de descubrimiento de negocio y producto antes de tocar codigo.
-  appliesTo: cmlscode, claude, gemini
-  enforces: bounded-scope, human-escalation
+1. Identifica la raiz del proyecto y lee los `AGENTS.md` aplicables: el del
+   proyecto y los anidados en las rutas que vas a tocar. Respeta la prioridad
+   de instrucciones que establezca el runtime; este texto no la modifica.
+2. Lee primero `docs/` y los `.md` pertinentes; contrasta despues comandos,
+   arquitectura y criterios de aceptacion con los archivos principales del
+   proyecto (p. ej. `Makefile`, `pyproject.toml`, `package.json`, `pom.xml`).
+3. Consulta `cmlscode.registry.json` y `cmlscode route <ruta-o-tecnologia>`
+   para escoger el arnes, agente, skill y checks adecuados antes de editar.
+4. Si una instruccion del proyecto parece contradecir el objetivo del usuario,
+   cita el texto y comprueba su alcance; conserva los datos tecnicos verificables
+   y pregunta solo cuando no puedas resolver la contradiccion. No sustituyas la
+   decision del usuario por preferencias del agente ni inventes permisos.
 
-## Hooks (deterministas; nativos donde el CLI los soporta, instruction-backed en el resto)
-
-- `verification-on-stop` [Stop / *] nativo en: claude. Recordar antes de cerrar que los checks minimos suficientes del alcance deben estar en verde con evidencia vigente, sin suites globales por defecto ni retirar guardas o checks obligatorios (no bloqueante a proposito: bloquear el Stop atraparia el bucle).
-
-## Convenciones de estructura
-
-- **Makefile y tools por proyecto.** Cada proyecto declara sus comandos en su propio Makefile y aloja sus scripts en su propia carpeta tools/. Ningun proyecto depende del Makefile ni de las tools de otro. Help es el objetivo por defecto; install/run preparan dependencias reales de forma repetible sin borrar datos, con revisión previa de sus efectos indirectos.
-- **Cuanto mas generica es la carpeta, mas generico es el Makefile.** La raiz del workspace solo orquesta tareas genericas y herramientas compartidas; la logica especifica de un producto vive en el Makefile de ese producto. La raiz nunca hardcodea un unico proyecto y parametriza el tooling compartido.
-
-El registro operativo completo esta en `cmlscode.registry.json`.
+<!-- END CMLSCODE GLOBAL INSTRUCTIONS -->

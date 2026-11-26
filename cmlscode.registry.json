@@ -1,5 +1,5 @@
 {
-  "version": "0.28.1",
+  "version": "0.28.2",
   "name": "cmlscode",
   "description": "Registro oficial de cmlscode: generador del ecosistema coherente de IA (agentes, multiagentes, subagentes, microagentes, skills, mcps y arneses) para que cualquier equipo que lo instale se comporte igual. Proyecto open source.",
   "sourcesOfTruth": {
@@ -139,9 +139,14 @@
       "statement": "En integraciones entre entornos, verificar identidad y cliente efectivos, callback, scopes y consentimiento, y configuracion de cada entorno antes de afirmar que la integracion funciona. Seguir el alcance solicitado para implementar, probar y promover; comprobar los requisitos y checks aplicables, comunicar los pendientes y solicitar solo el acceso o decision que realmente falte. No presentar una fase no ejecutada como completada."
     },
     {
+      "id": "remote-delivery-and-local-return",
+      "title": "Cierre de entregas Git y vuelta a la rama de desarrollo",
+      "statement": "En todos los proyectos versionados, antes de dar por cerrada una entrega, validar y publicar los cambios de la tarea en el remoto correcto, completar y verificar su integración remota conforme al flujo del repositorio y después volver en local a develop si es la rama de desarrollo del proyecto, o a su equivalente, y sincronizar con su referencia remota. En un repositorio de rama única, verificar la publicación en esa rama; no inventar PR ni ramas. Comprobar rama activa, checkout limpio y cero divergencia con la rama remota. Preservar cambios ajenos, sin forzar ni descartar trabajo. Si falta un permiso, check, merge o retorno seguro, indicar qué queda pendiente sin dar la entrega por cerrada. Respetar la autorización y las protecciones aplicables; esta regla no autoriza producción ni borrados."
+    },
+    {
       "id": "production-branch-release-traceability",
       "title": "Trazabilidad de ramas y release al llegar a producción",
-      "statement": "Cuando una petición incluye producción, verificar commit e imagen realmente desplegados y completar la alineación de ramas y la release según la política del repositorio. Comparar divergencias en ambas direcciones y preservar commits exclusivos; un deploy no equivale a merge ni release. Acreditar checks y aceptación requeridos antes de declarar el ciclo completo. No imponer nombres de ramas ni versionado universales; registrar los gates pendientes sin afirmar una fase no ejecutada."
+      "statement": "Cuando una petición incluye producción, verificar commit e imagen realmente desplegados y completar la alineación de ramas y la release según la política del repositorio. Comparar divergencias en ambas direcciones y preservar commits exclusivos; un deploy no equivale a merge ni release. Aplicar verifiable-promotion: fijar artefacto y ejecución, reconciliar antes de reintentar y acreditar checks y aceptación por entorno antes de declarar el ciclo completo. No imponer nombres de ramas ni versionado universales; registrar los gates pendientes sin afirmar una fase no ejecutada."
     },
     {
       "id": "cross-consumer-ui-contract",
@@ -151,7 +156,7 @@
     {
       "id": "compact-accessible-ui",
       "title": "Espacio útil y accesibilidad",
-      "statement": "Retirar ayudas obvias, títulos duplicados, etiquetas repetidas y relleno sin dejar huecos; conservar nombres accesibles, datos, procedencia, errores, estados vacíos útiles, avisos de negocio y confirmaciones destructivas. Alinear filas, columnas y controles con centrado vertical y simetría. Adaptar paneles y popups al contenido real, un solo scroll efectivo y tooltips dentro del viewport al hover/foco, sin recortar información ni reducir indiscriminadamente fuentes o superficies táctiles. Botones sin borde según el criterio visual acordado, disabled real grisáceo y foco visible; respetar el sistema de diseño del proyecto."
+      "statement": "Retirar ayudas obvias, títulos duplicados, etiquetas repetidas y relleno sin dejar huecos; conservar nombres accesibles, datos, procedencia, errores, estados vacíos útiles, avisos de negocio y confirmaciones destructivas. Alinear filas, columnas y controles con centrado vertical y simetría. Adaptar paneles y popups al contenido real, un solo scroll efectivo y tooltips dentro del viewport al hover/foco, sin recortar información ni reducir indiscriminadamente fuentes o superficies táctiles. Integrar el plegado en la propia barra persistente, mantener reapertura visible y abordar el scroll sin desplazar el fondo. Botones sin borde según el criterio visual acordado, disabled real grisáceo y foco visible; respetar el sistema de diseño del proyecto."
     },
     {
       "id": "ordered-efficient-lists",
@@ -167,6 +172,26 @@
       "id": "evidence-and-anonymous-reuse",
       "title": "Evidencia y generalización anónima",
       "statement": "Distinguir tests de modelo, render, build, DOM, inspección visual e interacción real; registrar consumidores, variantes, anchos y estados comprobados y pendientes. No afirmar revisión completa, instalación o portabilidad sin evidencia de esa fase. Al reutilizar aprendizajes entre proyectos, exportar principios anónimos sin personas, organizaciones, productos, rutas de usuario, IDs de chats, URLs privadas, cifras reales, capturas ni fuentes de negocio; no convertir reglas de dominio o decisiones locales en estándares globales."
+    },
+    {
+      "id": "validated-artifact-promotion",
+      "title": "LOCAL/PRE validan; PRO promueve artefactos con evidencia",
+      "statement": "Concentrar construccion, pruebas funcionales, negativos y regresiones en LOCAL/PRE sobre el artefacto final, incluidas sus dependencias y cualquier overlay; probar el checkout no sustituye probar el paquete entregable. Promover a PRO los mismos bytes ya validados, sin reconstruir ni repetir por defecto pruebas cubiertas por evidencia vigente. Vincular un manifiesto de componentes, dependencias, hashes, origen y configuracion por entorno con comandos, resultados, alcance y limites de esa evidencia. PRO debe ser una promocion sencilla y delicada: preflight de identidad, destino, permisos, herramientas, configuracion y compatibilidad antes de reservar o ejecutar acciones con efectos; comprobar hashes y gates de PRE, drift y rollback previsto. Ejecutar checks especificos de PRO y aceptacion funcional acotada de los flujos afectados; una alarma OK o un deploy exitoso no sustituyen esa aceptacion. Si cambian bytes, entradas, dependencias o configuracion relevante, invalidar solo la evidencia afectada y revalidar en LOCAL/PRE antes de promover. No retirar checks obligatorios ni guardas de integridad, seguridad o publicacion; detener la promocion ante discrepancias. Una prueba opt-in no es un gate automatico: acreditar su integracion real antes de afirmarlo."
+    },
+    {
+      "id": "task-delivery-matrix",
+      "title": "Matriz de tareas, responsables y criterio de hecho",
+      "statement": "Mantener para trabajos de varias fases una matriz durable y actualizada con tarea, estado, dueno, dependencias, criterio de hecho verificable y evidencia enlazada. Diferenciar pendiente, en curso, bloqueada y verificada; registrar el bloqueo concreto y la decision o acceso que falta. No marcar una tarea como hecha mientras sus dependencias o su criterio de hecho sigan pendientes; actualizar la matriz al ejecutar, verificar o transferir responsabilidad, sin confundir implementacion, validacion y promocion."
+    },
+    {
+      "id": "infrastructure-preserves-functionality",
+      "title": "Resolver limites tecnicos sin recortar el producto",
+      "statement": "No inventar limitaciones funcionales para acomodar limites de infraestructura. Conservar el contrato de producto y resolver integridad y completitud de extremo a extremo mediante las capacidades existentes, como paginacion, consultas acotadas o procesamiento por lotes, con evidencia y dentro del alcance autorizado. No truncar silenciosamente resultados ni presentar un subconjunto como completo. Si hace falta una decision de producto, arquitectura, coste o permisos aun no autorizada, exponer alternativas y pedir esa decision; no imponer una restriccion funcional como solucion tecnica."
+    },
+    {
+      "id": "safe-cross-environment-test-data",
+      "title": "Datos de prueba seguros y separados por entorno",
+      "statement": "Usar datos sinteticos o anonimizados para probar, con procedencia y cobertura documentadas y comprobacion de anonimización efectiva antes de transferirlos. NUNCA clonar datos reales entre entornos ni copiar secretos ciegamente para reproducir un caso. Mantener credenciales propias por entorno y permisos minimos; no transportar sesiones, tokens ni configuracion sensible como fixtures. Validar integridad, relaciones, volumen y casos limite con datos de prueba seguros; si no bastan, declarar el limite de evidencia y solicitar la decision necesaria sin copiar datos reales ni presumir equivalencia con produccion."
     }
   ],
   "orchestration": {
@@ -790,7 +815,8 @@
       "whenToUse": "se va a construir o cambiar UI y hay que validar experiencia o criterios WCAG",
       "done": "experiencia y criterios WCAG validados antes de construir UI.",
       "chainSkills": [
-        "ui-consistency"
+        "ui-consistency",
+        "ui-motion"
       ],
       "tools": [
         "Read",
@@ -941,7 +967,8 @@
       "chainSkills": [
         "verification-loop",
         "empirical-validation",
-        "ui-consistency"
+        "ui-consistency",
+        "ui-motion"
       ]
     },
     {
@@ -962,7 +989,8 @@
       "chainSkills": [
         "verification-loop",
         "empirical-validation",
-        "ui-consistency"
+        "ui-consistency",
+        "ui-motion"
       ],
       "tools": [
         "Read",
@@ -1003,7 +1031,8 @@
       "whenToUse": "hay que versionar, generar changelog, planificar rollout o rollback",
       "done": "Version, changelog y plan verificados; una release solo se declara publicada tras comprobar el artefacto y destino reales.",
       "chainSkills": [
-        "verification-loop"
+        "verification-loop",
+        "verifiable-promotion"
       ]
     },
     {
@@ -1377,7 +1406,8 @@
       "mustKnow": [
         "Version objetivo",
         "herramientas disponibles",
-        "comandos de validacion existentes"
+        "comandos de validacion existentes",
+        "Para animaciones UI, aplicar skills/ui-motion/SKILL.md: continuidad, fases, estado, movimiento reducido y aceptación visual real."
       ],
       "mustAskWhen": [
         "Faltan version, convenciones, permisos o criterio de aceptacion."
@@ -1595,7 +1625,8 @@
       "mustKnow": [
         "Version objetivo",
         "herramientas disponibles",
-        "comandos de validacion existentes"
+        "comandos de validacion existentes",
+        "Para animaciones UI, aplicar skills/ui-motion/SKILL.md: continuidad, fases, estado, movimiento reducido y aceptación visual real."
       ],
       "mustAskWhen": [
         "Faltan version, convenciones, permisos o criterio de aceptacion."
@@ -1626,7 +1657,8 @@
       "mustKnow": [
         "Version objetivo",
         "herramientas disponibles",
-        "comandos de validacion existentes"
+        "comandos de validacion existentes",
+        "Para animaciones UI, aplicar skills/ui-motion/SKILL.md: continuidad, fases, estado, movimiento reducido y aceptación visual real."
       ],
       "mustAskWhen": [
         "Faltan version, convenciones, permisos o criterio de aceptacion."
@@ -2425,7 +2457,8 @@
       "mustKnow": [
         "Version objetivo",
         "herramientas disponibles",
-        "comandos de validacion existentes"
+        "comandos de validacion existentes",
+        "Para animaciones UI, aplicar skills/ui-motion/SKILL.md: continuidad, fases, estado, movimiento reducido y aceptación visual real."
       ],
       "mustAskWhen": [
         "Faltan version, convenciones, permisos o criterio de aceptacion."
@@ -3008,6 +3041,125 @@
       ],
       "mustAskWhen": [
         "Falta decisión visual, semántica o de alcance necesaria."
+      ]
+    },
+    {
+      "id": "notification-lifecycle",
+      "kind": "skill",
+      "purpose": "Diseñar y verificar avisos personales, estado reversible, contador y entrega.",
+      "skillPath": "skills/notification-lifecycle/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "solution-architect",
+        "validation-auditor"
+      ],
+      "inputs": [
+        "objetivo, alcance y contrato del proyecto"
+      ],
+      "steps": [
+        "Separar actividad, persistencia y canales; definir destinatario y ámbito.",
+        "Verificar idempotencia, agregación, post-commit, deduplicación y reconexión.",
+        "Separar evidencia por capa y por entorno."
+      ],
+      "outputs": [
+        "evidencia separada por capa y entorno",
+        "resultado y pendientes"
+      ],
+      "sourceUrls": [],
+      "mustAskWhen": [
+        "Falta autorización, dato de prueba o decisión indispensable."
+      ]
+    },
+    {
+      "id": "verifiable-promotion",
+      "kind": "skill",
+      "purpose": "Promover y cerrar releases con evidencia del artefacto, runtime y Git.",
+      "skillPath": "skills/verifiable-promotion/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "release-manager",
+        "platform-sre"
+      ],
+      "inputs": [
+        "objetivo, alcance y contrato del proyecto"
+      ],
+      "steps": [
+        "Identificar entornos, dependencias, permisos y política de entrega.",
+        "Fijar fuente, artefacto y ejecuciones; verificar plan, rollback y runtime.",
+        "Verificar integración, release y retorno al checkout de desarrollo."
+      ],
+      "outputs": [
+        "evidencia separada por capa y entorno",
+        "resultado y pendientes"
+      ],
+      "sourceUrls": [],
+      "mustAskWhen": [
+        "Falta autorización, dato de prueba o decisión indispensable."
+      ]
+    },
+    {
+      "id": "ui-motion",
+      "kind": "skill",
+      "purpose": "Crear transiciones UI suaves sin deformar iconos ni perder estado; validar recorrido, interrupciones y accesibilidad.",
+      "skillPath": "skills/ui-motion/SKILL.md",
+      "stability": "stable",
+      "cost": "medium",
+      "targets": [
+        "claude",
+        "copilot",
+        "codex",
+        "gemini",
+        "antigravity",
+        "cursor"
+      ],
+      "appliesTo": [
+        "ux-accessibility-researcher",
+        "implementation-steward",
+        "validation-auditor",
+        "react",
+        "css-tailwind",
+        "frontend-testing",
+        "accessibility-wcag"
+      ],
+      "inputs": [
+        "contrato visual y estados origen/destino",
+        "navegadores y preferencias de movimiento"
+      ],
+      "steps": [
+        "Leer y aplicar skills/ui-motion/SKILL.md al cambiar animaciones.",
+        "Separar contracción, desplazamiento y aspecto sin estirar iconos; preservar estado y gestionar interrupciones.",
+        "Validar tests focalizados y recorrido visual real; registrar límites sin presentar build/tests como aceptación visual."
+      ],
+      "outputs": [
+        "secuencia de estados",
+        "componentes reutilizados",
+        "evidencia funcional y visual con límites"
+      ],
+      "sourceUrls": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API",
+        "https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html"
+      ],
+      "mustAskWhen": [
+        "Falta decisión visual indispensable o acceso para aceptar el recorrido real."
       ]
     }
   ],

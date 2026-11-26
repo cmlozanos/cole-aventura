@@ -75,6 +75,9 @@ Este proyecto usa `cmlscode.registry.json` como fuente de verdad machine-readabl
 | `spec-driven-development` | Desarrollo dirigido por especificacion (SDD, GitHub Spec Kit): constitution, spec, plan y tasks antes de implementar. |
 | `agentic-loop` | Conducir el bucle agentico (contexto -> accion -> verificacion -> repetir) con definicion de hecho objetiva, condiciones de parada y presupuesto. |
 | `ui-consistency` | Aplicar y verificar coherencia transversal, semántica de acciones, contenido compacto, listados y responsive en cambios de UI. |
+| `notification-lifecycle` | Diseñar y verificar avisos personales, estado reversible, contador y entrega. |
+| `verifiable-promotion` | Promover y cerrar releases con evidencia del artefacto, runtime y Git. |
+| `ui-motion` | Crear transiciones UI suaves sin deformar iconos ni perder estado; validar recorrido, interrupciones y accesibilidad. |
 
 ## MCPs disponibles
 
